@@ -27,7 +27,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/typenanalyse" className="text-gray-300 hover:text-white transition-colors">
-                  Typenanalyse
+                  Typberatung
                 </Link>
               </li>
               <li>

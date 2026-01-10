@@ -10,7 +10,7 @@ export default function Header() {
 
   const navigationLinks = [
     { href: '/stilberatung', label: 'Stilberatung' },
-    { href: '/typenanalyse', label: 'Typenanalyse' },
+    { href: '/typenanalyse', label: 'Typberatung' },
     { href: '/downloads', label: 'Downloads' },
     { href: '/shop', label: 'Shop' },
     { href: '/preise', label: 'Preise' },
@@ -20,10 +20,12 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <nav className="container-custom">
         <div className="flex items-center justify-between h-16 md:h-20">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-heading font-bold text-brand-primary">
-              Businessstylist
-            </span>
+          <Link href="/" className="flex items-center">
+            <img
+              src="/businessstylist-logo-sml.png"
+              alt="Businessstylist Logo"
+              className="h-12 md:h-14 w-auto"
+            />
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
