@@ -4,6 +4,7 @@ import { Inter, Playfair_Display, Montserrat } from 'next/font/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import SessionProvider from '@/components/providers/SessionProvider';
+import { CartProvider } from '@/lib/context/CartContext';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif' });
@@ -42,11 +43,13 @@ export default function RootLayout({
     <html lang="de" className={`${inter.variable} ${playfair.variable} ${montserrat.variable}`}>
       <body>
         <SessionProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
+          <CartProvider>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </div>
+          </CartProvider>
         </SessionProvider>
       </body>
     </html>
