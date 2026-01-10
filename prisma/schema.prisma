@@ -193,6 +193,7 @@ model ProductPage {
   name          String
   description   String?
   content       String    // Rich content
+  price         Float?
   priceDisplay  String?
   stripePriceId String?
   status        String    @default("PUBLISHED")
@@ -213,4 +214,22 @@ model ProductPage {
   dcCreator      String?
   dcLanguage     String?  @default("de-DE")
   schemaJson     String?  // JSON-LD
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  label       String
+  href        String
+  position    String   // HEADER or FOOTER
+  order       Int      @default(0)
+  parentId    String?
+  external    Boolean  @default(false)
+  visible     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent   MenuItem?  @relation("MenuItemToParent", fields: [parentId], references: [id], onDelete: Cascade)
+  children MenuItem[] @relation("MenuItemToParent")
+
+  @@index([position, order])
 }

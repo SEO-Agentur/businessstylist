@@ -1,7 +1,30 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+interface MenuItem {
+  id: string;
+  label: string;
+  href: string;
+  external: boolean;
+}
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [footerLinks, setFooterLinks] = useState<MenuItem[]>([]);
+
+  useEffect(() => {
+    fetch('/api/admin/menu-items?position=FOOTER')
+      .then(res => res.json())
+      .then(data => {
+        const visibleItems = data.filter((item: MenuItem & { visible: boolean }) => item.visible);
+        setFooterLinks(visibleItems);
+      })
+      .catch(() => {
+        setFooterLinks([]);
+      });
+  }, []);
 
   return (
     <footer className="bg-brand-primary text-white">

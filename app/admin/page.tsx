@@ -15,7 +15,24 @@ export default async function AdminDashboardPage() {
     prisma.blogPost.count(),
   ]);
 
+  const [menuItemCount, productPageCount] = await Promise.all([
+    prisma.menuItem.count(),
+    prisma.productPage.count(),
+  ]);
+
   const adminLinks = [
+    {
+      title: 'Menüverwaltung',
+      href: '/admin/menu',
+      description: 'Header & Footer Menüpunkte verwalten',
+      count: menuItemCount,
+    },
+    {
+      title: 'Produktseiten',
+      href: '/admin/products',
+      description: 'Produktseiten erstellen & bearbeiten',
+      count: productPageCount,
+    },
     {
       title: 'Nutzer',
       href: '/admin/users',
@@ -39,12 +56,6 @@ export default async function AdminDashboardPage() {
       href: '/admin/blog',
       description: 'Blog-Posts verwalten',
       count: blogCount,
-    },
-    {
-      title: 'Produkte',
-      href: '/admin/products',
-      description: 'Produktverwaltung, Preise',
-      count: 0,
     },
     {
       title: 'Bestellungen',

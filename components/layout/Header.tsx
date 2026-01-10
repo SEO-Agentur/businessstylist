@@ -2,21 +2,45 @@
 
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '@/lib/context/CartContext';
+
+interface MenuItem {
+  id: string;
+  label: string;
+  href: string;
+  external: boolean;
+}
 
 export default function Header() {
   const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { totalItems } = useCart();
+  const [navigationLinks, setNavigationLinks] = useState<MenuItem[]>([]);
 
-  const navigationLinks = [
-    { href: '/stilberatung', label: 'Stilberatung' },
-    { href: '/typenanalyse', label: 'Typberatung' },
-    { href: '/downloads', label: 'Downloads' },
-    { href: '/shop', label: 'Shop' },
-    { href: '/preise', label: 'Preise' },
+  const defaultLinks = [
+    { id: '1', href: '/stilberatung', label: 'Stilberatung', external: false },
+    { id: '2', href: '/typenanalyse', label: 'Typberatung', external: false },
+    { id: '3', href: '/downloads', label: 'Downloads', external: false },
+    { id: '4', href: '/shop', label: 'Shop', external: false },
+    { id: '5', href: '/preise', label: 'Preise', external: false },
   ];
+
+  useEffect(() => {
+    fetch('/api/admin/menu-items?position=HEADER')
+      .then(res => res.json())
+      .then(data => {
+        const visibleItems = data.filter((item: MenuItem & { visible: boolean }) => item.visible);
+        if (visibleItems.length > 0) {
+          setNavigationLinks(visibleItems);
+        } else {
+          setNavigationLinks(defaultLinks);
+        }
+      })
+      .catch(() => {
+        setNavigationLinks(defaultLinks);
+      });
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
