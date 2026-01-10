@@ -36,13 +36,20 @@ export default function SignInPage() {
 
       if (result?.error) {
         setError('Ungültige Anmeldedaten');
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await fetch('/api/auth/session');
+      const session = await response.json();
+
+      if (session?.user?.role === 'ADMIN') {
+        window.location.href = '/admin/dashboard';
       } else {
-        router.push('/account');
-        router.refresh();
+        window.location.href = '/account/dashboard';
       }
     } catch (error) {
       setError('Ein Fehler ist aufgetreten');
-    } finally {
       setIsLoading(false);
     }
   };

@@ -84,7 +84,7 @@ export default function Header() {
             {session?.user ? (
               <>
                 <Link
-                  href={session.user.role === 'ADMIN' ? '/admin' : '/account'}
+                  href={session.user.role === 'ADMIN' ? '/admin/dashboard' : '/account/dashboard'}
                   className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
                 >
                   {session.user.role === 'ADMIN' ? 'Admin' : 'Mein Bereich'}
@@ -167,7 +167,7 @@ export default function Header() {
               {session?.user ? (
                 <>
                   <Link
-                    href={session.user.role === 'ADMIN' ? '/admin' : '/account'}
+                    href={session.user.role === 'ADMIN' ? '/admin/dashboard' : '/account/dashboard'}
                     className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
