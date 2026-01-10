@@ -1,0 +1,216 @@
+// Businessstylist Database Schema
+// SQLite for quick setup, easily migrateable to PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  phone         String?
+  password      String?
+  role          String    @default("USER") // USER or ADMIN
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile       Profile?
+  orders        Order[]
+  invoices      Invoice[]
+  lookbooks     UserLookbook[]
+  quizResults   QuizResult[]
+  messages      Message[]
+}
+
+model Profile {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  preferences String?   // JSON string
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id             String      @id @default(cuid())
+  slug           String      @unique
+  name           String
+  description    String?
+  type           String      // EBOOK, LOOKBOOK, SERVICE, SUBSCRIPTION
+  price          Float
+  stripePriceId  String?
+  active         Boolean     @default(true)
+  features       String?     // JSON string array
+  imageUrl       String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  orders Order[]
+}
+
+model Order {
+  id                      String      @id @default(cuid())
+  userId                  String
+  productId               String
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+  status                  String      @default("PENDING") // PENDING, COMPLETED, FAILED, REFUNDED
+  amount                  Float
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime    @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Invoice {
+  id              String   @id @default(cuid())
+  userId          String
+  orderId         String?
+  stripeInvoiceId String?
+  url             String?
+  amount          Float
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Lookbook {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  fileUrl      String
+  thumbnailUrl String?
+  kibbeType    String?  // DRAMATIC, SOFT_DRAMATIC, FLAMBOYANT_NATURAL, etc.
+  freeForType  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  users UserLookbook[]
+}
+
+model UserLookbook {
+  id         String   @id @default(cuid())
+  userId     String
+  lookbookId String
+  assignedAt DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lookbook Lookbook @relation(fields: [lookbookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lookbookId])
+}
+
+model QuizResult {
+  id         String   @id @default(cuid())
+  userId     String?
+  resultType String   // Kibbe Type
+  answers    String   // JSON string
+  scores     String?  // JSON string: {D, N, R, G}
+  phone      String?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Message {
+  id       String    @id @default(cuid())
+  toUserId String
+  subject  String
+  body     String
+  readAt   DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [toUserId], references: [id], onDelete: Cascade)
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String?
+  content     String    // MDX content
+  category    String?
+  keywords    String?   // JSON array
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // SEO Fields
+  seoTitle       String?
+  seoDescription String?
+  canonical      String?
+  robots         String?  @default("index,follow")
+  ogTitle        String?
+  ogDescription  String?
+  ogImage        String?
+  twitterCard    String?  @default("summary_large_image")
+  dcTitle        String?
+  dcDescription  String?
+  dcCreator      String?
+  dcLanguage     String?  @default("de-DE")
+  schemaJson     String?  // JSON-LD
+}
+
+model Page {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  title     String
+  content   String    // MDX or Rich Text
+  status    String    @default("DRAFT") // DRAFT, PUBLISHED
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // SEO Fields
+  seoTitle       String?
+  seoDescription String?
+  canonical      String?
+  robots         String?  @default("index,follow")
+  ogTitle        String?
+  ogDescription  String?
+  ogImage        String?
+  twitterCard    String?  @default("summary_large_image")
+  dcTitle        String?
+  dcDescription  String?
+  dcCreator      String?
+  dcLanguage     String?  @default("de-DE")
+  schemaJson     String?  // JSON-LD
+}
+
+model ProductPage {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  name          String
+  description   String?
+  content       String    // Rich content
+  priceDisplay  String?
+  stripePriceId String?
+  status        String    @default("PUBLISHED")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // SEO Fields
+  seoTitle       String?
+  seoDescription String?
+  canonical      String?
+  robots         String?  @default("index,follow")
+  ogTitle        String?
+  ogDescription  String?
+  ogImage        String?
+  twitterCard    String?  @default("summary_large_image")
+  dcTitle        String?
+  dcDescription  String?
+  dcCreator      String?
+  dcLanguage     String?  @default("de-DE")
+  schemaJson     String?  // JSON-LD
+}

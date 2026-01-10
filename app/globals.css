@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-brand-primary: 26 26 26;
+    --color-brand-secondary: 74 74 74;
+    --color-brand-accent: 212 165 116;
+    --color-brand-light: 245 245 245;
+    --color-business-navy: 30 58 95;
+    --color-business-gold: 201 169 97;
+    --color-business-cream: 249 247 244;
+    --color-business-charcoal: 45 45 45;
+
+    --spacing-section: 5rem;
+    --spacing-container: 1.5rem;
+    --max-width-content: 1280px;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-brand-primary bg-white antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-semibold;
+  }
+
+  h1 {
+    @apply text-h1;
+  }
+
+  h2 {
+    @apply text-h2;
+  }
+
+  h3 {
+    @apply text-h3;
+  }
+
+  h4 {
+    @apply text-h4;
+  }
+
+  p {
+    @apply text-body mb-4;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  img {
+    @apply max-w-full h-auto;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-20 lg:py-24;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-brand-primary text-white font-medium rounded-lg hover:bg-brand-secondary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-white text-brand-primary font-medium rounded-lg border-2 border-brand-primary hover:bg-brand-light transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2;
+  }
+
+  .btn-accent {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-brand-accent text-white font-medium rounded-lg hover:bg-opacity-90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-card p-6 transition-shadow hover:shadow-lifted;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all;
+  }
+
+  .link-underline {
+    @apply underline decoration-brand-accent decoration-2 underline-offset-4 hover:decoration-brand-primary transition-colors;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
