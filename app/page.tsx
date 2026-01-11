@@ -179,47 +179,6 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-4 gap-6">
             <Card hover>
-              <h3 className="text-h3 mb-3">Typanalyse</h3>
-              <p className="text-brand-secondary mb-4">
-                Finde mit wenigen Klicks deinen Stiltyp: eine erste Orientierung für dein authentisches Business-Outfit.
-              </p>
-              <div className="my-6">
-                <div className="inline-block bg-brand-secondary text-white px-8 py-4 rounded-lg">
-                  <span className="text-4xl font-bold">€0</span>
-                </div>
-              </div>
-              <ul className="space-y-2 mb-6 text-sm text-brand-secondary">
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Typenanalyse nach Kibbe
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Erste Stilimpulse
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Orientierungshilfe
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  E-Mail-Auswertung
-                </li>
-              </ul>
-              <Link href="/typenanalyse">
-                <Button className="w-full">Typanalyse starten</Button>
-              </Link>
-            </Card>
-
-            <Card hover>
               <h3 className="text-h3 mb-3">Starter Lookbook</h3>
               <p className="text-brand-secondary mb-4">
                 Erhalte ein fertiges Lookbook mit Business-Outfits, abgestimmt auf deinen Typ - inklusive Shoppinglinks.
@@ -298,6 +257,47 @@ export default function HomePage() {
               </ul>
               <Link href="/kleiderschrank-check">
                 <Button className="w-full">Jetzt Termin buchen</Button>
+              </Link>
+            </Card>
+
+            <Card hover>
+              <h3 className="text-h3 mb-3">Farbberatung</h3>
+              <p className="text-brand-secondary mb-4">
+                Entdecke deine perfekte Farbpalette mit professioneller Farbtyp-Analyse nach der Vier-Jahreszeiten-Methode.
+              </p>
+              <div className="my-6">
+                <div className="inline-block bg-brand-secondary text-white px-8 py-4 rounded-lg">
+                  <span className="text-4xl font-bold">€179</span>
+                </div>
+              </div>
+              <ul className="space-y-2 mb-6 text-sm text-brand-secondary">
+                <li className="flex items-start">
+                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Farbtyp-Analyse
+                </li>
+                <li className="flex items-start">
+                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Persönliche Farbpalette
+                </li>
+                <li className="flex items-start">
+                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Styling-Empfehlungen
+                </li>
+                <li className="flex items-start">
+                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Make-up & Accessoires-Tipps
+                </li>
+              </ul>
+              <Link href="/farbtyp-beratung">
+                <Button className="w-full">Farbberatung buchen</Button>
               </Link>
             </Card>
 
