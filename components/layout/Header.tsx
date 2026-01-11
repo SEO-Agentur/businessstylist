@@ -21,6 +21,7 @@ export default function Header() {
 
   const stilberatungDropdown = [
     { label: 'Stilberatung', href: '/stilberatung' },
+    { label: 'Farbberatung', href: '/farbtyp-beratung' },
     { label: 'Kleiderschrank Check', href: '/kleiderschrank-check' },
     { label: 'Dresscode Playbook', href: '/dresscode-playbook' },
   ];
