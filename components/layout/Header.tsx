@@ -15,8 +15,15 @@ interface MenuItem {
 export default function Header() {
   const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [stilberatungOpen, setStilberatungOpen] = useState(false);
   const { totalItems } = useCart();
   const [navigationLinks, setNavigationLinks] = useState<MenuItem[]>([]);
+
+  const stilberatungDropdown = [
+    { label: 'Stilberatung', href: '/stilberatung' },
+    { label: 'Kleiderschrank Check', href: '/kleiderschrank-check' },
+    { label: 'Dresscode Playbook', href: '/dresscode-playbook' },
+  ];
 
   const defaultLinks = [
     { id: '1', href: '/stilberatung', label: 'Stilberatung', external: false },
@@ -55,15 +62,47 @@ export default function Header() {
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            {navigationLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navigationLinks.map((link) => {
+              if (link.label === 'Stilberatung') {
+                return (
+                  <div
+                    key={link.href}
+                    className="relative"
+                    onMouseEnter={() => setStilberatungOpen(true)}
+                    onMouseLeave={() => setStilberatungOpen(false)}
+                  >
+                    <button className="text-brand-secondary hover:text-brand-primary font-medium transition-colors flex items-center gap-1">
+                      {link.label}
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {stilberatungOpen && (
+                      <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                        {stilberatungDropdown.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className="block px-4 py-2 text-brand-secondary hover:bg-gray-50 hover:text-brand-primary transition-colors"
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
@@ -144,16 +183,43 @@ export default function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden pb-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4 pt-4">
-              {navigationLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navigationLinks.map((link) => {
+                if (link.label === 'Stilberatung') {
+                  return (
+                    <div key={link.href} className="space-y-2">
+                      <Link
+                        href={link.href}
+                        className="text-brand-secondary hover:text-brand-primary font-medium transition-colors block"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                      <div className="pl-4 space-y-2 border-l-2 border-gray-200">
+                        {stilberatungDropdown.slice(1).map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className="text-sm text-brand-secondary hover:text-brand-primary transition-colors block"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
               <Link
                 href="/checkout"
                 className="flex items-center text-brand-secondary hover:text-brand-primary font-medium transition-colors"
