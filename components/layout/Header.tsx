@@ -67,27 +67,37 @@ export default function Header() {
                 return (
                   <div
                     key={link.href}
-                    className="relative"
+                    className="relative group"
                     onMouseEnter={() => setStilberatungOpen(true)}
                     onMouseLeave={() => setStilberatungOpen(false)}
                   >
-                    <button className="text-brand-secondary hover:text-brand-primary font-medium transition-colors flex items-center gap-1">
+                    <button className="text-brand-secondary hover:text-brand-primary font-medium transition-colors flex items-center gap-1 py-2">
                       {link.label}
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg
+                        className={`w-4 h-4 transition-transform duration-200 ${stilberatungOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </button>
                     {stilberatungOpen && (
-                      <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                        {stilberatungDropdown.map((item) => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className="block px-4 py-2 text-brand-secondary hover:bg-gray-50 hover:text-brand-primary transition-colors"
-                          >
-                            {item.label}
-                          </Link>
-                        ))}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+                        <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3 w-64 overflow-hidden">
+                          {stilberatungDropdown.map((item, index) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className="block px-6 py-3 text-brand-secondary hover:bg-gradient-to-r hover:from-brand-primary/5 hover:to-brand-accent/5 hover:text-brand-primary transition-all duration-200 font-medium border-l-3 border-transparent hover:border-brand-accent"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent opacity-60"></span>
+                                {item.label}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
