@@ -1,12 +1,35 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { useCart } from '@/lib/context/CartContext';
 
 export default function StilberatungPage() {
   const [selectedPlan, setSelectedPlan] = useState<'single' | 'yearly'>('single');
+  const { addToCart } = useCart();
+  const router = useRouter();
+
+  const handleBooking = (type: 'single' | 'yearly') => {
+    const product = type === 'single'
+      ? {
+          id: 'stilberatung-single',
+          name: '1:1 Stilberatung',
+          price: 390,
+          type: 'service'
+        }
+      : {
+          id: 'stilberatung-yearly',
+          name: 'Jahresabo Stilberatung',
+          price: 1290,
+          type: 'subscription'
+        };
+
+    addToCart(product);
+    router.push('/checkout');
+  };
 
   return (
     <>
@@ -100,9 +123,13 @@ export default function StilberatungPage() {
                 </li>
               </ul>
 
-              <Link href="/kontakt">
-                <Button className="w-full" size="lg">Einzelberatung buchen</Button>
-              </Link>
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={() => handleBooking('single')}
+              >
+                Einzelberatung buchen
+              </Button>
             </Card>
 
             <Card className={`relative overflow-hidden transition-all duration-300 ${
@@ -151,9 +178,13 @@ export default function StilberatungPage() {
                 </li>
               </ul>
 
-              <Link href="/kontakt">
-                <Button className="w-full" size="lg">Jahresabo starten</Button>
-              </Link>
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={() => handleBooking('yearly')}
+              >
+                Jahresabo starten
+              </Button>
             </Card>
           </div>
         </div>
@@ -324,12 +355,20 @@ export default function StilberatungPage() {
             <h3 className="text-h3 mb-6">Bereit für Deinen nächsten Schritt?</h3>
             <p className="text-xl mb-8">Starte jetzt mit Deiner Stilberatung auf businessstylist.de</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/kontakt">
-                <Button variant="accent" size="lg">Einzelberatung buchen</Button>
-              </Link>
-              <Link href="/kontakt">
-                <Button variant="secondary" size="lg">Jahresabo starten</Button>
-              </Link>
+              <Button
+                variant="accent"
+                size="lg"
+                onClick={() => handleBooking('single')}
+              >
+                Einzelberatung buchen
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() => handleBooking('yearly')}
+              >
+                Jahresabo starten
+              </Button>
             </div>
           </div>
         </div>
@@ -344,17 +383,23 @@ export default function StilberatungPage() {
                 <h3 className="text-h3 mb-2">Einzel-Stilberatung</h3>
                 <p className="text-4xl font-bold text-brand-primary mb-2">€ 390,-</p>
                 <p className="text-brand-secondary mb-4">2 × 90 Minuten, inklusive Analyse & Lookbook</p>
-                <Link href="/kontakt">
-                  <Button className="w-full">Einzelberatung buchen</Button>
-                </Link>
+                <Button
+                  className="w-full"
+                  onClick={() => handleBooking('single')}
+                >
+                  Einzelberatung buchen
+                </Button>
               </div>
               <div className="bg-white rounded-xl p-6 shadow-card">
                 <h3 className="text-h3 mb-2">Jahresabo</h3>
                 <p className="text-4xl font-bold text-brand-primary mb-2">€ 1.290,-</p>
                 <p className="text-brand-secondary mb-4">Initialanalyse + Check + monatliches Lookbook</p>
-                <Link href="/kontakt">
-                  <Button className="w-full">Jahresabo starten</Button>
-                </Link>
+                <Button
+                  className="w-full"
+                  onClick={() => handleBooking('yearly')}
+                >
+                  Jahresabo starten
+                </Button>
               </div>
             </div>
           </div>
