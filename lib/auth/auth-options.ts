@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
-import { prisma } from '@/lib/db/prisma';
+import { supabase } from '@/lib/db/supabase';
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -24,9 +24,11 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Email und Passwort erforderlich');
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        const { data: user } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', credentials.email)
+          .maybeSingle();
 
         if (!user || !user.password) {
           throw new Error('Ungültige Anmeldedaten');

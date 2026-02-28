@@ -33,11 +33,32 @@ export default function CheckoutPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const response = await fetch('/api/checkout/create-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: items,
+          customerInfo: formData,
+        }),
+      });
 
-    setOrderComplete(true);
-    setIsSubmitting(false);
-    clearCart();
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Fehler beim Erstellen der Checkout-Session');
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      alert(error.message || 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+      setIsSubmitting(false);
+    }
   };
 
   if (orderComplete) {
