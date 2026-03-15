@@ -352,28 +352,28 @@ export default function HomePage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="aspect-square rounded-xl overflow-hidden shadow-card">
                   <img
-                    src="https://businessstylist.de/wp-content/uploads/2025/12/lookbook.webp"
+                    src="/lookbook.webp"
                     alt="Lookbook"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="aspect-square rounded-xl overflow-hidden shadow-card">
                   <img
-                    src="https://businessstylist.de/wp-content/uploads/2025/12/stilberatung.webp"
+                    src="/image.png"
                     alt="Stilberatung"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="aspect-square rounded-xl overflow-hidden shadow-card">
                   <img
-                    src="https://businessstylist.de/wp-content/uploads/2025/12/kibbe-body-type-analyse-768x768.webp"
+                    src="/kibbe-body-type-analyse.webp"
                     alt="Kibbe Body Type Analyse"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="aspect-square rounded-xl overflow-hidden shadow-card">
                   <img
-                    src="https://businessstylist.de/wp-content/uploads/2025/06/streetstyle-blazer.webp"
+                    src="/streetstyle-blazer.webp"
                     alt="Streetstyle Blazer"
                     className="w-full h-full object-cover"
                   />
