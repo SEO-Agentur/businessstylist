@@ -358,11 +358,13 @@ export default function HomePage() {
                   />
                 </div>
                 <div className="aspect-square rounded-xl overflow-hidden shadow-card">
-                  <img
-                    src="/image.png"
-                    alt="Stilberatung"
-                    className="w-full h-full object-cover"
-                  />
+                  <a href="/stilberatung" title="Stilberatung">
+                    <img
+                      src="/stilberatung copy.webp"
+                      alt="Stilberatung"
+                      className="w-full h-full object-cover"
+                    />
+                  </a>
                 </div>
                 <div className="aspect-square rounded-xl overflow-hidden shadow-card">
                   <img
