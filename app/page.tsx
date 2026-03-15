@@ -462,7 +462,7 @@ export default function HomePage() {
                 </div>
                 <div className="relative bg-gradient-to-br from-business-navy to-business-darkNavy p-8 md:p-12 flex items-center justify-center">
                   <img
-                    src="https://businessstylist.de/wp-content/uploads/2025/12/smart-casual-checkliste.png"
+                    src="/smart-casual-checkliste.webp"
                     alt="Smart Casual Checkliste"
                     className="w-full max-w-xs drop-shadow-2xl transform hover:scale-105 transition-transform duration-300"
                   />
