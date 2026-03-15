@@ -43,8 +43,8 @@ export default function HomePage() {
             <div className="relative">
               <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-lifted">
                 <img
-                  src="https://businessstylist.de/wp-content/uploads/2025/05/business-outfit-damen-sommer-768x1020.avif"
-                  alt="Business Outfit Damen Sommer"
+                  src="/business_stylist.webp"
+                  alt="Business-Stylist"
                   className="w-full h-full object-cover"
                 />
               </div>
