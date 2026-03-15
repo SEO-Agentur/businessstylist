@@ -5,18 +5,18 @@ import Card from '@/components/ui/Card';
 import { formatPrice } from '@/lib/utils/format';
 
 export const metadata: Metadata = {
-  title: 'Starter Lookbook - Fertige Business-Outfit-Ideen | Businessstylist',
+  title: 'Lookbook - Fertige Business-Outfit-Ideen | Businessstylist',
   description: '15 fertige Business-Outfits als digitales Lookbook. Perfekt für den Einstieg in eine professionelle Garderobe.',
   alternates: {
-    canonical: '/starter-lookbook',
+    canonical: '/lookbook',
   },
 };
 
-export default function StarterLookbookPage() {
+export default function LookbookPage() {
   return (
     <div className="section-padding">
       <div className="container-custom max-w-4xl">
-        <h1 className="text-h1 mb-8">Starter Lookbook</h1>
+        <h1 className="text-h1 mb-8">Lookbook</h1>
 
         <div className="prose prose-lg max-w-none mb-12">
           <p className="text-xl">
@@ -24,7 +24,7 @@ export default function StarterLookbookPage() {
             als digitales Lookbook.
           </p>
 
-          <h2>Was ist im Starter Lookbook enthalten?</h2>
+          <h2>Was ist im Lookbook enthalten?</h2>
           <ul>
             <li>15 komplett zusammengestellte Business-Outfits</li>
             <li>Visueller Guide mit hochwertigen Bildern</li>
@@ -33,9 +33,9 @@ export default function StarterLookbookPage() {
             <li>Kombinationsmöglichkeiten</li>
           </ul>
 
-          <h2>Für wen ist das Starter Lookbook geeignet?</h2>
+          <h2>Für wen ist das Lookbook geeignet?</h2>
           <p>
-            Das Starter Lookbook ist perfekt für dich, wenn du:
+            Das Lookbook ist perfekt für dich, wenn du:
           </p>
           <ul>
             <li>Neu im Berufsleben bist und eine professionelle Garderobe aufbauen möchtest</li>
@@ -48,7 +48,7 @@ export default function StarterLookbookPage() {
         <Card className="p-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-6 md:mb-0">
-              <h3 className="text-h3 mb-2">Starter Lookbook</h3>
+              <h3 className="text-h3 mb-2">Lookbook</h3>
               <p className="text-4xl font-bold mb-2">{formatPrice(97)}</p>
               <p className="text-brand-secondary">Einmalige Zahlung, sofortiger Download</p>
             </div>
@@ -64,7 +64,7 @@ export default function StarterLookbookPage() {
           <h3 className="text-h3 mb-6">Das sagen unsere Kundinnen</h3>
           <Card className="p-6">
             <blockquote className="text-brand-secondary italic mb-4">
-              &ldquo;Das Starter Lookbook hat mir den Einstieg in meinen neuen Job so viel leichter gemacht.
+              &ldquo;Das Lookbook hat mir den Einstieg in meinen neuen Job so viel leichter gemacht.
               Endlich weiß ich, was ich anziehen soll!&rdquo;
             </blockquote>
             <p className="font-semibold">— Lisa K., Marketing Managerin</p>

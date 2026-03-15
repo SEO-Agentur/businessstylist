@@ -22,9 +22,9 @@ export default function ShopPage() {
       features: ['Typenanalyse nach Kibbe', 'Erste Stilimpulse', 'Orientierungshilfe', 'E-Mail-Auswertung'],
     },
     {
-      id: 'starter-lookbook',
-      name: 'Starter Lookbook',
-      slug: '/starter-lookbook',
+      id: 'lookbook',
+      name: 'Lookbook',
+      slug: '/lookbook',
       price: 29,
       description: 'Erhalte ein fertiges Lookbook mit Business-Outfits, abgestimmt auf deinen Typ - inklusive Shoppinglinks.',
       type: 'Digital',

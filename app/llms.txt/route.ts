@@ -21,7 +21,7 @@ ${baseUrl}/
 ${baseUrl}/stilberatung
 ${baseUrl}/typenanalyse
 ${baseUrl}/kleiderschrank-check
-${baseUrl}/starter-lookbook
+${baseUrl}/lookbook
 ${baseUrl}/preise
 ${baseUrl}/ueber-mich
 ${baseUrl}/kontakt

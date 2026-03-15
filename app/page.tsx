@@ -214,7 +214,7 @@ export default function HomePage() {
                   Stilvolle Basics & Accessoires
                 </li>
               </ul>
-              <Link href="/starter-lookbook">
+              <Link href="/lookbook">
                 <Button className="w-full">Lookbook sichern</Button>
               </Link>
             </Card>
@@ -351,11 +351,13 @@ export default function HomePage() {
             <div className="order-2 md:order-1">
               <div className="grid grid-cols-2 gap-4">
                 <div className="aspect-square rounded-xl overflow-hidden shadow-card">
-                  <img
-                    src="/lookbook.webp"
-                    alt="Lookbook"
-                    className="w-full h-full object-cover"
-                  />
+                  <a href="/lookbook" title="Lookbook">
+                    <img
+                      src="/lookbook.webp"
+                      alt="Lookbook"
+                      className="w-full h-full object-cover"
+                    />
+                  </a>
                 </div>
                 <div className="aspect-square rounded-xl overflow-hidden shadow-card">
                   <a href="/stilberatung" title="Stilberatung">

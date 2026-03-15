@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '',
     '/stilberatung',
     '/typenanalyse',
-    '/starter-lookbook',
+    '/lookbook',
     '/kleiderschrank-check',
     '/dresscode-playbook',
     '/preise',
