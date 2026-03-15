@@ -31,7 +31,7 @@ export default function HomePage() {
                 Mit System zum stilsicheren Auftritt.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/typenanalyse">
+                <Link href="/kibbe-body-type-test">
                   <Button size="lg" variant="accent">Kostenlose Typanalyse starten</Button>
                 </Link>
                 <Link href="/stilberatung">
@@ -485,7 +485,7 @@ export default function HomePage() {
             Das ist Kleidung als strategische Ressource. Ich begleite dich vom ersten Mood-Board bis zum großen Pitch.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/typenanalyse">
+            <Link href="/kibbe-body-type-test">
               <Button variant="accent" size="lg">
                 Kostenlose Typanalyse starten
               </Button>

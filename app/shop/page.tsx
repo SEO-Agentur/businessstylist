@@ -15,7 +15,7 @@ export default function ShopPage() {
     {
       id: 'typanalyse',
       name: 'Typanalyse',
-      slug: '/typenanalyse',
+      slug: '/kibbe-body-type-test',
       price: 0,
       description: 'Finde mit wenigen Klicks deinen Stiltyp: eine erste Orientierung für dein authentisches Business-Outfit.',
       type: 'Kostenlos',

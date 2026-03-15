@@ -33,7 +33,7 @@ export default async function AccountTypenanalysePage() {
             <p className="text-brand-secondary mb-6">
               Du hast noch keine Typenanalyse gemacht.
             </p>
-            <Link href="/typenanalyse">
+            <Link href="/kibbe-body-type-test">
               <Button>Jetzt Typenanalyse starten</Button>
             </Link>
           </Card>

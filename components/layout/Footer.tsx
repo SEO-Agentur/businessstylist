@@ -49,7 +49,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/typenanalyse" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/kibbe-body-type-test" className="text-gray-300 hover:text-white transition-colors">
                   Typberatung
                 </Link>
               </li>

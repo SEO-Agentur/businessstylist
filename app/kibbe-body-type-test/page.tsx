@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Kostenlose Typberatung nach Kibbe - Finde deinen Stiltyp | Businessstylist',
   description: 'Entdecke deinen individuellen Kibbe Body Type mit unserer kostenlosen Typberatung. Erhalte personalisierte Empfehlungen für deinen perfekten Business-Look.',
   alternates: {
-    canonical: '/typenanalyse',
+    canonical: '/kibbe-body-type-test',
   },
 };
 
@@ -25,7 +25,7 @@ export default function TypenanalysePage() {
               welcher Kibbe-Typ du bist und erhalte personalisierte Empfehlungen für deinen
               perfekten Business-Look.
             </p>
-            <Link href="/typenanalyse/start">
+            <Link href="/kibbe-body-type-test/start">
               <Button size="lg">Jetzt starten</Button>
             </Link>
           </div>
@@ -78,7 +78,7 @@ export default function TypenanalysePage() {
           <p className="text-lg text-gray-200 max-w-2xl mx-auto mb-8">
             Die Analyse dauert nur 5 Minuten und ist völlig kostenlos
           </p>
-          <Link href="/typenanalyse/start">
+          <Link href="/kibbe-body-type-test/start">
             <Button size="lg" variant="accent">Analyse starten</Button>
           </Link>
         </div>
@@ -392,7 +392,7 @@ export default function TypenanalysePage() {
             analysiert deine Gesichtszüge, deine Knochenstruktur und deinen Körperbau – kostenlos und
             ohne Verpflichtung.
           </p>
-          <Link href="/typenanalyse/start">
+          <Link href="/kibbe-body-type-test/start">
             <Button size="lg" variant="accent">Kostenlose Analyse starten</Button>
           </Link>
         </div>

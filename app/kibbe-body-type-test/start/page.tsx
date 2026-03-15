@@ -102,7 +102,7 @@ export default function QuizStartPage() {
       localStorage.removeItem('quizAnswers');
 
       // Redirect to success page
-      router.push('/typenanalyse/erfolg');
+      router.push('/kibbe-body-type-test/erfolg');
     } catch (err: any) {
       setError(err.message || 'Ein Fehler ist aufgetreten');
       setIsSubmitting(false);

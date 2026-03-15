@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     '',
     '/stilberatung',
-    '/typenanalyse',
+    '/kibbe-body-type-test',
     '/lookbook',
     '/kleiderschrank-check',
     '/dresscode-playbook',

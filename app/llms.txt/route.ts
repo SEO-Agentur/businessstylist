@@ -19,7 +19,7 @@ Wir bieten individuelle Stilberatung, Typenanalysen, Lookbooks und Kleiderschran
 ## Marketing
 ${baseUrl}/
 ${baseUrl}/stilberatung
-${baseUrl}/typenanalyse
+${baseUrl}/kibbe-body-type-test
 ${baseUrl}/kleiderschrank-check
 ${baseUrl}/lookbook
 ${baseUrl}/preise
@@ -58,9 +58,9 @@ Disallow: ${baseUrl}/api
 Disallow: ${baseUrl}/api/*
 
 ## Quiz
-Disallow: ${baseUrl}/typenanalyse/start
-Disallow: ${baseUrl}/typenanalyse/erfolg
-Disallow: ${baseUrl}/typenanalyse/abschluss
+Disallow: ${baseUrl}/kibbe-body-type-test/start
+Disallow: ${baseUrl}/kibbe-body-type-test/erfolg
+Disallow: ${baseUrl}/kibbe-body-type-test/abschluss
 
 # Kontakt & Legal
 ${baseUrl}/impressum

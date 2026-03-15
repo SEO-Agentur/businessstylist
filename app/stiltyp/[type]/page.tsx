@@ -75,7 +75,7 @@ export default function StiltypPage({ params }: { params: { type: string } }) {
     <div className="section-padding">
       <div className="container-custom max-w-4xl">
         <div className="mb-8">
-          <Link href="/typenanalyse" className="text-brand-accent hover:underline text-sm">
+          <Link href="/kibbe-body-type-test" className="text-brand-accent hover:underline text-sm">
             ← Zurück zur Typenanalyse
           </Link>
         </div>
@@ -155,7 +155,7 @@ export default function StiltypPage({ params }: { params: { type: string } }) {
             <p className="text-brand-secondary mb-6">
               Mache jetzt unsere kostenlose Typenanalyse und finde heraus, welcher Stiltyp du bist.
             </p>
-            <Link href="/typenanalyse">
+            <Link href="/kibbe-body-type-test">
               <Button className="w-full">Typenanalyse starten</Button>
             </Link>
           </Card>

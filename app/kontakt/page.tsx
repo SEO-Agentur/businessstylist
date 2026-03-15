@@ -272,7 +272,7 @@ export default function KontaktPage() {
             <a href="/stilberatung">
               <Button size="lg" variant="accent">Stilberatung buchen</Button>
             </a>
-            <a href="/typenanalyse">
+            <a href="/kibbe-body-type-test">
               <Button size="lg" variant="secondary">Kostenlose Typanalyse</Button>
             </a>
           </div>
