@@ -22,8 +22,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="text-white">
               <h1 className="text-display-1 md:text-display-2 font-serif mb-6">
-                Business-Outfit, das sitzt.<br />
-                <span className="text-business-gold">Perfekt gekleidet, perfekt gekrönt!</span>
+                Zieh Erfolg an.
               </h1>
               <p className="text-lg mb-8 leading-relaxed text-gray-200">
                 Die Businesswelt tickt schnell: Ein Blick entscheidet, ob du Partnerin oder Fußnote bist.
