@@ -11,6 +11,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^5.15.9",
     "@prisma/client": "^5.6.0",
     "@supabase/supabase-js": "^2.98.0",
     "@types/node": "20.6.2",
