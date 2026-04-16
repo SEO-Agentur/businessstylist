@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import QuickKibbeAssessment from '@/components/quiz/QuickKibbeAssessment';
+import KibbeAssessment from '@/components/quiz/KibbeAssessment';
 
 const KIBBE_TYPES = [
   'Dramatic',
@@ -47,8 +47,8 @@ const FAQS = [
     a: 'Das Lookbook kostet 29 € als einmalige Zahlung. Keine versteckten Kosten, kein Abo. Du erhältst Dein personalisiertes Lookbook mit zwei Outfits, abgestimmt auf Deinen Kibbe-Typ.',
   },
   {
-    q: 'Was, wenn ich meinen Typ nicht kenne?',
-    a: 'Kein Problem. Direkt auf dieser Seite kannst Du einen kurzen Kibbe-Typ-Test machen und bekommst Dein Ergebnis in wenigen Minuten. Alternativ nutze den ausführlichen Test auf unserer Typberatungs-Seite.',
+    q: 'Wie lange dauert der Kibbe-Typ-Test auf dieser Seite?',
+    a: 'Der Test besteht aus 19 Fragen und dauert etwa 4–5 Minuten. Du beantwortest Fragen zu Deiner Silhouette, Deinen Schultern, Deiner Taille und Deinen Gesichtszügen. Am Ende kennst Du Deinen Typ und kannst Dein passendes Lookbook direkt bestellen.',
   },
   {
     q: 'Ist das Lookbook für jede Saison geeignet?',
@@ -254,7 +254,12 @@ function CheckoutCard() {
             </p>
           </div>
         ) : (
-          <QuickKibbeAssessment onTypeSelected={handleQuickTestComplete} />
+          <div className="space-y-4">
+            <p className="text-[#8A9AB5] text-sm leading-relaxed">
+              Dein persönliches Stil-Profil – 19 Fragen, etwa 4–5 Minuten. Am Ende weißt Du Deinen Kibbe-Typ und bekommst direkt Dein passendes Lookbook.
+            </p>
+            <KibbeAssessment onTypeSelected={handleQuickTestComplete} />
+          </div>
         )}
       </div>
     </div>
