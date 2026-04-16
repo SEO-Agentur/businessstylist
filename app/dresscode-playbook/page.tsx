@@ -1,7 +1,7 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { useCart } from '@/lib/context/CartContext';
@@ -9,12 +9,13 @@ import { useCart } from '@/lib/context/CartContext';
 export default function DresscodePlaybookPage() {
   const { addToCart } = useCart();
   const router = useRouter();
+  const [showSample, setShowSample] = useState(false);
 
   const handlePurchase = () => {
     addToCart({
       id: 'dresscode-playbook',
       name: 'Dresscode Playbook',
-      price: 49,
+      price: 33.95,
       type: 'ebook'
     });
     router.push('/checkout');
@@ -42,17 +43,32 @@ export default function DresscodePlaybookPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-8">
-                <div className="text-5xl font-bold">€ 49,-</div>
+                <div className="text-5xl font-bold">€ 33,95</div>
               </div>
 
-              <Button
-                size="lg"
-                variant="accent"
-                onClick={handlePurchase}
-                className="mb-4"
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start items-center flex-wrap mb-4">
+                <Button
+                  size="lg"
+                  variant="accent"
+                  onClick={handlePurchase}
+                >
+                  Jetzt kaufen
+                </Button>
+                <a
+                  href="https://amzn.to/482guRg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white text-brand-primary border-2 border-white hover:bg-gray-100 px-6 py-4 text-base whitespace-nowrap"
+                >
+                  Taschenbuch auf Amazon.de kaufen
+                </a>
+              </div>
+              <button
+                onClick={() => setShowSample(true)}
+                className="text-sm text-gray-300 underline underline-offset-2 hover:text-white transition-colors mb-2"
               >
-                Jetzt kaufen
-              </Button>
+                Leseprobe lesen
+              </button>
               <p className="text-sm text-gray-300">Sofortiger digitaler Download nach Zahlung</p>
             </div>
 
@@ -256,6 +272,31 @@ export default function DresscodePlaybookPage() {
           </div>
         </div>
       </section>
+
+      {showSample && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={() => setShowSample(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl h-[85vh] bg-white rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowSample(false)}
+              className="absolute top-3 right-4 z-10 text-gray-500 hover:text-gray-900 text-2xl font-bold leading-none"
+              aria-label="Schließen"
+            >
+              &times;
+            </button>
+            <iframe
+              src="https://read.amazon.com/sample/B0GGDN15HK?clientId=share"
+              className="w-full h-full border-0"
+              title="Dresscode Playbook Leseprobe"
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }
