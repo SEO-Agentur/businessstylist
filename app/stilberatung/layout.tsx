@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Stilberatung & Personal Styling | Farb- und Stilberatung für Business-Frauen',
-  description: 'Professionelle Farb- und Stilberatung von einer erfahrenen Personal Stylistin. Kleiderschrank-Check, Personal Shopping und Stylingtipps für Business und Alltag — online oder vor Ort. Einzelberatung ab 390 €.',
+  title: 'Stilberatung & Personal Styling für Business-Frauen',
+  description: 'Stilberatung von einer Top Personal Stylistin: Kleiderschrank-Check & Stylingtipps für Business-Frauen. Jetzt ab 390,- € buchen.',
   authors: [{ name: 'Businessstylist' }],
   robots: {
     index: true,
