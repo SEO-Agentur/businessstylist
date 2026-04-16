@@ -52,7 +52,7 @@ export default function DresscodePlaybookPage() {
                   Jetzt kaufen
                 </Button>
                 <a
-                  href="https://amzn.to/482guRg"
+                  href="https://amzn.to/3OFSH2V"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white text-brand-primary border-2 border-white hover:bg-gray-100 px-6 py-4 text-base whitespace-nowrap"
