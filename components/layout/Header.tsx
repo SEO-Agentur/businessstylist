@@ -31,7 +31,6 @@ export default function Header() {
     { id: '2', href: '/kibbe-body-type-test', label: 'Typberatung', external: false },
     { id: '3', href: '/downloads', label: 'Downloads', external: false },
     { id: '4', href: '/shop', label: 'Shop', external: false },
-    { id: '5', href: '/preise', label: 'Preise', external: false },
   ];
 
   useEffect(() => {

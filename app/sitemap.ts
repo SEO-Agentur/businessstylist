@@ -11,7 +11,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/lookbook',
     '/kleiderschrank-check',
     '/dresscode-playbook',
-    '/preise',
     '/ueber-mich',
     '/kontakt',
     '/faq',

@@ -22,7 +22,6 @@ ${baseUrl}/stilberatung
 ${baseUrl}/kibbe-body-type-test
 ${baseUrl}/kleiderschrank-check
 ${baseUrl}/lookbook
-${baseUrl}/preise
 ${baseUrl}/ueber-mich
 ${baseUrl}/kontakt
 ${baseUrl}/faq
