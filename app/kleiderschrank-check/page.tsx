@@ -293,7 +293,7 @@ export default function KleiderschrankCheckPage() {
             <a href="/kontakt">
               <Button size="lg" variant="secondary">Kontakt aufnehmen</Button>
             </a>
-            <a href="/stilberatung">
+            <a href="/shop">
               <Button size="lg" variant="primary">Alle Services ansehen</Button>
             </a>
           </div>
