@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -9,8 +8,6 @@ import { useCart } from '@/lib/context/CartContext';
 export default function DresscodePlaybookPage() {
   const { addToCart } = useCart();
   const router = useRouter();
-  const [showSample, setShowSample] = useState(false);
-
   const handlePurchase = () => {
     addToCart({
       id: 'dresscode-playbook',
@@ -63,12 +60,14 @@ export default function DresscodePlaybookPage() {
                   Taschenbuch auf Amazon.de kaufen
                 </a>
               </div>
-              <button
-                onClick={() => setShowSample(true)}
-                className="text-sm text-gray-300 underline underline-offset-2 hover:text-white transition-colors mb-2"
+              <a
+                href="https://read.amazon.com/sample/B0GGDN15HK?clientId=share"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-gray-300 underline underline-offset-2 hover:text-white transition-colors mb-2 inline-block"
               >
                 Leseprobe lesen
-              </button>
+              </a>
               <p className="text-sm text-gray-300">Sofortiger digitaler Download nach Zahlung</p>
             </div>
 
@@ -273,30 +272,7 @@ export default function DresscodePlaybookPage() {
         </div>
       </section>
 
-      {showSample && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-          onClick={() => setShowSample(false)}
-        >
-          <div
-            className="relative w-full max-w-4xl h-[85vh] bg-white rounded-2xl overflow-hidden shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setShowSample(false)}
-              className="absolute top-3 right-4 z-10 text-gray-500 hover:text-gray-900 text-2xl font-bold leading-none"
-              aria-label="Schließen"
-            >
-              &times;
-            </button>
-            <iframe
-              src="https://read.amazon.com/sample/B0GGDN15HK?clientId=share"
-              className="w-full h-full border-0"
-              title="Dresscode Playbook Leseprobe"
-            />
-          </div>
-        </div>
-      )}
+
     </>
   );
 }
