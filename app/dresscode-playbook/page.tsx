@@ -29,30 +29,40 @@ export default function DresscodePlaybookPage() {
         </div>
 
         <div className="container-custom relative z-10">
-          <div className="max-w-4xl mx-auto text-center text-white">
-            <h1 className="text-display-2 font-serif mb-6">
-              Dresscode Playbook
-            </h1>
-            <p className="text-xl leading-relaxed mb-4">
-              Der ultimative Guide für jeden Business-Dresscode
-            </p>
-            <p className="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
-              Von Smart Casual bis Black Tie – verstehe und beherrsche jeden Dresscode mit Sicherheit
-            </p>
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            <div className="flex-1 text-center lg:text-left text-white">
+              <h1 className="text-display-2 font-serif mb-6">
+                Dresscode Playbook
+              </h1>
+              <p className="text-xl leading-relaxed mb-4">
+                Der ultimative Guide für jeden Business-Dresscode
+              </p>
+              <p className="text-lg text-gray-300 max-w-xl mb-8">
+                Von Smart Casual bis Black Tie – verstehe und beherrsche jeden Dresscode mit Sicherheit
+              </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <div className="text-5xl font-bold">€ 49,-</div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-8">
+                <div className="text-5xl font-bold">€ 49,-</div>
+              </div>
+
+              <Button
+                size="lg"
+                variant="accent"
+                onClick={handlePurchase}
+                className="mb-4"
+              >
+                Jetzt kaufen
+              </Button>
+              <p className="text-sm text-gray-300">Sofortiger digitaler Download nach Zahlung</p>
             </div>
 
-            <Button
-              size="lg"
-              variant="accent"
-              onClick={handlePurchase}
-              className="mb-4"
-            >
-              Jetzt kaufen
-            </Button>
-            <p className="text-sm text-gray-300">Sofortiger digitaler Download nach Zahlung</p>
+            <div className="flex-shrink-0 lg:w-[420px] flex justify-center">
+              <img
+                src="/dresscode-playbook.png"
+                alt="Dresscode Playbook – auf Tablet, Smartphone und als Buch"
+                className="w-full max-w-sm lg:max-w-none drop-shadow-2xl"
+              />
+            </div>
           </div>
         </div>
       </section>
