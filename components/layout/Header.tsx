@@ -73,7 +73,7 @@ export default function Header() {
                     onMouseEnter={() => setStilberatungOpen(true)}
                     onMouseLeave={() => setStilberatungOpen(false)}
                   >
-                    <button className="text-brand-secondary hover:text-brand-primary font-medium transition-colors flex items-center gap-1 py-2">
+                    <a href={link.href} className="text-brand-secondary hover:text-brand-primary font-medium transition-colors flex items-center gap-1 py-2">
                       {link.label}
                       <svg
                         className={`w-4 h-4 transition-transform duration-200 ${stilberatungOpen ? 'rotate-180' : ''}`}
@@ -83,7 +83,7 @@ export default function Header() {
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
-                    </button>
+                    </a>
                     {stilberatungOpen && (
                       <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
                         <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3 w-64 overflow-hidden">
