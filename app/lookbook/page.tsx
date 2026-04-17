@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -136,6 +136,19 @@ function CheckoutCard() {
   const [consent, setConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [utmParams, setUtmParams] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const utm: Record<string, string> = {};
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach((key) => {
+        const val = params.get(key);
+        if (val) utm[key] = val;
+      });
+      setUtmParams(utm);
+    }
+  }, []);
 
   const handleDirectCheckout = async () => {
     if (!selectedType) {
@@ -160,7 +173,7 @@ function CheckoutCard() {
       const res = await fetch('/api/lookbook/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ kibbeType }),
+        body: JSON.stringify({ kibbeType, utmParams }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Fehler beim Checkout');

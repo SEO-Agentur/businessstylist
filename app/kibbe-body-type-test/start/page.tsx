@@ -1,27 +1,58 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import QuizProgress from '@/components/quiz/QuizProgress';
+import LeadMagnetForm from '@/components/kibbe/LeadMagnetForm';
 import { KIBBE_QUESTIONS } from '@/lib/quiz/questions';
+import { calculateScores, determineKibbeType, getKibbeTypeInfo, KibbeType } from '@/lib/quiz/scoring';
 
 type QuizAnswers = { [key: string]: string };
 
+const KIBBE_TYPE_TO_SLUG: Record<KibbeType, string> = {
+  DRAMATIC: 'dramatic',
+  SOFT_DRAMATIC: 'soft-dramatic',
+  FLAMBOYANT_NATURAL: 'flamboyant-natural',
+  NATURAL: 'natural',
+  SOFT_NATURAL: 'soft-natural',
+  DRAMATIC_CLASSIC: 'dramatic-classic',
+  CLASSIC: 'classic',
+  SOFT_CLASSIC: 'soft-classic',
+  FLAMBOYANT_GAMINE: 'flamboyant-gamine',
+  GAMINE: 'gamine',
+  SOFT_GAMINE: 'soft-gamine',
+  ROMANTIC: 'romantic',
+  THEATRICAL_ROMANTIC: 'theatrical-romantic',
+};
+
+const KIBBE_TYPE_DISPLAY: Record<KibbeType, string> = {
+  DRAMATIC: 'Dramatic',
+  SOFT_DRAMATIC: 'Soft Dramatic',
+  FLAMBOYANT_NATURAL: 'Flamboyant Natural',
+  NATURAL: 'Natural',
+  SOFT_NATURAL: 'Soft Natural',
+  DRAMATIC_CLASSIC: 'Dramatic Classic',
+  CLASSIC: 'Classic',
+  SOFT_CLASSIC: 'Soft Classic',
+  FLAMBOYANT_GAMINE: 'Flamboyant Gamine',
+  GAMINE: 'Gamine',
+  SOFT_GAMINE: 'Soft Gamine',
+  ROMANTIC: 'Romantic',
+  THEATRICAL_ROMANTIC: 'Theatrical Romantic',
+};
+
 export default function QuizStartPage() {
-  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
-  const [showLeadCapture, setShowLeadCapture] = useState(false);
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [consent, setConsent] = useState(false);
-  const [newsletter, setNewsletter] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [result, setResult] = useState<{
+    type: KibbeType;
+    slug: string;
+    displayName: string;
+    description: string;
+  } | null>(null);
 
-  // Load saved answers from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('quizAnswers');
     if (saved) {
@@ -29,19 +60,14 @@ export default function QuizStartPage() {
         const parsed = JSON.parse(saved);
         setAnswers(parsed.answers || {});
         setCurrentStep(parsed.step || 0);
-      } catch (e) {
-        console.error('Failed to parse saved answers');
+      } catch {
       }
     }
   }, []);
 
-  // Save answers to localStorage
   useEffect(() => {
     if (Object.keys(answers).length > 0) {
-      localStorage.setItem(
-        'quizAnswers',
-        JSON.stringify({ answers, step: currentStep })
-      );
+      localStorage.setItem('quizAnswers', JSON.stringify({ answers, step: currentStep }));
     }
   }, [answers, currentStep]);
 
@@ -49,10 +75,17 @@ export default function QuizStartPage() {
   const isLastQuestion = currentStep === KIBBE_QUESTIONS.length - 1;
 
   const handleAnswer = (value: string) => {
-    setAnswers({ ...answers, [currentQuestion.id]: value });
+    const newAnswers = { ...answers, [currentQuestion.id]: value };
+    setAnswers(newAnswers);
 
     if (isLastQuestion) {
-      setShowLeadCapture(true);
+      const scores = calculateScores(newAnswers);
+      const type = determineKibbeType(scores);
+      const info = getKibbeTypeInfo(type);
+      const displayName = KIBBE_TYPE_DISPLAY[type];
+      const slug = KIBBE_TYPE_TO_SLUG[type];
+      setResult({ type, slug, displayName, description: info.description });
+      localStorage.removeItem('quizAnswers');
     } else {
       setTimeout(() => {
         setCurrentStep(currentStep + 1);
@@ -61,149 +94,71 @@ export default function QuizStartPage() {
   };
 
   const handleBack = () => {
-    if (showLeadCapture) {
-      setShowLeadCapture(false);
+    if (result) {
+      setResult(null);
     } else if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-
-    if (!email || !phone || !consent) {
-      setError('Bitte fülle alle Pflichtfelder aus');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch('/api/quiz/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          answers,
-          email,
-          phone,
-          consent,
-          newsletter,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Ein Fehler ist aufgetreten');
-      }
-
-      // Clear localStorage
-      localStorage.removeItem('quizAnswers');
-
-      // Redirect to success page
-      router.push('/kibbe-body-type-test/erfolg');
-    } catch (err: any) {
-      setError(err.message || 'Ein Fehler ist aufgetreten');
-      setIsSubmitting(false);
-    }
+  const handleReset = () => {
+    setCurrentStep(0);
+    setAnswers({});
+    setResult(null);
+    localStorage.removeItem('quizAnswers');
   };
 
-  if (showLeadCapture) {
+  if (result) {
     return (
       <div className="min-h-screen section-padding bg-business-cream">
         <div className="container-custom max-w-2xl">
-          <Card className="p-8">
-            <h1 className="text-h2 mb-4">Fast geschafft!</h1>
-            <p className="text-brand-secondary mb-8">
-              Um dein persönliches Ergebnis zu erhalten, benötigen wir noch ein paar Informationen von dir.
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                  {error}
-                </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-brand-primary mb-2">
-                  E-Mail-Adresse *
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-field"
-                  required
-                />
+          <Card className="p-8 md:p-10 mb-6">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-brand-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-brand-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
               </div>
+              <p className="text-sm text-brand-secondary font-medium mb-1">Dein Kibbe-Typ ist</p>
+              <h1 className="text-display-1 font-serif text-brand-primary mb-3">{result.displayName}</h1>
+              <p className="text-brand-secondary leading-relaxed max-w-sm mx-auto">{result.description}</p>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-brand-primary mb-2">
-                  Telefonnummer *
-                </label>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="input-field"
-                  required
-                />
-              </div>
+            <div className="flex items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-gray-200" />
+              <span className="text-xs text-brand-secondary uppercase tracking-wider">Kostenloses Profil</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
 
-              <div>
-                <label className="flex items-start">
-                  <input
-                    type="checkbox"
-                    checked={consent}
-                    onChange={(e) => setConsent(e.target.checked)}
-                    className="mt-1 mr-3"
-                    required
-                  />
-                  <span className="text-sm">
-                    Ich stimme der Verarbeitung meiner Daten gemäß{' '}
-                    <a href="/datenschutz" className="text-brand-accent hover:underline" target="_blank">
-                      Datenschutzerklärung
-                    </a>{' '}
-                    zu und bin damit einverstanden, dass mir meine Analyse per E-Mail zugesendet wird. *
-                  </span>
-                </label>
-              </div>
+            <LeadMagnetForm kibbeType={result.slug} kibbeTypeDisplay={result.displayName} />
 
-              <div>
-                <label className="flex items-start">
-                  <input
-                    type="checkbox"
-                    checked={newsletter}
-                    onChange={(e) => setNewsletter(e.target.checked)}
-                    className="mt-1 mr-3"
-                  />
-                  <span className="text-sm">
-                    Ich möchte zusätzlich Styling-Tipps und Angebote per E-Mail erhalten (optional)
-                  </span>
-                </label>
-              </div>
-
-              <div className="flex gap-4">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={handleBack}
-                  disabled={isSubmitting}
-                >
-                  Zurück
-                </Button>
-                <Button
-                  type="submit"
-                  className="flex-1"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Wird gesendet...' : 'Ergebnis erhalten'}
-                </Button>
-              </div>
-            </form>
+            <div className="mt-6 pt-6 border-t border-gray-100 flex gap-3 justify-center">
+              <button
+                onClick={handleReset}
+                className="text-sm text-brand-secondary hover:text-brand-primary transition-colors"
+              >
+                Test neu starten
+              </button>
+              <span className="text-gray-300">·</span>
+              <Link
+                href={`/stiltyp/${result.slug}`}
+                className="text-sm text-brand-accent hover:underline"
+              >
+                Mehr über {result.displayName} →
+              </Link>
+            </div>
           </Card>
+
+          <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+            <p className="text-sm text-brand-secondary text-center mb-4">
+              Willst Du Dein Lookbook direkt kaufen?
+            </p>
+            <Link href="/lookbook">
+              <Button className="w-full" variant="primary">
+                Personalisertes Lookbook – 29 €
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     );

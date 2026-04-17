@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { stripe } from '@/lib/stripe/client';
 import { supabase } from '@/lib/db/supabase';
+import { updateSubscriberField } from '@/lib/mailerlite/client';
 import Stripe from 'stripe';
 
 export async function POST(request: Request) {
@@ -38,6 +39,21 @@ export async function POST(request: Request) {
             updated_at: new Date().toISOString(),
           })
           .eq('stripe_checkout_session_id', session.id);
+
+        if (session.metadata?.product === 'lookbook_2026') {
+          const customerEmail = session.customer_details?.email || session.customer_email;
+          if (customerEmail) {
+            try {
+              await updateSubscriberField(
+                customerEmail,
+                { bought_lookbook: true },
+                ['buyer-lookbook']
+              );
+            } catch (err) {
+              console.error('MailerLite lookbook update error:', err);
+            }
+          }
+        }
 
         break;
       }

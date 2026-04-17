@@ -3,7 +3,10 @@ import { stripe } from '@/lib/stripe/client';
 
 export async function POST(request: Request) {
   try {
-    const { kibbeType } = await request.json();
+    const { kibbeType, utmParams = {} } = await request.json() as {
+      kibbeType?: string;
+      utmParams?: Record<string, string>;
+    };
 
     if (!kibbeType) {
       return NextResponse.json(
@@ -36,6 +39,10 @@ export async function POST(request: Request) {
         product: 'lookbook_2026',
         kibbeType,
         pdfVersion: '2026-v1',
+        ...(utmParams.utm_source ? { utm_source: utmParams.utm_source } : {}),
+        ...(utmParams.utm_medium ? { utm_medium: utmParams.utm_medium } : {}),
+        ...(utmParams.utm_campaign ? { utm_campaign: utmParams.utm_campaign } : {}),
+        ...(utmParams.utm_content ? { utm_content: utmParams.utm_content } : {}),
       },
     });
 
