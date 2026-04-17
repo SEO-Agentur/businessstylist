@@ -35,7 +35,7 @@ export default function DownloadsPage() {
 
               <div className="aspect-[4/3] bg-business-navy mb-6 rounded-lg overflow-hidden">
                 <img
-                  src="https://businessstylist.de/wp-content/uploads/2025/12/smart-casual-checkliste.png"
+                  src="/smart-casual-checkliste.png"
                   alt="Smart Casual Checkliste"
                   className="w-full h-full object-cover"
                 />
