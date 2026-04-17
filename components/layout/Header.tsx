@@ -141,7 +141,7 @@ export default function Header() {
                   {session.user.role === 'ADMIN' ? 'Admin' : 'Mein Bereich'}
                 </Link>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => signOut({ callbackUrl: '/' })}
                   className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
                 >
                   Abmelden
@@ -253,7 +253,7 @@ export default function Header() {
                   </Link>
                   <button
                     onClick={() => {
-                      signOut();
+                      signOut({ callbackUrl: '/' });
                       setMobileMenuOpen(false);
                     }}
                     className="text-left text-brand-secondary hover:text-brand-primary font-medium transition-colors"
