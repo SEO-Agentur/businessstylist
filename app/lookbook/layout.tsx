@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
-  metadataBase: METADATA_BASE,
   title: 'Lookbook 2026 | Personalisiert nach Kibbe-Typ – 29 €',
   description:
     'Entdecke Dein persönliches Lookbook 2026 mit 2 Outfits, abgestimmt auf Deinen Kibbe-Typ. Sofort-Download als PDF. Einmalzahlung 29 €, keine Abo-Falle.',

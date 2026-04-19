@@ -1,10 +1,8 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import Button from '@/components/ui/Button';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
-  metadataBase: METADATA_BASE,
   title: 'Business Outfit - Der ultimative Guide für Business-Frauen | Businessstylist',
   description: 'Alles über das perfekte Business Outfit für Frauen: Dresscodes, Styling-Tipps, Outfit-Ideen und mehr.',
   keywords: ['Business Outfit', 'Business Outfit Frau', 'Büro Outfit', 'Business Kleidung Damen'],

@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
-  metadataBase: METADATA_BASE,
   title: 'Stilberatung & Personal Styling für Business-Frauen',
   description: 'Stilberatung von einer Top Personal Stylistin: Kleiderschrank-Check & Stylingtipps für Business-Frauen. Jetzt ab 390,- € buchen.',
   authors: [{ name: 'Businessstylist' }],

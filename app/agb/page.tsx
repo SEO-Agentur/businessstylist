@@ -1,11 +1,8 @@
 import type { Metadata } from 'next';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
-  metadataBase: METADATA_BASE,
   title: 'AGB - Allgemeine Geschäftsbedingungen | Businessstylist',
   robots: { index: true, follow: true },
-  alternates: { canonical: '/agb' },
 };
 
 export default function AGBPage() {

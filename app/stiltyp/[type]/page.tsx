@@ -4,7 +4,6 @@ import type { Metadata } from 'next';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { getKibbeTypeInfo, KibbeType } from '@/lib/quiz/scoring';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 const validTypes = [
   'dramatic',
@@ -54,7 +53,6 @@ export async function generateMetadata({ params }: { params: { type: string } })
   const typeInfo = getKibbeTypeInfo(kibbeType);
 
   return {
-    metadataBase: METADATA_BASE,
     title: `${typeInfo.name} - Kibbe Stiltyp Guide | Businessstylist`,
     description: `${typeInfo.description} Entdecke alles über den ${typeInfo.name} Stiltyp: Merkmale, Styling-Tipps und passende Business-Looks.`,
     alternates: {

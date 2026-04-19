@@ -3,10 +3,8 @@ import type { Metadata } from 'next';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import NewsletterSignup from '@/components/forms/NewsletterSignup';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
-  metadataBase: METADATA_BASE,
   title: 'Businessstylist - Business-Outfit, das sitzt | Zieh Erfolg an!',
   description: 'Perfekt gekleidet im Business: Stilberatung, Kibbe-Typanalyse & Capsule Wardrobe von Diplom-Kostümbildnerin Anika. Von formell bis business casual - dein stilsicherer Auftritt.',
   alternates: {

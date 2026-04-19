@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
-  metadataBase: METADATA_BASE,
   title: 'FAQ – Häufig gestellte Fragen | Businessstylist',
   description: 'Alle Antworten zu Stilberatung, Farbberatung, Capsule Wardrobe und Business-Outfits. Von Ablauf über Kosten bis zu individuellen Fragen – hier findest du Klarheit.',
   keywords: 'FAQ, Stilberatung Fragen, Farbberatung FAQ, Capsule Wardrobe, Business Outfit Beratung, Stilberatung Ablauf, Kosten Stilberatung',

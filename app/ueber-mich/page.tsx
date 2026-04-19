@@ -1,10 +1,8 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import Button from '@/components/ui/Button';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
-  metadataBase: METADATA_BASE,
   title: 'Über mich - Anika Schmitz | Businessstylist',
   description: 'Ich bin Anika Schmitz – Stilberaterin, Autorin und Gründerin von Business Stylist. Ich helfe Frauen und Männern, ihren persönlichen Stil so zu entwickeln, dass er sichtbar macht, wer sie sind.',
   alternates: {

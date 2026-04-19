@@ -6,10 +6,8 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { getKibbeTypeInfo } from '@/lib/quiz/scoring';
 import { formatDate } from '@/lib/utils/format';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata = {
-  metadataBase: METADATA_BASE,
   title: 'Meine Typenanalyse | Businessstylist',
   robots: {
     index: false,

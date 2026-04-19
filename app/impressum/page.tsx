@@ -1,11 +1,8 @@
 import type { Metadata } from 'next';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
-  metadataBase: METADATA_BASE,
   title: 'Impressum | Businessstylist',
   robots: { index: true, follow: true },
-  alternates: { canonical: '/impressum' },
 };
 
 export default function ImpressumPage() {

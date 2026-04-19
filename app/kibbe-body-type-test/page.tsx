@@ -2,10 +2,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
-  metadataBase: METADATA_BASE,
   title: 'Kostenlose Typberatung nach Kibbe - Finde deinen Stiltyp | Businessstylist',
   description: 'Entdecke deinen individuellen Kibbe Body Type mit unserer kostenlosen Typberatung. Erhalte personalisierte Empfehlungen für deinen perfekten Business-Look.',
   alternates: {
