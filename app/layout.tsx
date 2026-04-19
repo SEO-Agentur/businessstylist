@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: 'Entdecke deinen perfekten Business-Stil. Professionelle Stilberatung, Typenanalyse und Kleiderschrank-Check für selbstbewusste Frauen im Beruf.',
   keywords: ['Stilberatung', 'Business Outfit', 'Capsule Wardrobe', 'Farbberatung', 'Typenanalyse', 'Kleiderschrank Check'],
   authors: [{ name: 'Businessstylist' }],
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://businessstylist.de'),
   alternates: {
     canonical: '/',
   },
