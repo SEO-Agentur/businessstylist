@@ -38,6 +38,22 @@ export const KIBBE_TYPE_DISPLAY_MAP: Record<KibbeTypeSlug, string> = {
   'theatrical-romantic': 'Theatrical Romantic',
 };
 
+const KIBBE_TYPE_TO_GROUP_ENV: Record<KibbeTypeSlug, string> = {
+  'dramatic': 'MAILERLITE_GROUP_ID_DRAMATIC',
+  'soft-dramatic': 'MAILERLITE_GROUP_ID_SOFT_DRAMATIC',
+  'flamboyant-natural': 'MAILERLITE_GROUP_ID_FLAMBOYANT_NATURAL',
+  'natural': 'MAILERLITE_GROUP_ID_NATURAL',
+  'soft-natural': 'MAILERLITE_GROUP_ID_SOFT_NATURAL',
+  'flamboyant-gamine': 'MAILERLITE_GROUP_ID_FLAMBOYANT_GAMINE',
+  'gamine': 'MAILERLITE_GROUP_ID_GAMINE',
+  'soft-gamine': 'MAILERLITE_GROUP_ID_SOFT_GAMINE',
+  'dramatic-classic': 'MAILERLITE_GROUP_ID_DRAMATIC_CLASSIC',
+  'classic': 'MAILERLITE_GROUP_ID_CLASSIC',
+  'soft-classic': 'MAILERLITE_GROUP_ID_SOFT_CLASSIC',
+  'theatrical-romantic': 'MAILERLITE_GROUP_ID_THEATRICAL_ROMANTIC',
+  'romantic': 'MAILERLITE_GROUP_ID_ROMANTIC',
+};
+
 interface MailerLiteSubscriber {
   id: string;
   email: string;
@@ -55,9 +71,16 @@ function getApiKey(): string {
   return key;
 }
 
-function getGroupId(): string {
+function getFunnelGroupId(): string {
   const id = process.env.MAILERLITE_GROUP_ID_KIBBE_FUNNEL;
   if (!id) throw new Error('MAILERLITE_GROUP_ID_KIBBE_FUNNEL is not configured');
+  return id;
+}
+
+function getTypeGroupId(slug: KibbeTypeSlug): string {
+  const envKey = KIBBE_TYPE_TO_GROUP_ENV[slug];
+  const id = process.env[envKey];
+  if (!id) throw new Error(`${envKey} is not configured`);
   return id;
 }
 
@@ -68,7 +91,8 @@ export async function subscribeToKibbeFunnel(params: {
   kibbeTypeDisplay: string;
 }): Promise<{ subscriberId: string; alreadySubscribed: boolean }> {
   const apiKey = getApiKey();
-  const groupId = getGroupId();
+  const funnelGroupId = getFunnelGroupId();
+  const typeGroupId = getTypeGroupId(params.kibbeType);
   const today = new Date().toISOString().split('T')[0];
 
   const payload = {
@@ -78,7 +102,7 @@ export async function subscribeToKibbeFunnel(params: {
       kibbe_type: params.kibbeType,
       test_date: today,
     },
-    groups: [groupId],
+    groups: [funnelGroupId, typeGroupId],
     status: 'active',
   };
 
@@ -93,13 +117,6 @@ export async function subscribeToKibbeFunnel(params: {
   });
 
   const responseText = await response.text();
-  let data: MailerLiteResponse;
-
-  try {
-    data = JSON.parse(responseText);
-  } catch {
-    throw new Error(`MailerLite returned invalid JSON: ${responseText.slice(0, 200)}`);
-  }
 
   if (response.status === 422) {
     const parsed = JSON.parse(responseText) as { message?: string };
@@ -110,57 +127,23 @@ export async function subscribeToKibbeFunnel(params: {
   }
 
   if (!response.ok) {
+    console.error('MailerLite API error:', response.status, responseText.slice(0, 300));
     throw new Error(`MailerLite API error ${response.status}: ${responseText.slice(0, 200)}`);
   }
 
-  const subscriberId = data.data.id;
-
-  await addTagsToSubscriber(subscriberId, [
-    'source-kibbe-test',
-    `type-${params.kibbeType}`,
-  ]);
-
-  return { subscriberId, alreadySubscribed: false };
-}
-
-async function addTagsToSubscriber(subscriberId: string, tags: string[]): Promise<void> {
-  const apiKey = getApiKey();
-
-  for (const tag of tags) {
-    try {
-      const tagRes = await fetch(`${MAILERLITE_API_BASE}/tags`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          Accept: 'application/json',
-        },
-      });
-
-      if (!tagRes.ok) continue;
-
-      const tagData = await tagRes.json() as { data: Array<{ id: string; name: string }> };
-      const existingTag = tagData.data.find((t) => t.name === tag);
-
-      if (!existingTag) continue;
-
-      await fetch(`${MAILERLITE_API_BASE}/subscribers/${subscriberId}/tags`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({ tags: [existingTag.id] }),
-      });
-    } catch {
-    }
+  let data: MailerLiteResponse;
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    throw new Error(`MailerLite returned invalid JSON: ${responseText.slice(0, 200)}`);
   }
+
+  return { subscriberId: data.data.id, alreadySubscribed: false };
 }
 
 export async function updateSubscriberField(
   email: string,
-  fields: Record<string, string | boolean>,
-  tags?: string[]
+  fields: Record<string, string | boolean>
 ): Promise<void> {
   const apiKey = getApiKey();
 
@@ -180,10 +163,5 @@ export async function updateSubscriberField(
   if (!response.ok && response.status !== 404) {
     const text = await response.text();
     throw new Error(`MailerLite update error ${response.status}: ${text.slice(0, 200)}`);
-  }
-
-  if (tags && tags.length > 0 && response.ok) {
-    const data = await response.json() as MailerLiteResponse;
-    await addTagsToSubscriber(data.data.id, tags);
   }
 }

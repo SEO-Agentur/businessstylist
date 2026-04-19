@@ -135,7 +135,7 @@ export async function POST(request: Request) {
       kibbe_type: kibbeType,
       kibbe_type_display: kibbeTypeDisplay,
       mailerlite_subscriber_id: result.subscriberId || null,
-      status: 'pending_doi',
+      status: 'active',
     });
 
     if (subscriberInsert.error) {

@@ -46,8 +46,7 @@ export async function POST(request: Request) {
             try {
               await updateSubscriberField(
                 customerEmail,
-                { bought_lookbook: true },
-                ['buyer-lookbook']
+                { bought_lookbook: true }
               );
             } catch (err) {
               console.error('MailerLite lookbook update error:', err);
