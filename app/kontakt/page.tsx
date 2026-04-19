@@ -215,8 +215,8 @@ export default function KontaktPage() {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-h3 mb-2">TikTok</h3>
-                    <a href="https://www.tiktok.com/@businessstylist.de" target="_blank" rel="noopener noreferrer" className="text-brand-accent hover:underline">
-                      @businessstylist.de
+                    <a href="https://www.tiktok.com/@businessstylist" target="_blank" rel="noopener noreferrer" className="text-brand-accent hover:underline">
+                      @businessstylist
                     </a>
                   </div>
                 </div>
