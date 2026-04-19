@@ -92,13 +92,13 @@ export const KIBBE_QUESTIONS: QuizQuestion[] = [
   {
     id: 'q7',
     section: 'Fleisch/Weichteile',
-    text: 'Wie würdest du dein Körperflesh/Gewebe beschreiben?',
+    text: 'Wie würdest du die Beschaffenheit deines Körpers beschreiben?',
     options: [
-      { value: 'A', text: 'Straff, wenig weich', scoring: { D: 1 } },
-      { value: 'B', text: 'Straff mit etwas Substanz', scoring: { D: 0.5, N: 0.5 } },
-      { value: 'C', text: 'Ausgeglichen', scoring: { N: 1 } },
-      { value: 'D', text: 'Weich, leicht "plüschig"', scoring: { N: 0.5, R: 0.5 } },
-      { value: 'E', text: 'Sehr weich, rund, kurvig', scoring: { R: 1 } },
+      { value: 'A', text: 'Straff und fest, kaum weich', scoring: { D: 1 } },
+      { value: 'B', text: 'Straff, aber mit etwas Polster', scoring: { D: 0.5, N: 0.5 } },
+      { value: 'C', text: 'Ausgewogen – weder sehr fest noch sehr weich', scoring: { N: 1 } },
+      { value: 'D', text: 'Weich mit leichten Rundungen', scoring: { N: 0.5, R: 0.5 } },
+      { value: 'E', text: 'Sehr weich und deutlich kurvig', scoring: { R: 1 } },
     ],
   },
   {
