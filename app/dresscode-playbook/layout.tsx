@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
+  metadataBase: METADATA_BASE,
   title: 'Dresscode Playbook – Stil verstehen, Wirkung gestalten',
   description: 'Das Dresscode Playbook von Anika Schmitz: ein Begleiter für Menschen mit beruflicher Verantwortung. Capsule Wardrobe, Checklisten, Wochenplaner. Digital und als Taschenbuch.',
   authors: [{ name: 'Anika Schmitz' }],

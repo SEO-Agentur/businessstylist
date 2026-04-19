@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import Button from '@/components/ui/Button';
+import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
+  metadataBase: METADATA_BASE,
   title: 'Capsule Wardrobe - Minimalistische Business-Garderobe aufbauen | Businessstylist',
   description: 'Lerne, wie du eine Capsule Wardrobe für den Business-Alltag aufbaust. Weniger Teile, mehr Möglichkeiten.',
   keywords: ['Capsule Wardrobe', 'Minimalistische Garderobe', 'Business Capsule Wardrobe'],

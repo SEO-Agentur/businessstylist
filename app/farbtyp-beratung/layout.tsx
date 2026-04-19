@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
+  metadataBase: METADATA_BASE,
   title: 'Farbberatung & Farbtyp-Analyse – Professionelle Farbberatung | Businessstylist',
   description: 'Professionelle Farbberatung für Farben, die Dir stehen. Finde Deinen Farbtyp mit der Vier-Jahreszeiten-Methode – Wintertyp, Herbsttyp, Sommertyp, Frühlingstyp. Jetzt buchen!',
   keywords: [

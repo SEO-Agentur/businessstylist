@@ -3,8 +3,10 @@ import Link from 'next/link';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import NewsletterSignup from '@/components/forms/NewsletterSignup';
+import { METADATA_BASE } from '@/lib/utils/site';
 
 export const metadata: Metadata = {
+  metadataBase: METADATA_BASE,
   title: 'Kostenlose Downloads - Businessstylist',
   description: 'Kostenlose Style-Guides, Checklisten und E-Books für deinen perfekten Business-Look. Smart Casual Checkliste, Dresscode Playbook und mehr.',
   alternates: {
