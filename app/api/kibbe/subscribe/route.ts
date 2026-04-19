@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { createHash } from 'crypto';
-import { supabase } from '@/lib/db/supabase';
+import { getSupabaseAdmin } from '@/lib/db/supabase';
 import {
   subscribeToKibbeFunnel,
   isValidKibbeType,
@@ -86,14 +86,36 @@ export async function POST(request: Request) {
   const emailHash = hashValue(emailNormalized);
   const ipHash = hashValue(ip);
   const kibbeTypeDisplay = KIBBE_TYPE_DISPLAY_MAP[kibbeType];
+  const isDev = process.env.NODE_ENV !== 'production';
 
-  await supabase.from('consent_logs').insert({
+  let supabaseAdmin: ReturnType<typeof getSupabaseAdmin>;
+  try {
+    supabaseAdmin = getSupabaseAdmin();
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Kibbe subscribe config error:', errorMessage);
+    return NextResponse.json(
+      {
+        status: 'error',
+        message: isDev
+          ? `Server-Konfigurationsfehler: ${errorMessage}`
+          : 'Etwas ist schiefgelaufen. Bitte versuche es in wenigen Minuten erneut.',
+      },
+      { status: 500 }
+    );
+  }
+
+  const consentInsert = await supabaseAdmin.from('consent_logs').insert({
     email_hash: emailHash,
     ip_hash: ipHash,
     user_agent: userAgent.slice(0, 500),
     privacy_policy_version: PRIVACY_POLICY_VERSION,
     consent_type: 'kibbe_funnel_newsletter',
   });
+
+  if (consentInsert.error) {
+    console.error('Kibbe consent_logs insert error:', consentInsert.error.message);
+  }
 
   try {
     const result = await subscribeToKibbeFunnel({
@@ -107,7 +129,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ status: 'already_subscribed' });
     }
 
-    await supabase.from('kibbe_subscribers').insert({
+    const subscriberInsert = await supabaseAdmin.from('kibbe_subscribers').insert({
       email: emailNormalized,
       first_name: firstName.trim(),
       kibbe_type: kibbeType,
@@ -116,12 +138,16 @@ export async function POST(request: Request) {
       status: 'pending_doi',
     });
 
+    if (subscriberInsert.error) {
+      console.error('Kibbe subscribers insert error:', subscriberInsert.error.message);
+    }
+
     return NextResponse.json({ status: 'ok', message: 'check_email' });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Kibbe subscribe error:', errorMessage);
 
-    await supabase.from('kibbe_subscribers').insert({
+    await supabaseAdmin.from('kibbe_subscribers').insert({
       email: emailNormalized,
       first_name: firstName.trim(),
       kibbe_type: kibbeType,
@@ -131,7 +157,12 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(
-      { status: 'error', message: 'Etwas ist schiefgelaufen. Bitte versuche es in wenigen Minuten erneut.' },
+      {
+        status: 'error',
+        message: isDev
+          ? `Fehler: ${errorMessage}`
+          : 'Etwas ist schiefgelaufen. Bitte versuche es in wenigen Minuten erneut.',
+      },
       { status: 500 }
     );
   }
