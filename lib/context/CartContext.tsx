@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 
 export interface CartItem {
   id: string;
@@ -24,6 +25,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const router = useRouter();
 
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     setItems((prevItems) => {
@@ -35,6 +37,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prevItems, { ...item, quantity: 1 }];
     });
+    router.push('/checkout');
   };
 
   const removeFromCart = (id: string) => {
