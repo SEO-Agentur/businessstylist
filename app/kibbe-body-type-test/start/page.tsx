@@ -54,22 +54,11 @@ export default function QuizStartPage() {
   } | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('quizAnswers');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setAnswers(parsed.answers || {});
-        setCurrentStep(parsed.step || 0);
-      } catch {
-      }
-    }
+    localStorage.removeItem('quizAnswers');
+    setCurrentStep(0);
+    setAnswers({});
+    setResult(null);
   }, []);
-
-  useEffect(() => {
-    if (Object.keys(answers).length > 0) {
-      localStorage.setItem('quizAnswers', JSON.stringify({ answers, step: currentStep }));
-    }
-  }, [answers, currentStep]);
 
   const currentQuestion = KIBBE_QUESTIONS[currentStep];
   const isLastQuestion = currentStep === KIBBE_QUESTIONS.length - 1;
