@@ -39,9 +39,6 @@ ${baseUrl}/business-outfit
 ${baseUrl}/capsule-wardrobe
 ${baseUrl}/farbtyp-beratung
 
-## Blog
-${baseUrl}/blog
-
 # Geschützte Bereiche (nicht für LLM Crawling)
 
 ## Nutzerbereich

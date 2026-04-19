@@ -8,11 +8,10 @@ export default async function AdminDashboardPage() {
   await requireAdmin();
 
   // Get counts
-  const [userCount, orderCount, lookbookCount, blogCount] = await Promise.all([
+  const [userCount, orderCount, lookbookCount] = await Promise.all([
     prisma.user.count(),
     prisma.order.count(),
     prisma.lookbook.count(),
-    prisma.blogPost.count(),
   ]);
 
   const [menuItemCount, productPageCount] = await Promise.all([
@@ -50,12 +49,6 @@ export default async function AdminDashboardPage() {
       href: '/admin/pages',
       description: 'Landingpages, SEO-Felder',
       count: 0,
-    },
-    {
-      title: 'Blog',
-      href: '/admin/blog',
-      description: 'Blog-Posts verwalten',
-      count: blogCount,
     },
     {
       title: 'Bestellungen',
