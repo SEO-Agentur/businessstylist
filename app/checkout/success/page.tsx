@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [loading, setLoading] = useState(true);
@@ -81,5 +81,13 @@ export default function CheckoutSuccessPage() {
         </Card>
       </div>
     </section>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={<section className="section-padding"><div className="container-custom max-w-3xl"><Card className="text-center py-12"><div className="flex justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-accent" /></div></Card></div></section>}>
+      <CheckoutSuccessContent />
+    </Suspense>
   );
 }

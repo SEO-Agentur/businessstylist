@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { formatPrice } from '@/lib/utils/format';
@@ -11,7 +11,7 @@ const AMAZON_TASCHENBUCH_URL = 'https://amzn.to/3OFSH2V';
 
 export default function ShopPage() {
   const { addToCart } = useCart();
-  const [addedItems, setAddedItems] = useState<string[]>([]);
+  const router = useRouter();
 
   const products = [
     {
@@ -68,10 +68,7 @@ export default function ShopPage() {
       price: product.price,
       type: product.type,
     });
-    setAddedItems([...addedItems, product.id]);
-    setTimeout(() => {
-      setAddedItems(addedItems.filter(id => id !== product.id));
-    }, 2000);
+    router.push('/checkout');
   };
 
   const handleAddPlaybook = () => {
@@ -81,10 +78,7 @@ export default function ShopPage() {
       price: 33.95,
       type: 'ebook',
     });
-    setAddedItems((prev) => [...prev, 'dresscode-playbook']);
-    setTimeout(() => {
-      setAddedItems((prev) => prev.filter((id) => id !== 'dresscode-playbook'));
-    }, 2000);
+    router.push('/checkout');
   };
 
   return (
@@ -148,23 +142,11 @@ export default function ShopPage() {
                   <Button
                     variant="accent"
                     onClick={handleAddPlaybook}
-                    disabled={addedItems.includes('dresscode-playbook')}
                   >
-                    {addedItems.includes('dresscode-playbook') ? (
-                      <>
-                        <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        In den Warenkorb gelegt
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        In den Warenkorb
-                      </>
-                    )}
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    In den Warenkorb
                   </Button>
                   <Link href="/dresscode-playbook">
                     <Button variant="secondary" className="bg-white/10 text-white border-white/30 hover:bg-white/20">
@@ -226,23 +208,11 @@ export default function ShopPage() {
                       onClick={() => handleAddToCart(product)}
                       variant="accent"
                       className="w-full"
-                      disabled={addedItems.includes(product.id)}
                     >
-                      {addedItems.includes(product.id) ? (
-                        <>
-                          <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          In den Warenkorb gelegt
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                          </svg>
-                          In den Warenkorb
-                        </>
-                      )}
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                      In den Warenkorb
                     </Button>
                   )}
                   <Link href={product.slug}>
