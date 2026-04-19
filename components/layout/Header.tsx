@@ -17,8 +17,6 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [stilberatungOpen, setStilberatungOpen] = useState(false);
   const { totalItems } = useCart();
-  const [navigationLinks, setNavigationLinks] = useState<MenuItem[]>([]);
-
   const stilberatungDropdown = [
     { label: 'Stilberatung', href: '/stilberatung' },
     { label: 'Farbberatung', href: '/farbtyp-beratung' },
@@ -27,13 +25,15 @@ export default function Header() {
     { label: 'Lookbook', href: '/lookbook' },
   ];
 
-  const defaultLinks = [
+  const defaultLinks: MenuItem[] = [
     { id: '1', href: '/stilberatung', label: 'Stilberatung', external: false },
     { id: '2', href: '/kibbe-body-type-test', label: 'Typberatung', external: false },
     { id: '3', href: '/downloads', label: 'Downloads', external: false },
     { id: '4', href: '/shop', label: 'Shop', external: false },
     { id: '5', href: '/ueber-mich', label: 'Über mich', external: false },
   ];
+
+  const [navigationLinks, setNavigationLinks] = useState<MenuItem[]>(defaultLinks);
 
   useEffect(() => {
     fetch('/api/admin/menu-items?position=HEADER')
@@ -53,6 +53,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <noscript>
+        <style>{`.js-only{display:none !important}`}</style>
+      </noscript>
       <nav className="container-custom">
         <div className="flex items-center justify-between h-16 md:h-20">
           <Link href="/" className="flex items-center">
@@ -162,8 +165,15 @@ export default function Header() {
             )}
           </div>
 
+          <noscript>
+            <a href="#mobile-menu" className="md:hidden p-2 text-brand-secondary" aria-label="Menu">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </a>
+          </noscript>
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 js-only"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Menu"
           >
@@ -192,6 +202,30 @@ export default function Header() {
           </button>
         </div>
 
+        <noscript>
+          <div id="mobile-menu" className="md:hidden pb-4 border-t border-gray-200">
+            <div className="flex flex-col space-y-4 pt-4">
+              {defaultLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Link href="/checkout" className="text-brand-secondary hover:text-brand-primary font-medium transition-colors">
+                Warenkorb
+              </Link>
+              <Link href="/auth/signin" className="text-brand-secondary hover:text-brand-primary font-medium transition-colors">
+                Anmelden
+              </Link>
+              <Link href="/kontakt" className="btn-primary">
+                Kontakt
+              </Link>
+            </div>
+          </div>
+        </noscript>
         {mobileMenuOpen && (
           <div className="md:hidden pb-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4 pt-4">
