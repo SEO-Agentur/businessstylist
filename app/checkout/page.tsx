@@ -21,6 +21,7 @@ export default function CheckoutPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [widerrufsConsent, setWiderrufsConsent] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -259,11 +260,25 @@ export default function CheckoutPage() {
                     />
                   </div>
 
+                  <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                    <input
+                      type="checkbox"
+                      id="widerrufs-consent"
+                      checked={widerrufsConsent}
+                      onChange={(e) => setWiderrufsConsent(e.target.checked)}
+                      required
+                      className="mt-1 w-4 h-4 flex-shrink-0 accent-brand-accent cursor-pointer"
+                    />
+                    <label htmlFor="widerrufs-consent" className="text-sm text-brand-secondary leading-relaxed cursor-pointer">
+                      Ich verlange ausdrücklich, dass Sie vor Ablauf der Widerrufsfrist mit der Ausführung beginnen. Mir ist bekannt, dass ich mit Beginn der Ausführung mein Widerrufsrecht verliere.
+                    </label>
+                  </div>
+
                   <Button
                     type="submit"
                     className="w-full"
                     size="lg"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !widerrufsConsent}
                   >
                     {isSubmitting ? (
                       <>
@@ -326,12 +341,6 @@ export default function CheckoutPage() {
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     100% sichere Bezahlung
-                  </div>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    14 Tage Widerrufsrecht
                   </div>
                   <div className="flex items-center">
                     <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
