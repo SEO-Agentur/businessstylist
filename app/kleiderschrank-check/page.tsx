@@ -70,19 +70,19 @@ export default function KleiderschrankCheckPage() {
 
   return (
     <>
-      <section className="relative section-padding overflow-hidden bg-gradient-to-br from-business-navy via-business-darkNavy to-business-charcoal min-h-[80vh] flex items-center">
-        <div className="absolute inset-0 opacity-10">
+      <section className="relative section-padding overflow-x-hidden bg-gradient-to-br from-business-navy via-business-darkNavy to-business-charcoal min-h-[80vh] flex items-center">
+        <div className="absolute inset-0 overflow-hidden opacity-10">
           <div className="absolute top-20 right-20 w-96 h-96 bg-business-gold rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 left-20 w-96 h-96 bg-brand-accent rounded-full blur-3xl"></div>
         </div>
 
         <div className="container-custom relative z-10">
           <div className="max-w-4xl mx-auto text-center text-white">
-            <div className="inline-block px-4 py-2 bg-brand-accent rounded-full text-sm font-semibold mb-6">
+            <div className="inline-block max-w-full px-4 py-2 bg-brand-accent rounded-full text-sm font-semibold mb-6 whitespace-normal break-words">
               1:1 Kleiderschrank-Check & Typberatung
             </div>
 
-            <h1 className="text-display-2 font-serif mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-display-2 font-serif mb-6">
               Dein Kleiderschrank,<br />Dein Stil, Deine Klarheit
             </h1>
 
