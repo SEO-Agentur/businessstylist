@@ -138,16 +138,6 @@ export default function QuizStartPage() {
             </div>
           </Card>
 
-          <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-            <p className="text-sm text-brand-secondary text-center mb-4">
-              Willst Du Dein Lookbook direkt kaufen?
-            </p>
-            <Link href="/lookbook">
-              <Button className="w-full" variant="primary">
-                Personalisertes Lookbook – 29 €
-              </Button>
-            </Link>
-          </div>
         </div>
       </div>
     );

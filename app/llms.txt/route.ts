@@ -21,7 +21,6 @@ ${baseUrl}/
 ${baseUrl}/stilberatung
 ${baseUrl}/kibbe-body-type-test
 ${baseUrl}/kleiderschrank-check
-${baseUrl}/lookbook
 ${baseUrl}/ueber-mich
 ${baseUrl}/kontakt
 ${baseUrl}/faq
@@ -29,7 +28,6 @@ ${baseUrl}/faq
 ## Shop
 ${baseUrl}/shop
 ${baseUrl}/shop/ebook
-${baseUrl}/shop/lookbook
 ${baseUrl}/shop/stilberatung
 ${baseUrl}/shop/stilberatung-abo
 ${baseUrl}/shop/kleiderschrank-check
@@ -57,6 +55,11 @@ Disallow: ${baseUrl}/api/*
 Disallow: ${baseUrl}/kibbe-body-type-test/start
 Disallow: ${baseUrl}/kibbe-body-type-test/erfolg
 Disallow: ${baseUrl}/kibbe-body-type-test/abschluss
+
+## Lookbook (privat, passwortgeschützt)
+Disallow: ${baseUrl}/lookbook
+Disallow: ${baseUrl}/lookbook/*
+Disallow: ${baseUrl}/shop/lookbook
 
 # Kontakt & Legal
 ${baseUrl}/impressum

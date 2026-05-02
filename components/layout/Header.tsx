@@ -21,7 +21,6 @@ export default function Header() {
     { label: 'Farbberatung', href: '/farbtyp-beratung' },
     { label: 'Kleiderschrank Check', href: '/kleiderschrank-check' },
     { label: 'Dresscode Playbook', href: '/dresscode-playbook' },
-    { label: 'Lookbook', href: '/lookbook' },
   ];
 
   const defaultLinks: MenuItem[] = [
