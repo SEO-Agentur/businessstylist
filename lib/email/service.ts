@@ -7,40 +7,48 @@ interface EmailOptions {
   subject: string;
   html: string;
   text?: string;
+  replyTo?: string;
 }
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
-  // In development, log to console
-  if (process.env.NODE_ENV === 'development') {
-    console.log('📧 Email would be sent:');
-    console.log('To:', options.to);
-    console.log('Subject:', options.subject);
-    console.log('HTML:', options.html);
-    console.log('---');
-    return true;
-  }
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.EMAIL_FROM || 'Businessstylist <kontakt@businessstylist.de>';
 
-  // Production: Check for email service configuration
-  const emailService = process.env.EMAIL_SERVICE; // 'resend', 'sendgrid', etc.
-
-  if (!emailService) {
-    console.warn('No EMAIL_SERVICE configured. Email not sent.');
+  if (!apiKey) {
+    console.log('[email] RESEND_API_KEY missing, skipping real send. Preview:', {
+      to: options.to,
+      subject: options.subject,
+    });
     return false;
   }
 
-  // TODO: Implement actual email service integration
-  // Example for Resend:
-  // if (emailService === 'resend') {
-  //   const resend = new Resend(process.env.RESEND_API_KEY);
-  //   await resend.emails.send({
-  //     from: process.env.EMAIL_FROM!,
-  //     to: options.to,
-  //     subject: options.subject,
-  //     html: options.html,
-  //   });
-  // }
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from,
+        to: [options.to],
+        subject: options.subject,
+        html: options.html,
+        text: options.text,
+        ...(options.replyTo ? { reply_to: options.replyTo } : {}),
+      }),
+    });
 
-  return false;
+    if (!res.ok) {
+      const body = await res.text();
+      console.error('[email] Resend error:', res.status, body);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('[email] send error:', err);
+    return false;
+  }
 }
 
 export function generateWelcomeEmail(
