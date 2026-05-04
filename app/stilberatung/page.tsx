@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useCart } from '@/lib/context/CartContext';
 
@@ -90,8 +90,25 @@ const faqItems = [
 
 export default function StilberatungPage() {
   const [selectedPlan, setSelectedPlan] = useState<'single' | 'yearly'>('single');
-  const { addToCart } = useCart();
+  const { addToCart, applyDiscount, discount } = useCart();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [codeStatus, setCodeStatus] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  useEffect(() => {
+    const code = searchParams?.get('code');
+    if (!code) return;
+    if (discount?.code?.toUpperCase() === code.toUpperCase()) return;
+    (async () => {
+      const result = await applyDiscount(code);
+      if (result.ok) {
+        setCodeStatus({ message: `Rabattcode "${code.toUpperCase()}" aktiv – wird im Warenkorb abgezogen.`, type: 'success' });
+      } else {
+        setCodeStatus({ message: result.error || 'Code ungültig', type: 'error' });
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const handleBooking = (type: 'single' | 'yearly') => {
     const product = type === 'single'
@@ -111,6 +128,18 @@ export default function StilberatungPage() {
         </div>
 
         <div className="container-custom relative z-10">
+          {codeStatus && (
+            <div
+              className={`max-w-3xl mx-auto mb-8 px-5 py-3 rounded-xl text-sm font-medium text-center ${
+                codeStatus.type === 'success'
+                  ? 'bg-business-gold/95 text-business-navy shadow-lg'
+                  : 'bg-red-100 text-red-800'
+              }`}
+              role="status"
+            >
+              {codeStatus.message}
+            </div>
+          )}
           <div className="max-w-4xl mx-auto text-center text-white mb-14">
             <h1 className="font-serif text-display-2 mb-6 leading-tight">
               Stilberatung &amp; Personal Styling –<br />

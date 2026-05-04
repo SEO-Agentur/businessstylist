@@ -9,7 +9,7 @@ import Input from '@/components/forms/Input';
 import { formatPrice } from '@/lib/utils/format';
 
 export default function CheckoutPage() {
-  const { items, removeFromCart, updateQuantity, clearCart, totalPrice } = useCart();
+  const { items, removeFromCart, updateQuantity, clearCart, totalPrice, discount, discountAmount, clearDiscount } = useCart();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -43,6 +43,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: items,
           customerInfo: formData,
+          discountCode: discount?.code || null,
         }),
       });
 
@@ -315,6 +316,27 @@ export default function CheckoutPage() {
                     </div>
                   ))}
                 </div>
+
+                {discount && discountAmount > 0 && (
+                  <div className="border-t border-gray-200 pt-4 mb-4 space-y-2 text-sm">
+                    <div className="flex justify-between items-center text-green-700">
+                      <span className="font-semibold">
+                        Rabatt {discount.code}
+                        <button
+                          type="button"
+                          onClick={clearDiscount}
+                          className="ml-2 text-xs text-brand-secondary underline hover:text-brand-primary"
+                        >
+                          entfernen
+                        </button>
+                      </span>
+                      <span className="font-semibold">− {formatPrice(discountAmount)}</span>
+                    </div>
+                    {discount.description && (
+                      <p className="text-xs text-brand-secondary">{discount.description}</p>
+                    )}
+                  </div>
+                )}
 
                 <div className="border-t border-gray-200 pt-4 mb-6">
                   <div className="flex justify-between items-center">
