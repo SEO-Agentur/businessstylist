@@ -1,52 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useForm, ValidationError } from '@formspree/react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Input from '@/components/forms/Input';
 
 export default function KontaktPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Versand fehlgeschlagen');
-      }
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-    } catch (err) {
-      console.error('contact submit error:', err);
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
-      setTimeout(() => setSubmitStatus('idle'), 5000);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const [state, handleSubmit] = useForm('mnjwdwny');
+  const isSubmitting = state.submitting;
+  const hasError = state.errors && (Array.isArray((state.errors as any)) ? (state.errors as any).length > 0 : Object.keys(state.errors as any).length > 0);
 
   return (
     <>
@@ -73,14 +35,14 @@ export default function KontaktPage() {
             <div>
               <h2 className="text-h2 mb-6">Schreib uns eine Nachricht</h2>
 
-              {submitStatus === 'error' && (
+              {hasError && !state.succeeded && (
                 <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg">
                   <p className="font-semibold">Nachricht konnte nicht gesendet werden.</p>
-                  <p className="text-sm">Bitte versuche es erneut oder schreibe uns direkt an kontakt@businessstylist.de.</p>
+                  <p className="text-sm">Bitte überprüfe deine Eingaben oder schreibe uns direkt an info@businessstylist.de.</p>
                 </div>
               )}
 
-              {submitStatus === 'success' && (
+              {state.succeeded && (
                 <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-lg">
                   <div className="flex items-start">
                     <svg className="w-6 h-6 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -94,33 +56,43 @@ export default function KontaktPage() {
                 </div>
               )}
 
+              {!state.succeeded && (
               <form onSubmit={handleSubmit} className="space-y-6">
+                <input type="hidden" name="_subject" value="Neue Nachricht: Kontaktformular Businessstylist" />
+                <input type="hidden" name="_language" value="de" />
+                <input
+                  type="text"
+                  name="_gotcha"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  className="hidden"
+                  aria-hidden="true"
+                />
+
                 <Input
                   label="Name"
                   type="text"
                   name="name"
-                  value={formData.name}
-                  onChange={handleChange}
                   required
                   placeholder="Dein vollständiger Name"
                 />
+                <ValidationError prefix="Name" field="name" errors={state.errors} className="text-sm text-red-600 mt-1" />
 
-                <Input
-                  label="E-Mail"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="deine@email.de"
-                />
+                <div>
+                  <Input
+                    label="E-Mail"
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="deine@email.de"
+                  />
+                  <ValidationError prefix="E-Mail" field="email" errors={state.errors} className="text-sm text-red-600 mt-1" />
+                </div>
 
                 <Input
                   label="Telefon (optional)"
                   type="tel"
                   name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
                   placeholder="+49 XXX XXXXXXX"
                 />
 
@@ -130,9 +102,8 @@ export default function KontaktPage() {
                   </label>
                   <select
                     name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
                     required
+                    defaultValue=""
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all"
                   >
                     <option value="">Bitte wählen...</option>
@@ -151,13 +122,12 @@ export default function KontaktPage() {
                   </label>
                   <textarea
                     name="message"
-                    value={formData.message}
-                    onChange={handleChange}
                     required
                     rows={6}
                     placeholder="Beschreibe dein Anliegen..."
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all resize-none"
                   />
+                  <ValidationError prefix="Nachricht" field="message" errors={state.errors} className="text-sm text-red-600 mt-1" />
                 </div>
 
                 <Button
@@ -184,6 +154,7 @@ export default function KontaktPage() {
                   )}
                 </Button>
               </form>
+              )}
             </div>
 
             <div className="space-y-6">
