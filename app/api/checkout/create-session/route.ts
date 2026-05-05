@@ -82,40 +82,53 @@ export async function POST(request: Request) {
       quantity: item.quantity,
     }));
 
-    const discountRow = await resolveDiscount(discountCode);
+    const discountRow = await resolveDiscount(discountCode).catch((e) => {
+      console.error('resolveDiscount failed:', e);
+      return null;
+    });
     let discountsParam: { coupon: string }[] | undefined;
     let discountAmountEuros = 0;
 
     if (discountRow) {
       discountAmountEuros = computeDiscountEuros(items, discountRow);
       if (discountAmountEuros > 0) {
-        const coupon = await stripe.coupons.create({
-          name: `Code ${discountRow.code}`,
-          amount_off: Math.round(discountAmountEuros * 100),
-          currency: 'eur',
-          duration: 'once',
-          max_redemptions: 1,
-        });
-        discountsParam = [{ coupon: coupon.id }];
+        try {
+          const coupon = await stripe.coupons.create({
+            name: `Code ${discountRow.code}`,
+            amount_off: Math.round(discountAmountEuros * 100),
+            currency: 'eur',
+            duration: 'once',
+            max_redemptions: 1,
+          });
+          discountsParam = [{ coupon: coupon.id }];
+        } catch (e) {
+          console.error('Stripe coupon create failed, continuing without discount:', e);
+          discountAmountEuros = 0;
+        }
       }
     }
+
+    const origin =
+      request.headers.get('origin') ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      'https://businessstylist.de';
 
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card', 'paypal'],
       line_items: lineItems,
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout`,
+      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/checkout`,
       customer_email: customerInfo.email,
       ...(session?.user?.id ? { client_reference_id: session.user.id } : {}),
       ...(discountsParam ? { discounts: discountsParam } : {}),
       metadata: {
         ...(session?.user?.id ? { userId: session.user.id } : {}),
-        customerName: customerInfo.name,
-        customerPhone: customerInfo.phone,
-        customerAddress: customerInfo.address,
-        customerCity: customerInfo.city,
-        customerPostalCode: customerInfo.postalCode,
+        customerName: customerInfo.name || '',
+        customerPhone: customerInfo.phone || '',
+        customerAddress: customerInfo.address || '',
+        customerCity: customerInfo.city || '',
+        customerPostalCode: customerInfo.postalCode || '',
         notes: customerInfo.notes || '',
         ...(discountRow && discountAmountEuros > 0
           ? { discountCode: discountRow.code, discountAmountCents: String(Math.round(discountAmountEuros * 100)) }
@@ -123,30 +136,25 @@ export async function POST(request: Request) {
       },
     });
 
-    if (session?.user?.id) {
-      for (const item of items) {
-        await supabase.from('orders').insert({
-          user_id: session.user.id,
-          product_id: item.id,
-          stripe_checkout_session_id: checkoutSession.id,
-          status: 'PENDING',
-          amount: item.price * item.quantity,
-        });
-      }
-    }
-
     if (discountRow && discountAmountEuros > 0) {
-      await supabase
+      const { error: redemptionError } = await supabase
         .from('discount_codes')
         .update({ redemptions: discountRow.redemptions + 1 })
         .ilike('code', discountRow.code);
+      if (redemptionError) {
+        console.error('discount redemption update failed:', redemptionError);
+      }
     }
 
     return NextResponse.json({ sessionId: checkoutSession.id, url: checkoutSession.url });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Checkout error:', error);
+    const message =
+      error?.raw?.message ||
+      error?.message ||
+      'Fehler beim Erstellen der Checkout-Session';
     return NextResponse.json(
-      { error: 'Fehler beim Erstellen der Checkout-Session' },
+      { error: `Fehler beim Erstellen der Checkout-Session: ${message}` },
       { status: 500 }
     );
   }
