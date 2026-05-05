@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { stripe } from '@/lib/stripe/client';
-import { supabase } from '@/lib/db/supabase';
+import { getSupabaseAdmin } from '@/lib/db/supabase';
+const supabase = getSupabaseAdmin();
 import { updateSubscriberField } from '@/lib/mailerlite/client';
 import { sendEmail } from '@/lib/email/service';
 import { renderInvoiceEmail } from '@/lib/email/invoice';
@@ -123,15 +124,27 @@ export async function POST(request: Request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
+        const customerEmail = session.customer_details?.email || session.customer_email || null;
 
-        await supabase
+        const { error: upsertError } = await supabase
           .from('orders')
-          .update({
-            status: 'COMPLETED',
-            stripe_payment_intent_id: session.payment_intent as string,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('stripe_checkout_session_id', session.id);
+          .upsert(
+            {
+              stripe_checkout_session_id: session.id,
+              stripe_payment_intent_id: (session.payment_intent as string) || null,
+              email: customerEmail,
+              user_id: session.client_reference_id || null,
+              product_id: session.metadata?.product || null,
+              amount: ((session.amount_total ?? 0) / 100),
+              currency: (session.currency || 'eur').toLowerCase(),
+              status: 'COMPLETED',
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'stripe_checkout_session_id' }
+          );
+        if (upsertError) {
+          console.error('[webhook] orders upsert failed:', upsertError);
+        }
 
         if (session.metadata?.product === 'lookbook_2026') {
           const customerEmail = session.customer_details?.email || session.customer_email;

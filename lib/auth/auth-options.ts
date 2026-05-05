@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
-import { supabase } from '@/lib/db/supabase';
+import { getSupabaseAdmin } from '@/lib/db/supabase';
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -24,10 +24,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Email und Passwort erforderlich');
         }
 
-        const { data: user } = await supabase
+        const { data: user } = await getSupabaseAdmin()
           .from('users')
           .select('*')
-          .eq('email', credentials.email)
+          .ilike('email', credentials.email.trim())
           .maybeSingle();
 
         if (!user || !user.password) {

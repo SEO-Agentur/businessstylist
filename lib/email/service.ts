@@ -1,6 +1,11 @@
-// Email Service Adapter
-// This is a stub implementation that logs to console
-// Replace with actual email service (Resend, SendGrid, etc.) via environment variables
+import nodemailer, { Transporter } from 'nodemailer';
+import { getSupabaseAdmin } from '@/lib/db/supabase';
+
+interface EmailAttachment {
+  filename: string;
+  content: Buffer | string;
+  contentType?: string;
+}
 
 interface EmailOptions {
   to: string;
@@ -8,45 +13,80 @@ interface EmailOptions {
   html: string;
   text?: string;
   replyTo?: string;
+  bcc?: string;
+  attachments?: EmailAttachment[];
+}
+
+let cachedTransporter: Transporter | null = null;
+
+function getTransporter(): Transporter | null {
+  if (cachedTransporter) return cachedTransporter;
+
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT || 465);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASSWORD;
+  const secure = (process.env.SMTP_SECURE || 'true').toLowerCase() !== 'false';
+
+  if (!host || !user || !pass) return null;
+
+  cachedTransporter = nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: { user, pass },
+  });
+
+  return cachedTransporter;
+}
+
+async function logEmail(
+  to: string,
+  subject: string,
+  status: 'sent' | 'failed',
+  errorMessage?: string
+) {
+  try {
+    const admin = getSupabaseAdmin();
+    await admin.from('email_log').insert({
+      to_address: to,
+      subject,
+      status,
+      provider: 'smtp',
+      error_message: errorMessage || null,
+    });
+  } catch (err) {
+    console.error('[email] failed to write email_log:', err);
+  }
 }
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM || 'Businessstylist <kontakt@businessstylist.de>';
+  const from = process.env.EMAIL_FROM || 'Businessstylist <info@businessstylist.de>';
+  const bcc = options.bcc ?? process.env.EMAIL_BCC;
+  const transporter = getTransporter();
 
-  if (!apiKey) {
-    console.log('[email] RESEND_API_KEY missing, skipping real send. Preview:', {
-      to: options.to,
-      subject: options.subject,
-    });
+  if (!transporter) {
+    console.error('[email] SMTP not configured, skipping send to', options.to);
+    await logEmail(options.to, options.subject, 'failed', 'SMTP not configured');
     return false;
   }
 
   try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from,
-        to: [options.to],
-        subject: options.subject,
-        html: options.html,
-        text: options.text,
-        ...(options.replyTo ? { reply_to: options.replyTo } : {}),
-      }),
+    await transporter.sendMail({
+      from,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+      text: options.text,
+      replyTo: options.replyTo,
+      bcc: bcc || undefined,
+      attachments: options.attachments,
     });
-
-    if (!res.ok) {
-      const body = await res.text();
-      console.error('[email] Resend error:', res.status, body);
-      return false;
-    }
+    await logEmail(options.to, options.subject, 'sent');
     return true;
-  } catch (err) {
-    console.error('[email] send error:', err);
+  } catch (err: any) {
+    console.error('[email] SMTP send error:', err);
+    await logEmail(options.to, options.subject, 'failed', err?.message || String(err));
     return false;
   }
 }
