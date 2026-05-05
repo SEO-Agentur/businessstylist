@@ -20,15 +20,25 @@ export default function KontaktPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    setSubmitStatus('success');
-    setIsSubmitting(false);
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-
-    setTimeout(() => {
-      setSubmitStatus('idle');
-    }, 5000);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Versand fehlgeschlagen');
+      }
+      setSubmitStatus('success');
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (err) {
+      console.error('contact submit error:', err);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setSubmitStatus('idle'), 5000);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -62,6 +72,13 @@ export default function KontaktPage() {
           <div className="grid md:grid-cols-2 gap-12">
             <div>
               <h2 className="text-h2 mb-6">Schreib uns eine Nachricht</h2>
+
+              {submitStatus === 'error' && (
+                <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg">
+                  <p className="font-semibold">Nachricht konnte nicht gesendet werden.</p>
+                  <p className="text-sm">Bitte versuche es erneut oder schreibe uns direkt an kontakt@businessstylist.de.</p>
+                </div>
+              )}
 
               {submitStatus === 'success' && (
                 <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-lg">
