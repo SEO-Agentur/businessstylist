@@ -14,6 +14,7 @@ export async function createCheckoutSession(
   const session = await stripe.checkout.sessions.create({
     mode: product.type === 'SUBSCRIPTION' ? 'subscription' : 'payment',
     payment_method_types: ['card'],
+    allow_promotion_codes: true,
     line_items: [
       {
         price: product.stripePriceId,

@@ -121,7 +121,9 @@ export async function POST(request: Request) {
       cancel_url: `${origin}/checkout`,
       customer_email: customerInfo.email,
       ...(session?.user?.id ? { client_reference_id: session.user.id } : {}),
-      ...(discountsParam ? { discounts: discountsParam } : {}),
+      ...(discountsParam
+        ? { discounts: discountsParam }
+        : { allow_promotion_codes: true }),
       metadata: {
         ...(session?.user?.id ? { userId: session.user.id } : {}),
         customerName: customerInfo.name || '',
