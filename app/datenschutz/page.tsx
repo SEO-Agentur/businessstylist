@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Datenschutzerklärung | Businessstylist',
   robots: { index: true, follow: true },
+  alternates: { canonical: '/datenschutz' },
 };
 
 export default function DatenschutzPage() {

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Impressum | Businessstylist',
   robots: { index: true, follow: true },
+  alternates: { canonical: '/impressum' },
 };
 
 export default function ImpressumPage() {

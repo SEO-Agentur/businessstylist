@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Widerrufsrecht | Businessstylist',
   robots: { index: true, follow: true },
+  alternates: { canonical: '/widerruf' },
 };
 
 export default function WiderrufPage() {
