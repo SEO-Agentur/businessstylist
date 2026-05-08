@@ -9,7 +9,7 @@ const CHECKLIST_GROUP_ENV: Record<string, string> = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, checklist } = await request.json();
+    const { email, checklists } = await request.json();
 
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       return NextResponse.json(
@@ -18,18 +18,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const envKey = CHECKLIST_GROUP_ENV[checklist];
-    if (!envKey) {
+    if (!Array.isArray(checklists) || checklists.length === 0) {
       return NextResponse.json(
-        { error: 'Unbekannte Checkliste.' },
+        { error: 'Bitte wähle mindestens eine Checkliste aus.' },
         { status: 400 }
       );
     }
 
-    const groupId = process.env[envKey];
+    const groupIds: string[] = [];
+    const validSlugs: string[] = [];
+    for (const slug of checklists) {
+      const envKey = CHECKLIST_GROUP_ENV[slug];
+      if (!envKey) continue;
+      const id = process.env[envKey];
+      if (id) {
+        groupIds.push(id);
+        validSlugs.push(slug);
+      }
+    }
+
     const apiKey = process.env.MAILERLITE_API_KEY;
-    if (!groupId || !apiKey) {
-      console.error('[checklist] missing config', { envKey, hasApiKey: !!apiKey });
+    if (!apiKey || groupIds.length === 0) {
+      console.error('[checklist] missing config', { hasApiKey: !!apiKey, groups: groupIds.length });
       return NextResponse.json(
         { error: 'Der Versand ist aktuell nicht verfügbar. Bitte versuche es später erneut.' },
         { status: 500 }
@@ -47,8 +57,8 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         email: normalizedEmail,
-        groups: [groupId],
-        status: 'active',
+        groups: groupIds,
+        status: 'unconfirmed',
       }),
     });
 
@@ -64,7 +74,7 @@ export async function POST(request: NextRequest) {
     try {
       const admin = getSupabaseAdmin();
       await admin.from('newsletter_subscribers').upsert(
-        { email: normalizedEmail, source: checklist },
+        { email: normalizedEmail, source: `checklist:${validSlugs.join(',')}` },
         { onConflict: 'email' }
       );
     } catch (err) {
@@ -73,7 +83,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Perfekt! Prüfe dein E-Mail-Postfach – deine Checkliste ist unterwegs.',
+      message:
+        'Perfekt! Wir haben dir eine Bestätigungs-E-Mail gesendet. Bitte bestätige deine Anmeldung, um die Checklisten zu erhalten.',
     });
   } catch (error: any) {
     console.error('[checklist] error:', error);
