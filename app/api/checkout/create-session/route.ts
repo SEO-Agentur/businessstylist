@@ -120,6 +120,7 @@ export async function POST(request: Request) {
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/checkout`,
       customer_email: customerInfo.email,
+      invoice_creation: { enabled: true },
       ...(session?.user?.id ? { client_reference_id: session.user.id } : {}),
       ...(discountsParam
         ? { discounts: discountsParam }
