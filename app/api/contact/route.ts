@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { supabase } from '@/lib/db/supabase';
+import { getSupabaseAdmin } from '@/lib/db/supabase';
 import { sendEmail } from '@/lib/email/service';
 
 const RECIPIENT = process.env.CONTACT_RECIPIENT_EMAIL || 'info@businessstylist.de';
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     const ip = hdrs.get('x-forwarded-for')?.split(',')[0].trim() || '';
     const userAgent = hdrs.get('user-agent') || '';
 
-    const { error: dbError } = await supabase.from('contact_messages').insert({
+    const { error: dbError } = await getSupabaseAdmin().from('contact_messages').insert({
       name,
       email,
       phone,
