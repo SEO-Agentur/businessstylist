@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/auth-options';
 import { stripe } from '@/lib/stripe/client';
-import { supabase } from '@/lib/db/supabase';
+import { supabase, getSupabaseAdmin } from '@/lib/db/supabase';
+import { compare, hash } from 'bcryptjs';
+import { randomBytes, createHash } from 'crypto';
 
 interface DiscountRow {
   code: string;
@@ -54,7 +56,7 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    const { items, customerInfo, discountCode } = await request.json();
+    const { items, customerInfo, discountCode, authAction, authPassword } = await request.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json(
@@ -68,6 +70,73 @@ export async function POST(request: Request) {
         { error: 'E-Mail-Adresse ist erforderlich' },
         { status: 400 }
       );
+    }
+
+    const normalizedEmail = String(customerInfo.email).trim().toLowerCase();
+    const admin = getSupabaseAdmin();
+    let checkoutUserId: string | null = session?.user?.id || null;
+
+    if (!checkoutUserId) {
+      const { data: existingUser } = await admin
+        .from('users')
+        .select('id, password')
+        .ilike('email', normalizedEmail)
+        .maybeSingle();
+
+      if (existingUser) {
+        if (existingUser.password) {
+          if (authAction === 'login') {
+            if (!authPassword) {
+              return NextResponse.json({ error: 'Passwort erforderlich', code: 'password_required' }, { status: 400 });
+            }
+            const ok = await compare(String(authPassword), existingUser.password);
+            if (!ok) {
+              return NextResponse.json({ error: 'Ungueltige Anmeldedaten', code: 'invalid_password' }, { status: 400 });
+            }
+            checkoutUserId = existingUser.id;
+          } else {
+            return NextResponse.json(
+              { error: 'Fuer diese E-Mail existiert bereits ein Konto. Bitte melde Dich an.', code: 'password_required' },
+              { status: 400 }
+            );
+          }
+        } else {
+          if (authAction === 'set_password' && authPassword) {
+            if (String(authPassword).length < 6) {
+              return NextResponse.json({ error: 'Passwort muss mindestens 6 Zeichen lang sein' }, { status: 400 });
+            }
+            const hashed = await hash(String(authPassword), 12);
+            await admin
+              .from('users')
+              .update({ password: hashed, updated_at: new Date().toISOString() })
+              .eq('id', existingUser.id);
+          }
+          checkoutUserId = existingUser.id;
+        }
+      } else {
+        const newRow: Record<string, unknown> = {
+          email: normalizedEmail,
+          name: customerInfo.name || '',
+          phone: customerInfo.phone || null,
+          role: 'USER',
+        };
+        if (authAction === 'set_password' && authPassword) {
+          if (String(authPassword).length < 6) {
+            return NextResponse.json({ error: 'Passwort muss mindestens 6 Zeichen lang sein' }, { status: 400 });
+          }
+          newRow.password = await hash(String(authPassword), 12);
+        }
+        const { data: createdUser, error: createErr } = await admin
+          .from('users')
+          .insert(newRow)
+          .select('id')
+          .maybeSingle();
+        if (createErr) {
+          console.error('[checkout] user create failed:', createErr);
+        } else if (createdUser) {
+          checkoutUserId = createdUser.id;
+        }
+      }
     }
 
     const lineItems = items.map((item: any) => ({
@@ -113,20 +182,40 @@ export async function POST(request: Request) {
       process.env.NEXT_PUBLIC_APP_URL ||
       'https://businessstylist.de';
 
+    let loginToken: string | null = null;
+    if (checkoutUserId && !session?.user?.id) {
+      loginToken = randomBytes(32).toString('hex');
+      const tokenHash = createHash('sha256').update(loginToken).digest('hex');
+      const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+      const { error: tokenErr } = await admin.from('auth_login_tokens').insert({
+        user_id: checkoutUserId,
+        token_hash: tokenHash,
+        expires_at: expiresAt,
+      });
+      if (tokenErr) {
+        console.error('[checkout] login token insert failed:', tokenErr);
+        loginToken = null;
+      }
+    }
+
+    const successUrl = loginToken
+      ? `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&login_token=${loginToken}`
+      : `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card', 'paypal'],
       line_items: lineItems,
-      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: successUrl,
       cancel_url: `${origin}/checkout`,
       customer_email: customerInfo.email,
       invoice_creation: { enabled: true },
-      ...(session?.user?.id ? { client_reference_id: session.user.id } : {}),
+      ...(checkoutUserId ? { client_reference_id: checkoutUserId } : {}),
       ...(discountsParam
         ? { discounts: discountsParam }
         : { allow_promotion_codes: true }),
       metadata: {
-        ...(session?.user?.id ? { userId: session.user.id } : {}),
+        ...(checkoutUserId ? { userId: checkoutUserId } : {}),
         customerName: customerInfo.name || '',
         customerPhone: customerInfo.phone || '',
         customerAddress: customerInfo.address || '',

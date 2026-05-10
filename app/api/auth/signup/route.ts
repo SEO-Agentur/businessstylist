@@ -67,6 +67,18 @@ export async function POST(request: Request) {
       replyTo: 'info@businessstylist.de',
     }).catch((err) => console.error('Welcome email failed:', err));
 
+    sendEmail({
+      to: 'info@businessstylist.de',
+      subject: `Neuer Nutzer registriert: ${user.email}`,
+      html: `<p>Ein neuer Nutzer hat sich registriert:</p>
+        <ul>
+          <li><strong>Name:</strong> ${user.name || '-'}</li>
+          <li><strong>E-Mail:</strong> ${user.email}</li>
+          <li><strong>Zeitpunkt:</strong> ${new Date().toLocaleString('de-DE')}</li>
+        </ul>`,
+      text: `Neuer Nutzer registriert\n\nName: ${user.name || '-'}\nE-Mail: ${user.email}\nZeitpunkt: ${new Date().toLocaleString('de-DE')}`,
+    }).catch((err) => console.error('Admin notification failed:', err));
+
     return NextResponse.json(
       {
         message: 'Registrierung erfolgreich',

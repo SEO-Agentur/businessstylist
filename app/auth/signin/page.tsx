@@ -103,6 +103,15 @@ export default function SignInPage() {
           >
             {isLoading ? 'Anmelden...' : 'Anmelden'}
           </Button>
+
+          <div className="text-center">
+            <Link
+              href="/auth/forgot-password"
+              className="text-sm text-brand-secondary hover:text-brand-accent hover:underline"
+            >
+              Passwort vergessen?
+            </Link>
+          </div>
         </form>
       </div>
     </div>

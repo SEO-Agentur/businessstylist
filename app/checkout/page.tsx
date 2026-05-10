@@ -1,14 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { useCart } from '@/lib/context/CartContext';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Input from '@/components/forms/Input';
 import { formatPrice } from '@/lib/utils/format';
 
+type AuthMode = 'unknown' | 'guest' | 'existing_with_password' | 'existing_no_password' | 'new';
+
 export default function CheckoutPage() {
+  const { data: session } = useSession();
   const { items, removeFromCart, updateQuantity, clearCart, totalPrice, discount, discountAmount, clearDiscount } = useCart();
   const [formData, setFormData] = useState({
     name: '',
@@ -22,6 +26,37 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [widerrufsConsent, setWiderrufsConsent] = useState(false);
+  const [authMode, setAuthMode] = useState<AuthMode>('unknown');
+  const [authPassword, setAuthPassword] = useState('');
+  const [wantsAccount, setWantsAccount] = useState(true);
+  const [authError, setAuthError] = useState('');
+  const lastCheckedEmail = useRef('');
+
+  useEffect(() => {
+    if (session?.user) {
+      setAuthMode('guest');
+      return;
+    }
+    const email = formData.email.trim().toLowerCase();
+    if (!email || !/.+@.+\..+/.test(email)) {
+      setAuthMode('unknown');
+      return;
+    }
+    if (email === lastCheckedEmail.current) return;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+        lastCheckedEmail.current = email;
+        if (data.exists && data.hasPassword) setAuthMode('existing_with_password');
+        else if (data.exists && !data.hasPassword) setAuthMode('existing_no_password');
+        else setAuthMode('new');
+      } catch {
+        setAuthMode('new');
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [formData.email, session]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -32,7 +67,31 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthError('');
     setIsSubmitting(true);
+
+    let authAction: 'login' | 'set_password' | undefined;
+    let passwordForRequest: string | undefined;
+
+    if (!session?.user) {
+      if (authMode === 'existing_with_password') {
+        if (!authPassword) {
+          setAuthError('Bitte gib Dein Passwort ein');
+          setIsSubmitting(false);
+          return;
+        }
+        authAction = 'login';
+        passwordForRequest = authPassword;
+      } else if ((authMode === 'new' || authMode === 'existing_no_password') && wantsAccount && authPassword) {
+        if (authPassword.length < 6) {
+          setAuthError('Passwort muss mindestens 6 Zeichen lang sein');
+          setIsSubmitting(false);
+          return;
+        }
+        authAction = 'set_password';
+        passwordForRequest = authPassword;
+      }
+    }
 
     try {
       const response = await fetch('/api/checkout/create-session', {
@@ -44,12 +103,20 @@ export default function CheckoutPage() {
           items: items,
           customerInfo: formData,
           discountCode: discount?.code || null,
+          authAction,
+          authPassword: passwordForRequest,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
+        if (data?.code === 'invalid_password' || data?.code === 'password_required') {
+          setAuthMode('existing_with_password');
+          setAuthError(data.error || 'Bitte gib Dein Passwort ein');
+          setIsSubmitting(false);
+          return;
+        }
         throw new Error(data.error || 'Fehler beim Erstellen der Checkout-Session');
       }
 
@@ -260,6 +327,61 @@ export default function CheckoutPage() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all resize-none"
                     />
                   </div>
+
+                  {!session?.user && (authMode === 'existing_with_password' || authMode === 'existing_no_password' || authMode === 'new') && (
+                    <div className="p-4 border border-brand-accent/30 rounded-lg bg-brand-light/40 space-y-4">
+                      {authMode === 'existing_with_password' ? (
+                        <>
+                          <div>
+                            <h3 className="font-semibold text-brand-primary mb-1">Willkommen zurueck</h3>
+                            <p className="text-sm text-brand-secondary">
+                              Fuer diese E-Mail existiert bereits ein Konto. Bitte melde Dich an, um nach dem Kauf direkt ins Dashboard zu gelangen.
+                            </p>
+                          </div>
+                          <Input
+                            label="Passwort"
+                            type="password"
+                            value={authPassword}
+                            onChange={(e) => setAuthPassword(e.target.value)}
+                            required
+                            autoComplete="current-password"
+                          />
+                          <p className="text-xs text-brand-secondary">
+                            <Link href="/auth/forgot-password" className="underline hover:text-brand-accent">
+                              Passwort vergessen?
+                            </Link>
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <label className="flex items-start gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={wantsAccount}
+                              onChange={(e) => setWantsAccount(e.target.checked)}
+                              className="mt-1 w-4 h-4 flex-shrink-0 accent-brand-accent"
+                            />
+                            <span className="text-sm text-brand-secondary">
+                              Konto erstellen, damit ich nach dem Kauf direkt auf mein Dashboard zugreifen und spaeter wieder einloggen kann (empfohlen).
+                            </span>
+                          </label>
+                          {wantsAccount && (
+                            <Input
+                              label="Passwort festlegen (min. 6 Zeichen)"
+                              type="password"
+                              value={authPassword}
+                              onChange={(e) => setAuthPassword(e.target.value)}
+                              autoComplete="new-password"
+                              placeholder="Mindestens 6 Zeichen"
+                            />
+                          )}
+                        </>
+                      )}
+                      {authError && (
+                        <p className="text-sm text-red-700">{authError}</p>
+                      )}
+                    </div>
+                  )}
 
                   <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
                     <input
