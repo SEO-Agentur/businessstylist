@@ -36,32 +36,42 @@ export async function POST(request: NextRequest) {
       process.env.NEXT_PUBLIC_APP_URL ||
       'https://businessstylist.de';
 
-    const checkoutSession = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card', 'paypal'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'eur',
-            product_data: {
-              name: 'Capsule Wardrobe Plan',
-              description: 'Individueller Capsule-Wardrobe-Plan von Stylistin Anika',
+    let checkoutSession;
+    try {
+      checkoutSession = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        payment_method_types: ['card', 'paypal'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'eur',
+              product_data: {
+                name: 'Capsule Wardrobe Plan',
+                description: 'Individueller Capsule-Wardrobe-Plan von Stylistin Anika',
+              },
+              unit_amount: 7900,
             },
-            unit_amount: 7900,
+            quantity: 1,
           },
-          quantity: 1,
+        ],
+        customer_email: normalizedEmail,
+        success_url: `${origin}/capsule-wardrobe/fragebogen?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/capsule-wardrobe`,
+        metadata: {
+          orderId: order.id,
+          productType: 'capsule-wardrobe',
+          customerName: name.trim(),
+          customerEmail: normalizedEmail,
         },
-      ],
-      customer_email: normalizedEmail,
-      success_url: `${origin}/capsule-wardrobe/fragebogen?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/capsule-wardrobe`,
-      metadata: {
-        orderId: order.id,
-        productType: 'capsule-wardrobe',
-        customerName: name.trim(),
-        customerEmail: normalizedEmail,
-      },
-    });
+      });
+    } catch (stripeErr: any) {
+      console.error('[capsule] Stripe session creation failed:', stripeErr);
+      const msg = stripeErr?.raw?.message || stripeErr?.message || 'Zahlungsanbieter nicht erreichbar';
+      return NextResponse.json(
+        { error: `Stripe-Fehler: ${msg}` },
+        { status: 502 }
+      );
+    }
 
     await supabase
       .from('capsule_wardrobe_orders')

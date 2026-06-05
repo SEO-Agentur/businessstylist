@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import type { Session } from 'next-auth';
-import { authOptions } from '@/lib/auth/auth-options';
 import { stripe } from '@/lib/stripe/client';
 import { supabase, getSupabaseAdmin } from '@/lib/db/supabase';
 import { compare, hash } from 'bcryptjs';
@@ -53,14 +50,20 @@ function computeDiscountEuros(
   return Math.round(applicableTotal * (Number(discount.discount_percent) / 100) * 100) / 100;
 }
 
+async function getSessionUserId(): Promise<string | null> {
+  try {
+    const { getServerSession } = await import('next-auth/next');
+    const { authOptions } = await import('@/lib/auth/auth-options');
+    const session = await getServerSession(authOptions);
+    return session?.user?.id || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(request: Request) {
   try {
-    let session: Session | null = null;
-    try {
-      session = await getServerSession(authOptions);
-    } catch (e) {
-      console.warn('[checkout] getServerSession failed (non-fatal):', (e as Error).message);
-    }
+    const sessionUserId = await getSessionUserId();
 
     const { items, customerInfo, discountCode, authAction, authPassword } = await request.json();
 
@@ -85,7 +88,7 @@ export async function POST(request: Request) {
     } catch (e) {
       console.warn('[checkout] getSupabaseAdmin failed (non-fatal):', (e as Error).message);
     }
-    let checkoutUserId: string | null = session?.user?.id || null;
+    let checkoutUserId: string | null = sessionUserId;
 
     if (!checkoutUserId && admin) {
       try {
@@ -126,27 +129,27 @@ export async function POST(request: Request) {
             checkoutUserId = existingUser.id;
           }
         } else {
-          const newRow: Record<string, unknown> = {
-            email: normalizedEmail,
-            name: customerInfo.name || '',
-            phone: customerInfo.phone || null,
-            role: 'USER',
-          };
           if (authAction === 'set_password' && authPassword) {
             if (String(authPassword).length < 6) {
               return NextResponse.json({ error: 'Passwort muss mindestens 6 Zeichen lang sein' }, { status: 400 });
             }
-            newRow.password = await hash(String(authPassword), 12);
-          }
-          const { data: createdUser, error: createErr } = await admin
-            .from('users')
-            .insert(newRow)
-            .select('id')
-            .maybeSingle();
-          if (createErr) {
-            console.error('[checkout] user create failed:', createErr);
-          } else if (createdUser) {
-            checkoutUserId = createdUser.id;
+            const newRow: Record<string, unknown> = {
+              email: normalizedEmail,
+              name: customerInfo.name || '',
+              phone: customerInfo.phone || null,
+              role: 'USER',
+              password: await hash(String(authPassword), 12),
+            };
+            const { data: createdUser, error: createErr } = await admin
+              .from('users')
+              .insert(newRow)
+              .select('id')
+              .maybeSingle();
+            if (createErr) {
+              console.error('[checkout] user create failed:', createErr);
+            } else if (createdUser) {
+              checkoutUserId = createdUser.id;
+            }
           }
         }
       } catch (e) {
@@ -198,7 +201,7 @@ export async function POST(request: Request) {
       'https://businessstylist.de';
 
     let loginToken: string | null = null;
-    if (checkoutUserId && !session?.user?.id && admin) {
+    if (checkoutUserId && !sessionUserId && admin) {
       loginToken = randomBytes(32).toString('hex');
       const tokenHash = createHash('sha256').update(loginToken).digest('hex');
       const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
@@ -217,31 +220,41 @@ export async function POST(request: Request) {
       ? `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&login_token=${loginToken}`
       : `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
 
-    const checkoutSession = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card', 'paypal'],
-      line_items: lineItems,
-      success_url: successUrl,
-      cancel_url: `${origin}/checkout`,
-      customer_email: customerInfo.email,
-      invoice_creation: { enabled: true },
-      ...(checkoutUserId ? { client_reference_id: checkoutUserId } : {}),
-      ...(discountsParam
-        ? { discounts: discountsParam }
-        : { allow_promotion_codes: true }),
-      metadata: {
-        ...(checkoutUserId ? { userId: checkoutUserId } : {}),
-        customerName: customerInfo.name || '',
-        customerPhone: customerInfo.phone || '',
-        customerAddress: customerInfo.address || '',
-        customerCity: customerInfo.city || '',
-        customerPostalCode: customerInfo.postalCode || '',
-        notes: customerInfo.notes || '',
-        ...(discountRow && discountAmountEuros > 0
-          ? { discountCode: discountRow.code, discountAmountCents: String(Math.round(discountAmountEuros * 100)) }
-          : {}),
-      },
-    });
+    let checkoutSession;
+    try {
+      checkoutSession = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        payment_method_types: ['card', 'paypal'],
+        line_items: lineItems,
+        success_url: successUrl,
+        cancel_url: `${origin}/checkout`,
+        customer_email: customerInfo.email,
+        invoice_creation: { enabled: true },
+        ...(checkoutUserId ? { client_reference_id: checkoutUserId } : {}),
+        ...(discountsParam
+          ? { discounts: discountsParam }
+          : { allow_promotion_codes: true }),
+        metadata: {
+          ...(checkoutUserId ? { userId: checkoutUserId } : {}),
+          customerName: customerInfo.name || '',
+          customerPhone: customerInfo.phone || '',
+          customerAddress: customerInfo.address || '',
+          customerCity: customerInfo.city || '',
+          customerPostalCode: customerInfo.postalCode || '',
+          notes: customerInfo.notes || '',
+          ...(discountRow && discountAmountEuros > 0
+            ? { discountCode: discountRow.code, discountAmountCents: String(Math.round(discountAmountEuros * 100)) }
+            : {}),
+        },
+      });
+    } catch (stripeErr: any) {
+      console.error('[checkout] Stripe session creation failed:', stripeErr);
+      const msg = stripeErr?.raw?.message || stripeErr?.message || 'Zahlungsanbieter nicht erreichbar';
+      return NextResponse.json(
+        { error: `Fehler beim Erstellen der Checkout-Session: ${msg}` },
+        { status: 502 }
+      );
+    }
 
     if (discountRow && discountAmountEuros > 0) {
       const { error: redemptionError } = await supabase
@@ -256,10 +269,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ sessionId: checkoutSession.id, url: checkoutSession.url });
   } catch (error: any) {
     console.error('Checkout error:', error);
-    const message =
-      error?.raw?.message ||
-      error?.message ||
-      'Fehler beim Erstellen der Checkout-Session';
+    const message = error?.message || 'Unbekannter Fehler';
     return NextResponse.json(
       { error: `Fehler beim Erstellen der Checkout-Session: ${message}` },
       { status: 500 }
