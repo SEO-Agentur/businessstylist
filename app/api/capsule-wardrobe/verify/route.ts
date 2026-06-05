@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { supabase } from '@/lib/db/supabase';
 
 export async function GET(request: NextRequest) {
   const sessionId = request.nextUrl.searchParams.get('session_id');
@@ -8,8 +8,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ valid: false }, { status: 400 });
   }
 
-  const admin = getSupabaseAdmin();
-  const { data: order } = await admin
+  const { data: order } = await supabase
     .from('capsule_wardrobe_orders')
     .select('id, name, email, status')
     .eq('stripe_session_id', sessionId)

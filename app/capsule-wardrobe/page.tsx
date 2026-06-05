@@ -18,7 +18,7 @@ export default function CapsuleWardrobePage() {
             Individuell von Stylistin Anika erstellt
           </span>
           <h1 className="text-display-1 font-serif mb-6 text-brand-primary">
-            Capsule Wardrobe erstellen: Weniger ist mehr fuer deinen minimalistischen Kleiderschrank
+            Deine individuelle Capsule Wardrobe
           </h1>
           <p className="text-body-lg text-brand-secondary max-w-2xl mx-auto mb-8 leading-relaxed">
             Du traegst immer wieder die gleichen Outfits und hast trotzdem das Gefuehl, nichts anzuziehen?

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { supabase } from '@/lib/db/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,9 +12,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Fragebogen-Daten fehlen.' }, { status: 400 });
     }
 
-    const admin = getSupabaseAdmin();
-
-    const { data: order } = await admin
+    const { data: order } = await supabase
       .from('capsule_wardrobe_orders')
       .select('id, status')
       .eq('stripe_session_id', session_id)
@@ -28,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Fragebogen wurde bereits ausgefuellt.' }, { status: 409 });
     }
 
-    const { error: updateErr } = await admin
+    const { error: updateErr } = await supabase
       .from('capsule_wardrobe_orders')
       .update({
         answers,

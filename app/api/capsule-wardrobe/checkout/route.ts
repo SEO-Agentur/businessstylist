@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe/client';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { supabase } from '@/lib/db/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,9 +14,8 @@ export async function POST(request: NextRequest) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const admin = getSupabaseAdmin();
 
-    const { data: order, error: insertErr } = await admin
+    const { data: order, error: insertErr } = await supabase
       .from('capsule_wardrobe_orders')
       .insert({
         email: normalizedEmail,
@@ -64,7 +63,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await admin
+    await supabase
       .from('capsule_wardrobe_orders')
       .update({ stripe_session_id: checkoutSession.id })
       .eq('id', order.id);

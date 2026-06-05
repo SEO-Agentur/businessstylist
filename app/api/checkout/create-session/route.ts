@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
+import type { Session } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { stripe } from '@/lib/stripe/client';
 import { supabase, getSupabaseAdmin } from '@/lib/db/supabase';
@@ -54,7 +55,12 @@ function computeDiscountEuros(
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    let session: Session | null = null;
+    try {
+      session = await getServerSession(authOptions);
+    } catch (e) {
+      console.warn('[checkout] getServerSession failed (non-fatal):', (e as Error).message);
+    }
 
     const { items, customerInfo, discountCode, authAction, authPassword } = await request.json();
 
@@ -73,69 +79,78 @@ export async function POST(request: Request) {
     }
 
     const normalizedEmail = String(customerInfo.email).trim().toLowerCase();
-    const admin = getSupabaseAdmin();
+    let admin: ReturnType<typeof getSupabaseAdmin> | null = null;
+    try {
+      admin = getSupabaseAdmin();
+    } catch (e) {
+      console.warn('[checkout] getSupabaseAdmin failed (non-fatal):', (e as Error).message);
+    }
     let checkoutUserId: string | null = session?.user?.id || null;
 
-    if (!checkoutUserId) {
-      const { data: existingUser } = await admin
-        .from('users')
-        .select('id, password')
-        .ilike('email', normalizedEmail)
-        .maybeSingle();
+    if (!checkoutUserId && admin) {
+      try {
+        const { data: existingUser } = await admin
+          .from('users')
+          .select('id, password')
+          .ilike('email', normalizedEmail)
+          .maybeSingle();
 
-      if (existingUser) {
-        if (existingUser.password) {
-          if (authAction === 'login') {
-            if (!authPassword) {
-              return NextResponse.json({ error: 'Passwort erforderlich', code: 'password_required' }, { status: 400 });
+        if (existingUser) {
+          if (existingUser.password) {
+            if (authAction === 'login') {
+              if (!authPassword) {
+                return NextResponse.json({ error: 'Passwort erforderlich', code: 'password_required' }, { status: 400 });
+              }
+              const ok = await compare(String(authPassword), existingUser.password);
+              if (!ok) {
+                return NextResponse.json({ error: 'Ungueltige Anmeldedaten', code: 'invalid_password' }, { status: 400 });
+              }
+              checkoutUserId = existingUser.id;
+            } else {
+              return NextResponse.json(
+                { error: 'Fuer diese E-Mail existiert bereits ein Konto. Bitte melde Dich an.', code: 'password_required' },
+                { status: 400 }
+              );
             }
-            const ok = await compare(String(authPassword), existingUser.password);
-            if (!ok) {
-              return NextResponse.json({ error: 'Ungueltige Anmeldedaten', code: 'invalid_password' }, { status: 400 });
+          } else {
+            if (authAction === 'set_password' && authPassword) {
+              if (String(authPassword).length < 6) {
+                return NextResponse.json({ error: 'Passwort muss mindestens 6 Zeichen lang sein' }, { status: 400 });
+              }
+              const hashed = await hash(String(authPassword), 12);
+              await admin
+                .from('users')
+                .update({ password: hashed, updated_at: new Date().toISOString() })
+                .eq('id', existingUser.id);
             }
             checkoutUserId = existingUser.id;
-          } else {
-            return NextResponse.json(
-              { error: 'Fuer diese E-Mail existiert bereits ein Konto. Bitte melde Dich an.', code: 'password_required' },
-              { status: 400 }
-            );
           }
         } else {
+          const newRow: Record<string, unknown> = {
+            email: normalizedEmail,
+            name: customerInfo.name || '',
+            phone: customerInfo.phone || null,
+            role: 'USER',
+          };
           if (authAction === 'set_password' && authPassword) {
             if (String(authPassword).length < 6) {
               return NextResponse.json({ error: 'Passwort muss mindestens 6 Zeichen lang sein' }, { status: 400 });
             }
-            const hashed = await hash(String(authPassword), 12);
-            await admin
-              .from('users')
-              .update({ password: hashed, updated_at: new Date().toISOString() })
-              .eq('id', existingUser.id);
+            newRow.password = await hash(String(authPassword), 12);
           }
-          checkoutUserId = existingUser.id;
-        }
-      } else {
-        const newRow: Record<string, unknown> = {
-          email: normalizedEmail,
-          name: customerInfo.name || '',
-          phone: customerInfo.phone || null,
-          role: 'USER',
-        };
-        if (authAction === 'set_password' && authPassword) {
-          if (String(authPassword).length < 6) {
-            return NextResponse.json({ error: 'Passwort muss mindestens 6 Zeichen lang sein' }, { status: 400 });
+          const { data: createdUser, error: createErr } = await admin
+            .from('users')
+            .insert(newRow)
+            .select('id')
+            .maybeSingle();
+          if (createErr) {
+            console.error('[checkout] user create failed:', createErr);
+          } else if (createdUser) {
+            checkoutUserId = createdUser.id;
           }
-          newRow.password = await hash(String(authPassword), 12);
         }
-        const { data: createdUser, error: createErr } = await admin
-          .from('users')
-          .insert(newRow)
-          .select('id')
-          .maybeSingle();
-        if (createErr) {
-          console.error('[checkout] user create failed:', createErr);
-        } else if (createdUser) {
-          checkoutUserId = createdUser.id;
-        }
+      } catch (e) {
+        console.warn('[checkout] user lookup/create failed (non-fatal):', (e as Error).message);
       }
     }
 
@@ -183,7 +198,7 @@ export async function POST(request: Request) {
       'https://businessstylist.de';
 
     let loginToken: string | null = null;
-    if (checkoutUserId && !session?.user?.id) {
+    if (checkoutUserId && !session?.user?.id && admin) {
       loginToken = randomBytes(32).toString('hex');
       const tokenHash = createHash('sha256').update(loginToken).digest('hex');
       const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
