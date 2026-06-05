@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -10,6 +10,12 @@ type Phase = 'info' | 'questionnaire' | 'checkout' | 'submitting' | 'error';
 
 export default function CapsuleWardrobePage() {
   const [phase, setPhase] = useState<Phase>('info');
+
+  useEffect(() => {
+    if (window.location.hash === '#fragebogen') {
+      setPhase('questionnaire');
+    }
+  }, []);
   const [answers, setAnswers] = useState<CapsuleAnswers | null>(null);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -54,11 +60,17 @@ export default function CapsuleWardrobePage() {
           <h1 className="text-display-1 font-serif mb-4">
             Deine persoenliche Capsule Wardrobe
           </h1>
-          <p className="text-body-lg text-brand-secondary max-w-2xl mx-auto">
+          <p className="text-body-lg text-brand-secondary max-w-2xl mx-auto mb-6">
             Weniger Teile, mehr Stil. Anika erstellt dir auf Basis deiner Angaben
             einen individuellen Capsule-Wardrobe-Plan – abgestimmt auf deinen Alltag,
             deinen Stil und deine Figur.
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button size="lg" variant="accent" onClick={() => { setPhase('questionnaire'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+              Jetzt Fragebogen starten – 79,- EUR
+            </Button>
+            <span className="text-sm text-brand-secondary">Kein Abo. Einmalig.</span>
+          </div>
         </div>
       </section>
 
