@@ -164,7 +164,7 @@ export default function KleiderschrankCheckPage() {
             </div>
 
             <p className="text-sm mt-8 opacity-75">
-              90 Min Online-Call · Bestehende Teile neu stylen · Kein Kaufdruck · Passform-Tipps
+              Bestehende Teile neu stylen · Kein Kaufdruck · Passform-Tipps
             </p>
           </div>
         </div>

@@ -186,7 +186,7 @@ export default function StilberatungPage() {
                   Beliebteste Wahl
                 </span>
                 <h3 className="font-heading font-bold text-business-navy text-2xl mb-1">1:1 Stilberatung</h3>
-                <p className="text-brand-secondary text-sm mb-5">2 × 90 Minuten — persönlich &amp; effektiv</p>
+                <p className="text-brand-secondary text-sm mb-5">persönlich &amp; effektiv</p>
                 <div className="mb-1">
                   <span
                     className="text-5xl font-bold text-business-navy font-heading"
@@ -267,7 +267,7 @@ export default function StilberatungPage() {
             </div>
 
             <p className="text-gray-400 text-sm">
-              Zertifizierte Imageberatung · Online oder vor Ort · Sichere Bezahlung
+              Zertifizierte Imageberatung · einfach Online buchen · Sichere Bezahlung
             </p>
           </div>
         </div>
@@ -399,7 +399,7 @@ export default function StilberatungPage() {
               'Farb- und Stilberatung stärkt Deine Ausstrahlung und Dein Selbstbewusstsein',
               'Personal Shopping vermeidet Fehlkäufe und macht Deine Garderobe nachhaltig',
               'Styling-Know-how sorgt für stimmige Looks bei verschiedenen Anlässen',
-              'Online oder vor Ort: flexibel, professionell und wirksam',
+              'einfach Online buchen: flexibel, professionell und wirksam',
               'Klare Preise: 390 € Einzelberatung oder 1.290 € im Jahresabo',
             ].map((item) => (
               <div key={item} className="flex items-start gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-5">
@@ -474,7 +474,7 @@ export default function StilberatungPage() {
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-brand-light rounded-2xl p-8 flex flex-col">
               <h3 className="font-heading font-bold text-business-navy text-xl mb-1">Einzel-Stilberatung</h3>
-              <p className="text-brand-secondary text-sm mb-5">2 × 90 Minuten, inklusive Analyse &amp; Lookbook</p>
+              <p className="text-brand-secondary text-sm mb-5">inklusive Analyse &amp; Lookbook</p>
               <div className="mb-1">
                 <span className="text-4xl font-bold text-business-navy font-heading" itemProp="price" content="390">
                   390 €
