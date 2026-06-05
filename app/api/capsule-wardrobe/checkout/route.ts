@@ -4,16 +4,13 @@ import { getSupabaseAdmin } from '@/lib/db/supabase';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, name, answers } = await request.json();
+    const { email, name } = await request.json();
 
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       return NextResponse.json({ error: 'Bitte gib eine gueltige E-Mail-Adresse ein.' }, { status: 400 });
     }
     if (!name || typeof name !== 'string' || name.trim().length < 2) {
       return NextResponse.json({ error: 'Bitte gib deinen Namen ein.' }, { status: 400 });
-    }
-    if (!answers || typeof answers !== 'object') {
-      return NextResponse.json({ error: 'Fragebogen-Daten fehlen.' }, { status: 400 });
     }
 
     const normalizedEmail = email.trim().toLowerCase();
@@ -24,7 +21,7 @@ export async function POST(request: NextRequest) {
       .insert({
         email: normalizedEmail,
         name: name.trim(),
-        answers,
+        answers: {},
         status: 'pending',
       })
       .select('id')
@@ -57,7 +54,7 @@ export async function POST(request: NextRequest) {
         },
       ],
       customer_email: normalizedEmail,
-      success_url: `${origin}/capsule-wardrobe/erfolg?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/capsule-wardrobe/fragebogen?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/capsule-wardrobe`,
       metadata: {
         orderId: order.id,

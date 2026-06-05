@@ -146,6 +146,13 @@ export async function POST(request: Request) {
           console.error('[webhook] orders upsert failed:', upsertError);
         }
 
+        if (session.metadata?.productType === 'capsule-wardrobe' && session.metadata?.orderId) {
+          await supabase
+            .from('capsule_wardrobe_orders')
+            .update({ status: 'paid', updated_at: new Date().toISOString() })
+            .eq('id', session.metadata.orderId);
+        }
+
         if (session.metadata?.product === 'lookbook_2026') {
           const customerEmail = session.customer_details?.email || session.customer_email;
           if (customerEmail) {

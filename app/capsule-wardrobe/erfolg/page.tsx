@@ -25,8 +25,8 @@ export default function CapsuleWardrobeSuccessPage() {
           <h1 className="text-h1 font-serif mb-4">Vielen Dank!</h1>
 
           <p className="text-brand-secondary text-lg leading-relaxed mb-6">
-            Deine Bestellung ist eingegangen. Anika erstellt jetzt deinen individuellen
-            Capsule-Wardrobe-Plan auf Basis deiner Angaben. Du erhaeltst ihn innerhalb
+            Deine Angaben sind eingegangen. Anika erstellt jetzt deinen individuellen
+            Capsule-Wardrobe-Plan auf Basis deines Fragebogens. Du erhaeltst ihn innerhalb
             von 3-5 Werktagen per E-Mail.
           </p>
 
@@ -35,7 +35,7 @@ export default function CapsuleWardrobeSuccessPage() {
             <ul className="space-y-2 text-sm text-brand-secondary">
               <li className="flex items-start gap-2">
                 <span className="text-brand-accent font-bold mt-0.5">1.</span>
-                Anika sichtet deine Angaben und erstellt deinen persoenlichen Plan.
+                Anika hat deine Zahlung und deinen Fragebogen erhalten.
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-brand-accent font-bold mt-0.5">2.</span>

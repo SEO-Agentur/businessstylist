@@ -77,7 +77,7 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/capsule-wardrobe#fragebogen">
+                <Link href="/capsule-wardrobe#bestellen">
                   <Button variant="accent" size="lg">
                     Capsule Wardrobe fuer 79,- EUR starten
                   </Button>

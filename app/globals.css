@@ -92,6 +92,26 @@
   .link-underline {
     @apply underline decoration-brand-accent decoration-2 underline-offset-4 hover:decoration-brand-primary transition-colors;
   }
+
+  .prose-custom h2 {
+    @apply text-h2 font-serif mt-12 mb-4;
+  }
+
+  .prose-custom h3 {
+    @apply text-h3 font-serif mt-8 mb-3;
+  }
+
+  .prose-custom p {
+    @apply text-brand-secondary leading-relaxed mb-4;
+  }
+
+  .prose-custom ul {
+    @apply list-disc list-inside space-y-2 text-brand-secondary mb-6;
+  }
+
+  .prose-custom li {
+    @apply leading-relaxed;
+  }
 }
 
 @layer utilities {

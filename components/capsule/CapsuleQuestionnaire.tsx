@@ -360,7 +360,7 @@ export default function CapsuleQuestionnaire({ onComplete }: Props) {
           disabled={!canProceed()}
           size="lg"
         >
-          {step === totalSteps - 1 ? 'Weiter zur Bestellung' : 'Weiter'}
+          {step === totalSteps - 1 ? 'Fragebogen absenden' : 'Weiter'}
         </Button>
       </div>
     </div>
