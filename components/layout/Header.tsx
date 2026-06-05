@@ -20,6 +20,7 @@ export default function Header() {
     { label: 'Stilberatung', href: '/stilberatung' },
     { label: 'Farbberatung', href: '/farbtyp-beratung' },
     { label: 'Kleiderschrank Check', href: '/kleiderschrank-check' },
+    { label: 'Capsule Wardrobe', href: '/capsule-wardrobe' },
     { label: 'Dresscode Playbook', href: '/dresscode-playbook' },
   ];
 
