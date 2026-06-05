@@ -22,6 +22,17 @@ export default function ShopPage() {
       description: 'Finde mit wenigen Klicks deinen Stiltyp: eine erste Orientierung für dein authentisches Business-Outfit.',
       type: 'Kostenlos',
       features: ['Typenanalyse nach Kibbe', 'Erste Stilimpulse', 'Orientierungshilfe', 'E-Mail-Auswertung'],
+      directLink: true,
+    },
+    {
+      id: 'capsule-wardrobe',
+      name: 'Capsule Wardrobe',
+      slug: '/capsule-wardrobe',
+      price: 79,
+      description: 'Anika erstellt dir einen individuellen Capsule-Wardrobe-Plan – abgestimmt auf deinen Alltag, Stil und deine Figur.',
+      type: 'Individueller Plan',
+      features: ['Persoenlich von Anika erstellt', 'Abgestimmte Farbpalette', 'Kombinationsvorschlaege', 'Markenempfehlungen'],
+      directLink: true,
     },
     {
       id: 'kleiderschrank-check',
@@ -46,9 +57,9 @@ export default function ShopPage() {
       name: 'Stilberatung Jahresabo',
       slug: '/stilberatung',
       price: 1290,
-      description: 'Dein Stil-System: Initialanalyse + Kleiderschrank-Check + monatliches Lookbook & persönlicher Shop',
+      description: 'Dein Stil-System: Initialanalyse + Kleiderschrank-Check + monatliches Lookbook & persoenlicher Shop',
       type: 'Jahresabo',
-      features: ['alle Initialanalysen', 'Kleiderschrank-Check', 'monatliches Lookbook', 'persönlicher Shop'],
+      features: ['alle Initialanalysen', 'Kleiderschrank-Check', 'monatliches Lookbook', 'persoenlicher Shop'],
     },
   ];
 
@@ -212,7 +223,7 @@ export default function ShopPage() {
                 </ul>
 
                 <div className="space-y-3 mt-auto">
-                  {product.price > 0 && (
+                  {product.price > 0 && !(product as any).directLink && (
                     <Button
                       onClick={() => handleAddToCart(product)}
                       variant="accent"
@@ -237,8 +248,8 @@ export default function ShopPage() {
                     </Button>
                   )}
                   <Link href={product.slug}>
-                    <Button variant={product.price === 0 ? 'primary' : 'secondary'} className="w-full">
-                      Mehr erfahren
+                    <Button variant={product.price === 0 || (product as any).directLink ? 'primary' : 'secondary'} className="w-full">
+                      {(product as any).directLink && product.price > 0 ? 'Jetzt starten' : 'Mehr erfahren'}
                     </Button>
                   </Link>
                 </div>
