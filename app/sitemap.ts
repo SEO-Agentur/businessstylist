@@ -2,39 +2,77 @@ import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://businessstylist.de';
+  const now = new Date().toISOString();
 
-  // Static routes
-  const staticRoutes = [
-    '',
-    '/stilberatung',
-    '/kibbe-body-type-test',
+  const highPriorityPages: MetadataRoute.Sitemap = [
+    {
+      url: baseUrl,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/stilberatung`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/kibbe-body-type-test`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/capsule-wardrobe`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/shop`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+  ];
+
+  const servicePages: MetadataRoute.Sitemap = [
     '/kleiderschrank-check',
+    '/farbtyp-beratung',
     '/dresscode-playbook',
+    '/business-outfit',
+    '/downloads',
+  ].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }));
+
+  const infoPages: MetadataRoute.Sitemap = [
     '/ueber-mich',
     '/kontakt',
     '/faq',
-    '/shop',
-    '/shop/ebook',
-    '/shop/stilberatung',
-    '/shop/stilberatung-abo',
-    '/shop/kleiderschrank-check',
-    '/business-outfit',
-    '/capsule-wardrobe',
-    '/farbtyp-beratung',
+  ].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
+
+  const legalPages: MetadataRoute.Sitemap = [
     '/impressum',
     '/datenschutz',
     '/agb',
     '/widerruf',
-  ];
-
-  const staticSitemap: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
+  ].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: route === '' ? 1 : route.startsWith('/shop') ? 0.9 : 0.8,
+    lastModified: now,
+    changeFrequency: 'yearly' as const,
+    priority: 0.3,
   }));
 
-  // Kibbe type guide pages
   const kibbeTypes = [
     'dramatic',
     'soft-dramatic',
@@ -53,10 +91,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const typeSitemap: MetadataRoute.Sitemap = kibbeTypes.map((type) => ({
     url: `${baseUrl}/stiltyp/${type}`,
-    lastModified: new Date(),
+    lastModified: now,
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
 
-  return [...staticSitemap, ...typeSitemap];
+  return [
+    ...highPriorityPages,
+    ...servicePages,
+    ...infoPages,
+    ...typeSitemap,
+    ...legalPages,
+  ];
 }
