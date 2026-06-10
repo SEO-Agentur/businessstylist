@@ -43,6 +43,12 @@ export default function ImpressumPage() {
             Triq il Marfa, MLH, 9065<br />
             Mellieha, Malta
           </p>
+          <p>
+            mit freundlicher Unterstützung von{' '}
+            <a href="https://seooptimierung.de" target="_blank" rel="noopener noreferrer">
+              SEOoptimierung.de
+            </a>
+          </p>
 
           <h2>Haftungsausschluss</h2>
 
