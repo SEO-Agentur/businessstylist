@@ -122,7 +122,8 @@ export default function Footer() {
         <div className="pt-8 border-t border-gray-700">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-300">
-              &copy; {currentYear} Businessstylist. Alle Rechte vorbehalten.
+              &copy; {currentYear} Businessstylist. Alle Rechte vorbehalten. Mit &#9825; von{' '}
+              <a href="https://seooptimierung.de" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline">SEOoptimierung.de</a> gemacht
             </p>
 
             <div className="flex items-center gap-4">
