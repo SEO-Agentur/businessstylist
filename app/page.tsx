@@ -59,16 +59,16 @@ export default function HomePage() {
             <div className="grid md:grid-cols-5 gap-8 items-center">
               <div className="md:col-span-3">
                 <span className="inline-block px-3 py-1 bg-brand-accent/10 text-brand-accent text-xs font-semibold uppercase tracking-wide rounded-full mb-3">
-                  Neu
+                  Signature Service
                 </span>
-                <h2 className="text-h2 font-serif mb-3">Deine persoenliche Capsule Wardrobe</h2>
+                <h2 className="text-h2 font-serif mb-3">Business Capsule Wardrobe</h2>
                 <p className="text-brand-secondary mb-4 leading-relaxed">
-                  Weniger Teile, mehr Stil: Anika erstellt dir auf Basis eines kurzen Fragebogens
-                  einen individuellen Capsule-Wardrobe-Plan – mit Farbpalette, Teile-Liste und
-                  Kombinationsvorschlaegen. Abgestimmt auf deinen Alltag, deinen Beruf und deine Figur.
+                  Die komplette Garderobenstrategie: Anika entwickelt deine individuelle Business-Garderobe
+                  mit 25–35 Teilen und 80–100 Outfitkombinationen. Saisonplanung, priorisierte Einkaufsliste
+                  und ein 90-Tage-Fahrplan – damit du nie wieder Fehlkaeufe machst.
                 </p>
                 <ul className="grid grid-cols-2 gap-2 mb-6 text-sm text-brand-secondary">
-                  {['Abgestimmte Farbpalette', 'Kombinationsvorschlaege', 'Markenempfehlungen', 'Persoenlich erstellt'].map((item) => (
+                  {['Komplette Business-Garderobe', '80–100 Outfitkombinationen', 'Saisonplanung', 'Einkauf nach Plan statt Gefuehl', 'Keine Fehlkaeufe mehr', 'Persoenlich von Anika erstellt'].map((item) => (
                     <li key={item} className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-brand-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -79,21 +79,21 @@ export default function HomePage() {
                 </ul>
                 <Link href="/capsule-wardrobe#bestellen">
                   <Button variant="accent" size="lg">
-                    Capsule Wardrobe fuer 79,- EUR starten
+                    Business Capsule Wardrobe fuer 299,- EUR starten
                   </Button>
                 </Link>
               </div>
               <div className="md:col-span-2">
                 <div className="bg-gradient-to-br from-business-cream to-white rounded-2xl p-8 text-center border border-business-cream shadow-soft">
                   <div className="mb-4">
-                    <span className="text-5xl font-bold text-brand-primary">79,-</span>
+                    <span className="text-5xl font-bold text-brand-primary">299,-</span>
                     <span className="text-brand-secondary ml-1">EUR</span>
                   </div>
                   <p className="text-sm text-brand-secondary mb-4">
                     Einmalig. Kein Abo.
                   </p>
                   <div className="space-y-2 text-left text-sm">
-                    {['8 kurze Fragen beantworten', 'Individueller Plan von Anika', 'Lieferung per E-Mail in 3-5 Tagen'].map((step) => (
+                    {['25–35 Teile, 80–100 Kombinationen', 'Saisonplanung & 90-Tage-Fahrplan', 'Priorisierte Einkaufsliste', 'Persoenlich von Anika erstellt'].map((step) => (
                       <div key={step} className="flex items-start gap-2 text-brand-secondary">
                         <svg className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />

@@ -36,15 +36,15 @@ export default function CapsuleCheckoutForm() {
   return (
     <div id="bestellen" className="scroll-mt-24">
       <div className="bg-white rounded-2xl shadow-xl border border-business-cream/80 p-8 md:p-10">
-        <h2 className="text-h2 font-serif mb-2">Jetzt deine Capsule Wardrobe bestellen</h2>
+        <h2 className="text-h2 font-serif mb-2">Business Capsule Wardrobe bestellen</h2>
         <p className="text-brand-secondary mb-6">
-          Gib deine Daten ein und schliesse die Bestellung ab. Nach der Zahlung fuellst du einen kurzen Fragebogen aus, damit Anika deinen Plan individuell erstellen kann.
+          Gib deine Daten ein und schliesse die Bestellung ab. Nach der Zahlung fuellst du einen ausfuehrlichen Fragebogen aus, damit Anika deine komplette Garderobenstrategie erstellen kann.
         </p>
 
         <div className="bg-brand-light/50 rounded-lg p-4 mb-6">
           <div className="flex justify-between items-center">
-            <span className="font-semibold text-brand-primary">Capsule Wardrobe Plan</span>
-            <span className="text-xl font-bold text-brand-accent">79,- EUR</span>
+            <span className="font-semibold text-brand-primary">Business Capsule Wardrobe</span>
+            <span className="text-xl font-bold text-brand-accent">299,- EUR</span>
           </div>
         </div>
 
@@ -84,7 +84,7 @@ export default function CapsuleCheckoutForm() {
             size="lg"
             disabled={submitting || !email.trim() || !name.trim()}
           >
-            {submitting ? 'Wird verarbeitet...' : 'Jetzt kostenpflichtig bestellen – 79,- EUR'}
+            {submitting ? 'Wird verarbeitet...' : 'Jetzt kostenpflichtig bestellen – 299,- EUR'}
           </Button>
 
           <p className="text-xs text-brand-secondary text-center leading-relaxed">

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe/client';
-import { supabase } from '@/lib/db/supabase';
+import { getSupabaseAdmin } from '@/lib/db/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,6 +14,8 @@ export async function POST(request: NextRequest) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+
+    const supabase = getSupabaseAdmin();
 
     const { data: order, error: insertErr } = await supabase
       .from('capsule_wardrobe_orders')
@@ -40,16 +42,16 @@ export async function POST(request: NextRequest) {
     try {
       checkoutSession = await stripe.checkout.sessions.create({
         mode: 'payment',
-        payment_method_types: ['card', 'paypal'],
+        payment_method_types: ['card'],
         line_items: [
           {
             price_data: {
               currency: 'eur',
               product_data: {
-                name: 'Capsule Wardrobe Plan',
-                description: 'Individueller Capsule-Wardrobe-Plan von Stylistin Anika',
+                name: 'Business Capsule Wardrobe',
+                description: 'Komplette Business-Garderobenstrategie von Stylistin Anika',
               },
-              unit_amount: 7900,
+              unit_amount: 29900,
             },
             quantity: 1,
           },

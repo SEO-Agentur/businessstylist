@@ -18,18 +18,17 @@ export default function CapsuleWardrobePage() {
             Individuell von Stylistin Anika erstellt
           </span>
           <h1 className="text-display-1 font-serif mb-6 text-brand-primary">
-            Deine individuelle Capsule Wardrobe
+            Deine individuelle Business Capsule Wardrobe
           </h1>
           <p className="text-body-lg text-brand-secondary max-w-2xl mx-auto mb-8 leading-relaxed">
-            Du traegst immer wieder die gleichen Outfits und hast trotzdem das Gefuehl, nichts anzuziehen?
-            Eine Capsule Wardrobe loest genau dieses Problem. Anika erstellt dir auf Basis deiner Angaben
-            einen individuellen Plan mit Essentials, Farbpalette und konkreten Kombinationsvorschlaegen –
-            fuer einen minimalistischen Kleiderschrank, der wirklich funktioniert.
+            Dein Signature-Service: Anika entwickelt deine komplette Business-Garderobenstrategie.
+            25–35 Teile, 80–100 Outfitkombinationen, Saisonplanung und eine priorisierte Einkaufsliste –
+            damit du nie wieder Fehlkaeufe machst. Einkauf nach Plan statt nach Gefuehl.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link href="#bestellen">
               <span className="inline-flex items-center justify-center px-8 py-4 bg-brand-accent text-white font-semibold rounded-xl hover:bg-brand-accent/90 transition-all duration-200 text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-                Jetzt Capsule Wardrobe bestellen – 79,- EUR
+                Jetzt Business Capsule Wardrobe bestellen – 299,- EUR
               </span>
             </Link>
             <span className="text-sm text-brand-secondary">Kein Abo. Einmalig.</span>
@@ -170,7 +169,7 @@ export default function CapsuleWardrobePage() {
           </p>
           <Link href="#bestellen">
             <span className="inline-flex items-center justify-center px-7 py-3.5 bg-brand-accent text-white font-semibold rounded-xl hover:bg-brand-accent/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5">
-              Capsule Wardrobe bestellen – 79,- EUR
+              Capsule Wardrobe bestellen – 299,- EUR
             </span>
           </Link>
         </div>

@@ -26,12 +26,12 @@ export default function ShopPage() {
     },
     {
       id: 'capsule-wardrobe',
-      name: 'Capsule Wardrobe',
+      name: 'Business Capsule Wardrobe',
       slug: '/capsule-wardrobe#bestellen',
-      price: 79,
-      description: 'Anika erstellt dir einen individuellen Capsule-Wardrobe-Plan – abgestimmt auf deinen Alltag, Stil und deine Figur.',
-      type: 'Individueller Plan',
-      features: ['Persoenlich von Anika erstellt', 'Abgestimmte Farbpalette', 'Kombinationsvorschlaege', 'Markenempfehlungen'],
+      price: 299,
+      description: 'Dein Signature-Produkt: Anika entwickelt deine komplette Business-Garderobenstrategie – die eigentliche Transformation.',
+      type: 'Signature Service',
+      features: ['Komplette Business-Garderobe', '25–35 Teile', '80–100 Outfitkombinationen', 'Saisonplanung', 'Fehlkaeufe vermeiden', 'Einkauf nach Plan'],
       directLink: true,
     },
     {
