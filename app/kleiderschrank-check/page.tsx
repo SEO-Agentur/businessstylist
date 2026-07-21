@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { formatPrice } from '@/lib/utils/format';
@@ -70,6 +71,17 @@ export default function KleiderschrankCheckPage() {
 
   return (
     <>
+      <div className="bg-business-cream border-b border-gray-200">
+        <div className="container-custom py-3">
+          <p className="text-sm text-brand-secondary text-center">
+            Die Kleiderschrankanalyse ist heute Teil der{' '}
+            <Link href="/capsule-wardrobe" className="underline decoration-brand-accent decoration-2 underline-offset-4 hover:text-brand-primary font-medium">
+              Business Capsule Wardrobe
+            </Link>{' '}
+            – mein Signature Service mit kompletter Garderobenstrategie.
+          </p>
+        </div>
+      </div>
       <section className="relative section-padding overflow-x-hidden bg-gradient-to-br from-business-navy via-business-darkNavy to-business-charcoal min-h-[80vh] flex items-center">
         <div className="absolute inset-0 overflow-hidden opacity-10">
           <div className="absolute top-20 right-20 w-96 h-96 bg-business-gold rounded-full blur-3xl"></div>

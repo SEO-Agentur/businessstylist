@@ -19,14 +19,19 @@ export default function Header() {
   const stilberatungDropdown = [
     { label: 'Stilberatung', href: '/stilberatung' },
     { label: 'Farbberatung', href: '/farbtyp-beratung' },
-    { label: 'Kleiderschrank Check', href: '/kleiderschrank-check' },
     { label: 'Capsule Wardrobe', href: '/capsule-wardrobe' },
     { label: 'Dresscode Playbook', href: '/dresscode-playbook' },
   ];
 
+  const ersterEindruckDropdown = [
+    { label: 'Erster Eindruck', href: '/erster-eindruck', primary: true, sub: 'Kostenlos · 12 Minuten' },
+    { label: 'Typanalyse nach Kibbe', href: '/kibbe-body-type-test', primary: false, sub: 'Bestand' },
+    { label: 'Kleiderschrank Check', href: '/kleiderschrank-check', primary: false, sub: 'Bestand' },
+  ];
+
   const defaultLinks: MenuItem[] = [
     { id: '1', href: '/stilberatung', label: 'Stilberatung', external: false },
-    { id: '2', href: '/kibbe-body-type-test', label: 'Typberatung', external: false },
+    { id: '2', href: '/erster-eindruck', label: 'Erster Eindruck', external: false },
     { id: '3', href: '/downloads', label: 'Downloads', external: false },
     { id: '4', href: '/shop', label: 'Shop', external: false },
     { id: '5', href: '/ueber-mich', label: 'Über mich', external: false },
@@ -97,6 +102,50 @@ export default function Header() {
                               {item.label}
                             </div>
                           </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              if (link.label === 'Erster Eindruck') {
+                return (
+                  <div key={link.href} className="relative group">
+                    <a href={link.href} className="text-brand-secondary hover:text-brand-primary font-medium transition-colors flex items-center gap-1 py-2">
+                      {link.label}
+                      <svg className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </a>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 hidden group-hover:block">
+                      <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3 w-72 overflow-hidden">
+                        {ersterEindruckDropdown.map((item, idx) => (
+                          <div key={item.href}>
+                            {idx === 1 && (
+                              <div className="px-6 pt-3 pb-1">
+                                <div className="border-t border-gray-200 mb-2" />
+                                <span className="text-xs text-gray-400 uppercase tracking-wider font-medium">Weiterhin verfügbar</span>
+                              </div>
+                            )}
+                            <Link
+                              href={item.href}
+                              className={`block px-6 py-3 transition-all duration-200 font-medium border-l-3 border-transparent hover:border-brand-accent ${
+                                item.primary
+                                  ? 'text-brand-primary hover:bg-gradient-to-r hover:from-brand-primary/5 hover:to-brand-accent/5'
+                                  : 'text-gray-400 hover:text-brand-secondary hover:bg-gray-50'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                {item.primary && <span className="w-1.5 h-1.5 rounded-full bg-brand-accent"></span>}
+                                <span>{item.label}</span>
+                              </div>
+                              {item.sub && (
+                                <span className={`text-xs ml-${item.primary ? '4' : '0'} mt-0.5 block ${item.primary ? 'text-brand-accent' : 'text-gray-400'}`}>
+                                  {item.sub}
+                                </span>
+                              )}
+                            </Link>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -218,6 +267,30 @@ export default function Header() {
                             className="text-sm text-brand-secondary hover:text-brand-primary transition-colors block"
                           >
                             {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </details>
+                  );
+                }
+                if (link.label === 'Erster Eindruck') {
+                  return (
+                    <details key={link.href} className="group">
+                      <summary className="flex items-center justify-between cursor-pointer text-brand-secondary hover:text-brand-primary font-medium transition-colors list-none">
+                        <span>{link.label}</span>
+                        <svg className="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </summary>
+                      <div className="pl-4 mt-2 space-y-2 border-l-2 border-gray-200">
+                        {ersterEindruckDropdown.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`text-sm transition-colors block ${item.primary ? 'text-brand-primary font-medium' : 'text-gray-400'}`}
+                          >
+                            {item.label}
+                            {item.sub && <span className="text-xs ml-2 text-gray-400">({item.sub})</span>}
                           </Link>
                         ))}
                       </div>

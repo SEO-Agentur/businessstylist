@@ -14,6 +14,17 @@ export const metadata: Metadata = {
 export default function TypenanalysePage() {
   return (
     <>
+      <div className="bg-business-cream border-b border-gray-200">
+        <div className="container-custom py-3">
+          <p className="text-sm text-brand-secondary text-center">
+            Für den Einstieg in die BusinessStylist®-Methode empfehle ich heute den{' '}
+            <Link href="/erster-eindruck" className="underline decoration-brand-accent decoration-2 underline-offset-4 hover:text-brand-primary font-medium">
+              Ersten Eindruck
+            </Link>{' '}
+            – meine eigene Analyse.
+          </p>
+        </div>
+      </div>
       <section className="section-padding bg-business-cream">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">

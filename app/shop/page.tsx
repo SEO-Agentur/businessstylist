@@ -15,13 +15,13 @@ export default function ShopPage() {
 
   const products = [
     {
-      id: 'typanalyse',
-      name: 'Typanalyse',
-      slug: '/kibbe-body-type-test',
+      id: 'erster-eindruck',
+      name: 'Erster Eindruck',
+      slug: '/erster-eindruck',
       price: 0,
-      description: 'Finde mit wenigen Klicks deinen Stiltyp: eine erste Orientierung für dein authentisches Business-Outfit.',
+      description: 'Anikas eigene Analyse und der Einstieg in die BusinessStylist®-Methode. Du erfährst, wie dein aktueller Business-Auftritt wirkt – mit deinem persönlichen Business First Impression Score™.',
       type: 'Kostenlos',
-      features: ['Typenanalyse nach Kibbe', 'Erste Stilimpulse', 'Orientierungshilfe', 'E-Mail-Auswertung'],
+      features: ['Business First Impression Score™', 'Stärkster Wirkungsbereich', 'Größtes Potenzial', 'Ein sofort umsetzbarer Tipp', 'Persönliche Auswertung'],
       directLink: true,
     },
     {
@@ -31,17 +31,8 @@ export default function ShopPage() {
       price: 299,
       description: 'Dein Signature-Produkt: Anika entwickelt deine komplette Business-Garderobenstrategie – die eigentliche Transformation.',
       type: 'Signature Service',
-      features: ['Komplette Business-Garderobe', '25–35 Teile', '80–100 Outfitkombinationen', 'Saisonplanung', 'Fehlkaeufe vermeiden', 'Einkauf nach Plan'],
+      features: ['Komplette Business-Garderobe', '25–35 Teile', '80–100 Outfitkombinationen', 'Saisonplanung', 'Fehlkäufe vermeiden', 'Einkauf nach Plan'],
       directLink: true,
-    },
-    {
-      id: 'kleiderschrank-check',
-      name: 'Kleiderschrank Check',
-      slug: '/kleiderschrank-check',
-      price: 179,
-      description: 'Dein Einstieg ins Business-Styling: Wir analysieren deine Garderobe und entwickeln direkt erste Outfit-Ideen.',
-      type: 'Service',
-      features: ['Bestehende Teile neu stylen', 'Kein Kaufdruck', 'Passform-Tipps'],
     },
     {
       id: 'stilberatung',
@@ -52,14 +43,32 @@ export default function ShopPage() {
       type: 'Service',
       features: ['Farb- & Stiltyp Analyse', 'komplette Outfit-Strategie', 'Figur & Passform', 'Lookbook inkl.'],
     },
+  ];
+
+  const legacyProducts = [
     {
-      id: 'stilberatung-abo',
-      name: 'Stilberatung Jahresabo',
-      slug: '/stilberatung',
-      price: 1290,
-      description: 'Dein Stil-System: Initialanalyse + Kleiderschrank-Check + monatliches Lookbook & persoenlicher Shop',
-      type: 'Jahresabo',
-      features: ['alle Initialanalysen', 'Kleiderschrank-Check', 'monatliches Lookbook', 'persoenlicher Shop'],
+      id: 'typanalyse',
+      name: 'Typanalyse nach Kibbe',
+      slug: '/kibbe-body-type-test',
+      price: 0,
+      description: 'Bleibt als eigenständiges Angebot bestehen.',
+      type: 'Bestandsangebot',
+      features: ['Typenanalyse nach Kibbe', 'Erste Stilimpulse', 'Orientierungshilfe', 'E-Mail-Auswertung'],
+      note: 'Für den Einstieg empfehle ich heute den',
+      noteLink: '/erster-eindruck',
+      noteLinkText: 'Ersten Eindruck',
+    },
+    {
+      id: 'kleiderschrank-check',
+      name: 'Kleiderschrank Check',
+      slug: '/kleiderschrank-check',
+      price: 179,
+      description: 'Bleibt als eigenständiges Angebot bestehen.',
+      type: 'Bestandsangebot',
+      features: ['Bestehende Teile neu stylen', 'Kein Kaufdruck', 'Passform-Tipps'],
+      note: 'Die Kleiderschrankanalyse ist bereits Teil der',
+      noteLink: '/capsule-wardrobe',
+      noteLinkText: 'Business Capsule Wardrobe',
     },
   ];
 
@@ -249,12 +258,54 @@ export default function ShopPage() {
                   )}
                   <Link href={product.slug}>
                     <Button variant={product.price === 0 || (product as any).directLink ? 'primary' : 'secondary'} className="w-full">
-                      {(product as any).directLink && product.price > 0 ? 'Jetzt starten' : 'Mehr erfahren'}
+                      {product.price === 0 ? 'Kostenlos starten' : (product as any).directLink && product.price > 0 ? 'Jetzt starten' : 'Mehr erfahren'}
                     </Button>
                   </Link>
                 </div>
               </Card>
             ))}
+          </div>
+
+          {/* Legacy Products */}
+          <div className="mt-16 pt-12 border-t border-gray-200">
+            <h3 className="text-lg text-gray-400 font-medium mb-8">Weiterhin verfügbar</h3>
+            <div className="grid md:grid-cols-2 gap-8">
+              {legacyProducts.map((product) => (
+                <div key={product.id} className="border border-gray-200 rounded-xl p-6 bg-gray-50/50 flex flex-col">
+                  <div className="mb-3">
+                    <span className="inline-block px-3 py-1 bg-gray-200 text-gray-500 text-xs rounded-full font-medium">
+                      {product.type}
+                    </span>
+                  </div>
+                  <h4 className="text-h4 text-gray-500 mb-2">{product.name}</h4>
+                  <p className="text-sm text-gray-400 mb-3">{product.description}</p>
+                  <div className="mb-3">
+                    <span className="text-2xl font-bold text-gray-400">{formatPrice(product.price)}</span>
+                  </div>
+                  <ul className="space-y-1.5 mb-4 flex-grow">
+                    {product.features.map((feature, index) => (
+                      <li key={index} className="flex items-start text-xs text-gray-400">
+                        <svg className="w-4 h-4 text-gray-300 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-xs text-gray-400 mb-4 italic">
+                    {product.note}{' '}
+                    <Link href={product.noteLink} className="underline hover:text-brand-primary transition-colors">
+                      {product.noteLinkText}
+                    </Link>.
+                  </p>
+                  <Link href={product.slug}>
+                    <Button variant="secondary" className="w-full text-gray-400 border-gray-300 hover:border-gray-400 hover:text-gray-600">
+                      Weiterhin buchbar
+                    </Button>
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

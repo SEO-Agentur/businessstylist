@@ -30,13 +30,16 @@ export default function HomePage() {
                 Mit System zum stilsicheren Auftritt.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/kibbe-body-type-test">
-                  <Button size="lg" variant="accent">Kostenlose Typanalyse starten</Button>
+                <Link href="/erster-eindruck">
+                  <Button size="lg" variant="accent">Erster Eindruck – kostenlos starten</Button>
                 </Link>
                 <Link href="/stilberatung">
                   <Button size="lg" variant="secondary">Stilberatung buchen</Button>
                 </Link>
               </div>
+              <p className="text-sm text-gray-300 mt-4 max-w-lg">
+                Ein Blick entscheidet. Finde in 12 Minuten heraus, wie dein Business-Auftritt wirkt.
+              </p>
             </div>
 
             <div className="relative">
@@ -123,9 +126,9 @@ export default function HomePage() {
               <div className="w-12 h-12 bg-brand-accent rounded-lg flex items-center justify-center text-white text-2xl font-bold mb-4">
                 1
               </div>
-              <h3 className="text-h3 mb-3">Kurze Typanalyse</h3>
+              <h3 className="text-h3 mb-3">Erster Eindruck</h3>
               <p className="text-brand-secondary">
-                Mach online einen kurzen Stil-Test – abgestimmt auf Figur, Farbwirkung und beruflichen Kontext. So findest du heraus, welcher Business-Stil zu dir passt.
+                Finde in 12 Minuten heraus, wie dein Business-Auftritt wirkt – mit deinem persönlichen Business First Impression Score™.
               </p>
             </Card>
 
