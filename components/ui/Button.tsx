@@ -1,8 +1,7 @@
 import { ButtonHTMLAttributes } from 'react';
-import { cn } from '@/lib/utils/cn';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'accent';
+  variant?: 'primary' | 'secondary' | 'accent' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   children: React.ReactNode;
@@ -16,23 +15,25 @@ export default function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-medium uppercase tracking-[.16em] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy focus-visible:outline-offset-4 disabled:opacity-40 disabled:cursor-not-allowed';
 
   const variants = {
-    primary: 'bg-brand-primary text-white hover:bg-brand-secondary focus:ring-brand-accent',
-    secondary: 'bg-white text-brand-primary border-2 border-brand-primary hover:bg-brand-light focus:ring-brand-accent',
-    accent: 'bg-brand-accent text-white hover:bg-opacity-90 focus:ring-brand-accent',
+    primary: 'bg-ink text-paper hover:bg-navy',
+    secondary: 'bg-transparent text-ink border border-ink hover:bg-ink hover:text-paper',
+    accent: 'bg-navy text-paper hover:bg-ink',
+    ghost: 'bg-transparent text-ink-faint border border-stone hover:border-ink-faint hover:text-ink',
   };
 
   const sizes = {
-    sm: 'px-4 py-2 text-sm',
-    md: 'px-6 py-3 text-base',
-    lg: 'px-8 py-4 text-lg',
+    sm: 'px-5 py-2.5 text-[10px]',
+    md: 'px-7 py-3.5 text-[11px]',
+    lg: 'px-9 py-4.5 text-xs',
   };
 
   return (
     <button
-      className={cn(baseStyles, variants[variant], sizes[size], fullWidth && 'w-full', className)}
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${fullWidth ? 'w-full' : ''} ${className || ''}`}
+      style={{ borderRadius: 0 }}
       {...props}
     >
       {children}
