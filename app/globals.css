@@ -114,6 +114,10 @@
   .rounded-xl { border-radius: 0 !important; }
   .rounded-2xl { border-radius: 0 !important; }
   .rounded-3xl { border-radius: 0 !important; }
+  .rounded-full { border-radius: 0 !important; }
+
+  /* Preserve circular shape for loading spinners */
+  .animate-spin { border-radius: 9999px !important; }
 
   /* Kill all shadows */
   .shadow-sm { box-shadow: none !important; }

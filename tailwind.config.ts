@@ -43,7 +43,7 @@ const config: Config = {
         xl: '0',
         '2xl': '0',
         '3xl': '0',
-        full: '9999px',
+        full: '0',
       },
       fontFamily: {
         sans: ['Inter Tight', 'Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],

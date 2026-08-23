@@ -10,8 +10,8 @@ export default function Card({ children, hover = false, className, ...props }: C
   return (
     <div
       className={cn(
-        'bg-white rounded-xl shadow-card p-6 transition-shadow',
-        hover && 'hover:shadow-lifted',
+        'bg-white p-6 transition-colors',
+        hover && 'hover:bg-bone',
         className
       )}
       {...props}
