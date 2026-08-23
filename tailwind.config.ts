@@ -47,6 +47,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['Inter Tight', 'Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
+        serif: ['Inter Tight', 'Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
+        heading: ['Inter Tight', 'Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
       },
       fontSize: {
         'display-1': ['clamp(2.375rem, 6.4vw, 4.25rem)', { lineHeight: '1.02', letterSpacing: '-0.035em', fontWeight: '200' }],
