@@ -56,12 +56,12 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <header className="sticky top-0 z-50 bg-[var(--bone)] border-b border-[var(--stone-light)]">
       <noscript>
         <style>{`.js-only{display:none !important}`}</style>
       </noscript>
       <nav className="container-custom">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-16 md:h-20" style={{ fontFamily: 'var(--font-sans), Inter, system-ui, sans-serif' }}>
           <Link href="/" className="flex items-center">
             <img
               src="/businessstylist-logo-sml.png"
@@ -78,10 +78,10 @@ export default function Header() {
                     key={link.href}
                     className="relative group"
                   >
-                    <a href={link.href} className="text-brand-secondary hover:text-brand-primary font-medium transition-colors flex items-center gap-1 py-2">
+                    <a href={link.href} className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors flex items-center gap-1 py-2">
                       {link.label}
                       <svg
-                        className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180"
+                        className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -90,15 +90,15 @@ export default function Header() {
                       </svg>
                     </a>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 hidden group-hover:block">
-                      <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3 w-64 overflow-hidden">
+                      <div className="bg-[var(--paper)] border border-[var(--stone-light)] py-3 w-64 overflow-hidden">
                         {stilberatungDropdown.map((item) => (
                           <Link
                             key={item.href}
                             href={item.href}
-                            className="block px-6 py-3 text-brand-secondary hover:bg-gradient-to-r hover:from-brand-primary/5 hover:to-brand-accent/5 hover:text-brand-primary transition-all duration-200 font-medium border-l-3 border-transparent hover:border-brand-accent"
+                            className="block px-6 py-3 text-[var(--ink-soft)] hover:bg-[var(--bone)] hover:text-[var(--ink)] transition-colors duration-200 text-sm border-l-2 border-transparent hover:border-[var(--taupe)]"
                           >
                             <div className="flex items-center gap-3">
-                              <span className="w-1.5 h-1.5 rounded-full bg-brand-accent opacity-60"></span>
+                              <span className="w-1 h-1 bg-[var(--taupe)] opacity-60"></span>
                               {item.label}
                             </div>
                           </Link>
@@ -111,36 +111,36 @@ export default function Header() {
               if (link.label === 'Erster Eindruck') {
                 return (
                   <div key={link.href} className="relative group">
-                    <a href={link.href} className="text-brand-secondary hover:text-brand-primary font-medium transition-colors flex items-center gap-1 py-2">
+                    <a href={link.href} className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors flex items-center gap-1 py-2">
                       {link.label}
-                      <svg className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </a>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 hidden group-hover:block">
-                      <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3 w-72 overflow-hidden">
+                      <div className="bg-[var(--paper)] border border-[var(--stone-light)] py-3 w-72 overflow-hidden">
                         {ersterEindruckDropdown.map((item, idx) => (
                           <div key={item.href}>
                             {idx === 1 && (
                               <div className="px-6 pt-3 pb-1">
-                                <div className="border-t border-gray-200 mb-2" />
-                                <span className="text-xs text-gray-400 uppercase tracking-wider font-medium">Weiterhin verfügbar</span>
+                                <div className="border-t border-[var(--stone-light)] mb-2" />
+                                <span className="text-xs text-[var(--ink-faint)] uppercase tracking-wider ">Weiterhin verfügbar</span>
                               </div>
                             )}
                             <Link
                               href={item.href}
-                              className={`block px-6 py-3 transition-all duration-200 font-medium border-l-3 border-transparent hover:border-brand-accent ${
+                              className={`block px-6 py-3 transition-all duration-200  border-l-2 border-transparent hover:border-[var(--taupe)] ${
                                 item.primary
-                                  ? 'text-brand-primary hover:bg-gradient-to-r hover:from-brand-primary/5 hover:to-brand-accent/5'
-                                  : 'text-gray-400 hover:text-brand-secondary hover:bg-gray-50'
+                                  ? 'text-[var(--ink)] hover:bg-[var(--bone)]'
+                                  : 'text-[var(--ink-faint)] hover:text-[var(--ink-soft)] hover:bg-[var(--bone)]'
                               }`}
                             >
                               <div className="flex items-center gap-3">
-                                {item.primary && <span className="w-1.5 h-1.5 rounded-full bg-brand-accent"></span>}
+                                {item.primary && <span className="w-1.5 h-1.5  bg-[var(--taupe)]"></span>}
                                 <span>{item.label}</span>
                               </div>
                               {item.sub && (
-                                <span className={`text-xs ml-${item.primary ? '4' : '0'} mt-0.5 block ${item.primary ? 'text-brand-accent' : 'text-gray-400'}`}>
+                                <span className={`text-xs ml-${item.primary ? '4' : '0'} mt-0.5 block ${item.primary ? 'text-[var(--taupe)]' : 'text-[var(--ink-faint)]'}`}>
                                   {item.sub}
                                 </span>
                               )}
@@ -156,7 +156,7 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                  className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -167,14 +167,14 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-4">
             <Link
               href="/checkout"
-              className="relative text-brand-secondary hover:text-brand-primary transition-colors p-2"
+              className="relative text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors p-2"
               aria-label="Warenkorb"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-brand-accent text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-[var(--taupe)] text-white text-xs font-bold h-5 w-5 flex items-center justify-center" style={{ borderRadius: '9999px' }}>
                   {totalItems}
                 </span>
               )}
@@ -183,13 +183,13 @@ export default function Header() {
               <>
                 <Link
                   href={session.user.role === 'ADMIN' ? '/admin/dashboard' : '/account/dashboard'}
-                  className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                  className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                 >
                   {session.user.role === 'ADMIN' ? 'Admin' : 'Mein Bereich'}
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                  className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                 >
                   Abmelden
                 </button>
@@ -198,7 +198,7 @@ export default function Header() {
               <>
                 <Link
                   href="/auth/signin"
-                  className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                  className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                 >
                   Anmelden
                 </Link>
@@ -210,7 +210,7 @@ export default function Header() {
           </div>
 
           <noscript>
-            <a href="#mobile-menu" className="md:hidden p-2 text-brand-secondary" aria-label="Menu">
+            <a href="#mobile-menu" className="md:hidden p-2 text-[var(--ink-soft)]" aria-label="Menu">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
@@ -247,24 +247,24 @@ export default function Header() {
         </div>
 
         <noscript>
-          <div id="mobile-menu" className="md:hidden pb-4 border-t border-gray-200">
+          <div id="mobile-menu" className="md:hidden pb-4 border-t border-[var(--stone-light)]">
             <div className="flex flex-col space-y-4 pt-4">
               {defaultLinks.map((link) => {
                 if (link.label === 'Stilberatung') {
                   return (
                     <details key={link.href} className="group">
-                      <summary className="flex items-center justify-between cursor-pointer text-brand-secondary hover:text-brand-primary font-medium transition-colors list-none">
+                      <summary className="flex items-center justify-between cursor-pointer text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors list-none">
                         <span>{link.label}</span>
                         <svg className="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </summary>
-                      <div className="pl-4 mt-2 space-y-2 border-l-2 border-gray-200">
+                      <div className="pl-4 mt-2 space-y-2 border-l-2 border-[var(--stone-light)]">
                         {stilberatungDropdown.map((item) => (
                           <Link
                             key={item.href}
                             href={item.href}
-                            className="text-sm text-brand-secondary hover:text-brand-primary transition-colors block"
+                            className="text-sm text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors block"
                           >
                             {item.label}
                           </Link>
@@ -276,21 +276,21 @@ export default function Header() {
                 if (link.label === 'Erster Eindruck') {
                   return (
                     <details key={link.href} className="group">
-                      <summary className="flex items-center justify-between cursor-pointer text-brand-secondary hover:text-brand-primary font-medium transition-colors list-none">
+                      <summary className="flex items-center justify-between cursor-pointer text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors list-none">
                         <span>{link.label}</span>
                         <svg className="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </summary>
-                      <div className="pl-4 mt-2 space-y-2 border-l-2 border-gray-200">
+                      <div className="pl-4 mt-2 space-y-2 border-l-2 border-[var(--stone-light)]">
                         {ersterEindruckDropdown.map((item) => (
                           <Link
                             key={item.href}
                             href={item.href}
-                            className={`text-sm transition-colors block ${item.primary ? 'text-brand-primary font-medium' : 'text-gray-400'}`}
+                            className={`text-sm transition-colors block ${item.primary ? 'text-[var(--ink)] ' : 'text-[var(--ink-faint)]'}`}
                           >
                             {item.label}
-                            {item.sub && <span className="text-xs ml-2 text-gray-400">({item.sub})</span>}
+                            {item.sub && <span className="text-xs ml-2 text-[var(--ink-faint)]">({item.sub})</span>}
                           </Link>
                         ))}
                       </div>
@@ -301,16 +301,16 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                    className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                   >
                     {link.label}
                   </Link>
                 );
               })}
-              <Link href="/checkout" className="text-brand-secondary hover:text-brand-primary font-medium transition-colors">
+              <Link href="/checkout" className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors">
                 Warenkorb
               </Link>
-              <Link href="/auth/signin" className="text-brand-secondary hover:text-brand-primary font-medium transition-colors">
+              <Link href="/auth/signin" className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors">
                 Anmelden
               </Link>
               <Link href="/kontakt" className="btn-primary">
@@ -320,7 +320,7 @@ export default function Header() {
           </div>
         </noscript>
         {mobileMenuOpen && (
-          <div className="md:hidden pb-4 border-t border-gray-200">
+          <div className="md:hidden pb-4 border-t border-[var(--stone-light)]">
             <div className="flex flex-col space-y-4 pt-4">
               {navigationLinks.map((link) => {
                 if (link.label === 'Stilberatung') {
@@ -328,17 +328,17 @@ export default function Header() {
                     <div key={link.href} className="space-y-2">
                       <Link
                         href={link.href}
-                        className="text-brand-secondary hover:text-brand-primary font-medium transition-colors block"
+                        className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors block"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {link.label}
                       </Link>
-                      <div className="pl-4 space-y-2 border-l-2 border-gray-200">
+                      <div className="pl-4 space-y-2 border-l-2 border-[var(--stone-light)]">
                         {stilberatungDropdown.slice(1).map((item) => (
                           <Link
                             key={item.href}
                             href={item.href}
-                            className="text-sm text-brand-secondary hover:text-brand-primary transition-colors block"
+                            className="text-sm text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors block"
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             {item.label}
@@ -352,7 +352,7 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                    className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.label}
@@ -361,7 +361,7 @@ export default function Header() {
               })}
               <Link
                 href="/checkout"
-                className="flex items-center text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                className="flex items-center text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -373,7 +373,7 @@ export default function Header() {
                 <>
                   <Link
                     href={session.user.role === 'ADMIN' ? '/admin/dashboard' : '/account/dashboard'}
-                    className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                    className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {session.user.role === 'ADMIN' ? 'Admin' : 'Mein Bereich'}
@@ -383,7 +383,7 @@ export default function Header() {
                       signOut({ callbackUrl: '/' });
                       setMobileMenuOpen(false);
                     }}
-                    className="text-left text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                    className="text-left text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                   >
                     Abmelden
                   </button>
@@ -392,7 +392,7 @@ export default function Header() {
                 <>
                   <Link
                     href="/auth/signin"
-                    className="text-brand-secondary hover:text-brand-primary font-medium transition-colors"
+                    className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm tracking-wide transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Anmelden

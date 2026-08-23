@@ -27,44 +27,44 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="bg-brand-primary text-white">
+    <footer className="bg-[var(--ink)] text-[var(--paper)]" style={{ fontFamily: 'var(--font-sans), Inter, system-ui, sans-serif' }}>
       <div className="container-custom py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <h3 className="text-lg font-heading font-semibold mb-4">Businessstylist</h3>
-            <p className="text-sm text-gray-300 mb-2">
+            <h3 className="text-lg tracking-wide mb-4">Businessstylist</h3>
+            <p className="text-sm text-[var(--ink-faint)] mb-2">
               Professionelle Stilberatung für Business-Frauen
             </p>
-            <p className="text-brand-accent font-semibold">
+            <p className="text-[var(--taupe)] tracking-wide text-sm">
               Zieh Erfolg an!
             </p>
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold mb-4 uppercase tracking-wider">Services</h4>
+            <h4 className="text-xs uppercase tracking-[.17em] text-[var(--ink-faint)] mb-4">Services</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/stilberatung" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/stilberatung" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Stilberatung
                 </Link>
               </li>
               <li>
-                <Link href="/kibbe-body-type-test" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/kibbe-body-type-test" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Typberatung
                 </Link>
               </li>
               <li>
-                <Link href="/kleiderschrank-check" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/kleiderschrank-check" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Kleiderschrank Check
                 </Link>
               </li>
               <li>
-                <Link href="/downloads" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/downloads" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Downloads
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/shop" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Shop
                 </Link>
               </li>
@@ -72,20 +72,20 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold mb-4 uppercase tracking-wider">Informationen</h4>
+            <h4 className="text-xs uppercase tracking-[.17em] text-[var(--ink-faint)] mb-4">Informationen</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/ueber-mich" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/ueber-mich" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Über mich
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/faq" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/kontakt" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/kontakt" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Kontakt
                 </Link>
               </li>
@@ -93,25 +93,25 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold mb-4 uppercase tracking-wider">Rechtliches</h4>
+            <h4 className="text-xs uppercase tracking-[.17em] text-[var(--ink-faint)] mb-4">Rechtliches</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/impressum" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/impressum" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Impressum
                 </Link>
               </li>
               <li>
-                <Link href="/datenschutz" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/datenschutz" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Datenschutz
                 </Link>
               </li>
               <li>
-                <Link href="/agb" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/agb" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   AGB
                 </Link>
               </li>
               <li>
-                <Link href="/widerruf" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/widerruf" className="text-[var(--ink-faint)] hover:text-[var(--paper)] transition-colors">
                   Widerrufsrecht
                 </Link>
               </li>
@@ -119,21 +119,21 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-gray-700">
+        <div className="pt-8 border-t border-[var(--ink-soft)]">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-[var(--ink-faint)]">
               &copy; {currentYear} Businessstylist. Alle Rechte vorbehalten. Mit &#9825; von{' '}
-              <a href="https://seooptimierung.de" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline">SEOoptimierung.de</a> gemacht
+              <a href="https://seooptimierung.de" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--paper)] transition-colors underline">SEOoptimierung.de</a> gemacht
             </p>
 
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-400">Folge uns:</span>
+              <span className="text-sm text-[var(--ink-faint)]">Folge uns:</span>
               <div className="flex gap-3">
                 <a
                   href="https://www.facebook.com/businessstylists"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-business-gold transition-colors"
+                  className="text-[var(--ink-faint)] hover:text-[var(--taupe)] transition-colors"
                   aria-label="Facebook"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -144,7 +144,7 @@ export default function Footer() {
                   href="https://www.instagram.com/businessstylist/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-business-gold transition-colors"
+                  className="text-[var(--ink-faint)] hover:text-[var(--taupe)] transition-colors"
                   aria-label="Instagram"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -155,7 +155,7 @@ export default function Footer() {
                   href="https://www.tiktok.com/@businessstylist"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-business-gold transition-colors"
+                  className="text-[var(--ink-faint)] hover:text-[var(--taupe)] transition-colors"
                   aria-label="TikTok"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

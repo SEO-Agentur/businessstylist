@@ -15,16 +15,15 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <section className="relative section-padding overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-business-navy via-business-darkNavy to-business-charcoal opacity-95 z-0"></div>
-
-        <div className="container-custom relative z-10">
+      <section className="relative overflow-hidden" style={{ background: 'var(--ink)', color: 'var(--paper)' }}>
+        <div className="container-custom relative z-10 py-20 md:py-28">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="text-white">
-              <h1 className="text-display-1 md:text-display-2 font-serif mb-6">
+            <div>
+              <p className="page-eyebrow" style={{ color: 'var(--taupe)' }}>BusinessStylist® Methode</p>
+              <h1 className="page-title" style={{ color: 'var(--paper)', fontSize: 'clamp(2.4rem, 5vw, 4.2rem)', marginBottom: '24px' }}>
                 Zieh Erfolg an.
               </h1>
-              <p className="text-lg mb-8 leading-relaxed text-gray-200">
+              <p className="page-lede" style={{ color: 'rgba(255,255,255,.7)', marginBottom: '32px' }}>
                 Die Businesswelt tickt schnell: Ein Blick entscheidet, ob du Partnerin oder Fußnote bist.
                 Dein Business-Look ist eine visuelle Kurzbiografie – verfasst in Blazer, Rock oder Anzug.
                 Mit System zum stilsicheren Auftritt.
@@ -37,70 +36,63 @@ export default function HomePage() {
                   <Button size="lg" variant="secondary">Stilberatung buchen</Button>
                 </Link>
               </div>
-              <p className="text-sm text-gray-300 mt-4 max-w-lg">
+              <p className="text-sm mt-4 max-w-lg" style={{ color: 'rgba(255,255,255,.5)' }}>
                 Ein Blick entscheidet. Finde in 12 Minuten heraus, wie dein Business-Auftritt wirkt.
               </p>
             </div>
 
             <div className="relative">
-              <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-lifted">
+              <div className="aspect-[3/4] overflow-hidden">
                 <img
                   src="/business_stylist.webp"
                   alt="Business-Stylist"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-business-gold rounded-full opacity-20 blur-2xl"></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="section-padding bg-white border-b border-gray-100">
+      <section className="page-section" style={{ background: 'var(--paper)' }}>
         <div className="container-custom">
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-5 gap-8 items-center">
               <div className="md:col-span-3">
-                <span className="inline-block px-3 py-1 bg-brand-accent/10 text-brand-accent text-xs font-semibold uppercase tracking-wide rounded-full mb-3">
-                  Signature Service
-                </span>
-                <h2 className="text-h2 font-serif mb-3">Business Capsule Wardrobe</h2>
-                <p className="text-brand-secondary mb-4 leading-relaxed">
+                <span className="page-eyebrow">Signature Service</span>
+                <h2 className="page-h2">Business Capsule Wardrobe</h2>
+                <p className="page-body mb-4">
                   Die komplette Garderobenstrategie: Anika entwickelt deine individuelle Business-Garderobe
                   mit 25–35 Teilen und 80–100 Outfitkombinationen. Saisonplanung, priorisierte Einkaufsliste
-                  und ein 90-Tage-Fahrplan – damit du nie wieder Fehlkaeufe machst.
+                  und ein 90-Tage-Fahrplan – damit du nie wieder Fehlkäufe machst.
                 </p>
-                <ul className="grid grid-cols-2 gap-2 mb-6 text-sm text-brand-secondary">
-                  {['Komplette Business-Garderobe', '80–100 Outfitkombinationen', 'Saisonplanung', 'Einkauf nach Plan statt Gefuehl', 'Keine Fehlkaeufe mehr', 'Persoenlich von Anika erstellt'].map((item) => (
+                <ul className="grid grid-cols-2 gap-2 mb-6 text-sm page-body">
+                  {['Komplette Business-Garderobe', '80–100 Outfitkombinationen', 'Saisonplanung', 'Einkauf nach Plan statt Gefühl', 'Keine Fehlkäufe mehr', 'Persönlich von Anika erstellt'].map((item) => (
                     <li key={item} className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-brand-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
+                      <span className="w-1 h-1 bg-[var(--taupe)] flex-shrink-0" />
                       {item}
                     </li>
                   ))}
                 </ul>
                 <Link href="/capsule-wardrobe#bestellen">
                   <Button variant="accent" size="lg">
-                    Business Capsule Wardrobe fuer 299,- EUR starten
+                    Business Capsule Wardrobe für 299,- EUR starten
                   </Button>
                 </Link>
               </div>
               <div className="md:col-span-2">
-                <div className="bg-gradient-to-br from-business-cream to-white rounded-2xl p-8 text-center border border-business-cream shadow-soft">
+                <div className="page-card text-center">
                   <div className="mb-4">
-                    <span className="text-5xl font-bold text-brand-primary">299,-</span>
-                    <span className="text-brand-secondary ml-1">EUR</span>
+                    <span className="text-4xl font-light text-[var(--ink)]">299,-</span>
+                    <span className="page-body ml-1">EUR</span>
                   </div>
-                  <p className="text-sm text-brand-secondary mb-4">
+                  <p className="text-sm page-body mb-4">
                     Einmalig. Kein Abo.
                   </p>
                   <div className="space-y-2 text-left text-sm">
-                    {['25–35 Teile, 80–100 Kombinationen', 'Saisonplanung & 90-Tage-Fahrplan', 'Priorisierte Einkaufsliste', 'Persoenlich von Anika erstellt'].map((step) => (
-                      <div key={step} className="flex items-start gap-2 text-brand-secondary">
-                        <svg className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
+                    {['25–35 Teile, 80–100 Kombinationen', 'Saisonplanung & 90-Tage-Fahrplan', 'Priorisierte Einkaufsliste', 'Persönlich von Anika erstellt'].map((step) => (
+                      <div key={step} className="flex items-start gap-2 page-body">
+                        <span className="w-1 h-1 mt-2 bg-[var(--taupe)] flex-shrink-0" />
                         {step}
                       </div>
                     ))}
@@ -112,321 +104,151 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-padding">
+      <section className="page-section">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="text-h2 mb-4">Dein Weg zum sicheren Business Outfit</h2>
-            <p className="text-body-lg text-brand-secondary max-w-2xl mx-auto">
-              Vom Stil-Test bis zur laufenden Stilpflege - dein professioneller Auftritt in vier Schritten
+            <h2 className="page-h2">Dein Weg zum sicheren Business Outfit</h2>
+            <p className="page-lede mx-auto" style={{ marginBottom: 0 }}>
+              Vom Stil-Test bis zur laufenden Stilpflege – dein professioneller Auftritt in vier Schritten
             </p>
           </div>
 
           <div className="grid md:grid-cols-4 gap-6">
-            <Card hover>
-              <div className="w-12 h-12 bg-brand-accent rounded-lg flex items-center justify-center text-white text-2xl font-bold mb-4">
-                1
-              </div>
-              <h3 className="text-h3 mb-3">Erster Eindruck</h3>
-              <p className="text-brand-secondary">
-                Finde in 12 Minuten heraus, wie dein Business-Auftritt wirkt – mit deinem persönlichen Business First Impression Score™.
-              </p>
-            </Card>
-
-            <Card hover>
-              <div className="w-12 h-12 bg-brand-accent rounded-lg flex items-center justify-center text-white text-2xl font-bold mb-4">
-                2
-              </div>
-              <h3 className="text-h3 mb-3">Digitales Lookbook</h3>
-              <p className="text-brand-secondary">
-                Erhalte ein fertiges Lookbook mit Outfit-Vorschlägen, perfekt auf deinen Stiltyp abgestimmt – inklusive Shop-Links für sofort bestellbare Business Outfits.
-              </p>
-            </Card>
-
-            <Card hover>
-              <div className="w-12 h-12 bg-brand-accent rounded-lg flex items-center justify-center text-white text-2xl font-bold mb-4">
-                3
-              </div>
-              <h3 className="text-h3 mb-3">Stilberatung</h3>
-              <p className="text-brand-secondary">
-                In der 1:1-Beratung mit Anika bekommst du deine Farb-, Stil- und Garderobenstrategie – auf Wunsch online oder vor Ort, diskret und individuell.
-              </p>
-            </Card>
-
-            <Card hover>
-              <div className="w-12 h-12 bg-brand-accent rounded-lg flex items-center justify-center text-white text-2xl font-bold mb-4">
-                4
-              </div>
-              <h3 className="text-h3 mb-3">Laufende Stilpflege</h3>
-              <p className="text-brand-secondary">
-                Mit dem Style-Abo bleibst du saisonal aktuell. Du bekommst neue Looks, Updates für deine Capsule Wardrobe und persönliche Unterstützung bei Fragen.
-              </p>
-            </Card>
+            {[
+              { num: '1', title: 'Erster Eindruck', text: 'Finde in 12 Minuten heraus, wie dein Business-Auftritt wirkt – mit deinem persönlichen Business First Impression Score™.' },
+              { num: '2', title: 'Digitales Lookbook', text: 'Erhalte ein fertiges Lookbook mit Outfit-Vorschlägen, perfekt auf deinen Stiltyp abgestimmt – inklusive Shop-Links für sofort bestellbare Business Outfits.' },
+              { num: '3', title: 'Stilberatung', text: 'In der 1:1-Beratung mit Anika bekommst du deine Farb-, Stil- und Garderobenstrategie – auf Wunsch online oder vor Ort, diskret und individuell.' },
+              { num: '4', title: 'Laufende Stilpflege', text: 'Mit dem Style-Abo bleibst du saisonal aktuell. Du bekommst neue Looks, Updates für deine Capsule Wardrobe und persönliche Unterstützung bei Fragen.' },
+            ].map((item) => (
+              <Card key={item.num} hover>
+                <div className="w-10 h-10 border border-[var(--stone)] flex items-center justify-center text-[var(--taupe)] text-sm mb-4">
+                  {item.num}
+                </div>
+                <h3 className="page-h3">{item.title}</h3>
+                <p className="page-body">{item.text}</p>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section-padding bg-brand-light">
+      <section className="page-section" style={{ background: 'var(--paper)' }}>
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="text-h2 mb-4">Warum Du einen Stylisten buchen solltest</h2>
-            <p className="text-body-lg text-brand-secondary max-w-2xl mx-auto">
+            <h2 className="page-h2">Warum Du einen Stylisten buchen solltest</h2>
+            <p className="page-lede mx-auto" style={{ marginBottom: 0 }}>
               Dein Business-Outfit ist keine Verkleidung, sondern deine visuelle Visitenkarte
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <Card>
-              <h3 className="text-h3 mb-3">Perfekt gekleidet</h3>
-              <p className="text-brand-secondary">
-                Dein Business-Outfit ist keine Verkleidung, sondern deine visuelle Visitenkarte.
-                Statt Uniform bekommst du maßgeschneiderte Looks, die sofort professionell und stilsicher wirken.
-              </p>
-            </Card>
-
-            <Card>
-              <h3 className="text-h3 mb-3">Layering-Looks</h3>
-              <p className="text-brand-secondary">
-                Für die kalte Jahreszeit kombinieren wir Cashmere, Wolle und leichte Schichten so,
-                dass dein Outfit luftig wirkt und trotzdem warm hält. Stilsicher und perfekt temperiert.
-              </p>
-            </Card>
-
-            <Card>
-              <h3 className="text-h3 mb-3">Business-Casual-Check</h3>
-              <p className="text-brand-secondary">
-                Zwischen formell und casual finden wir dein optimales Gleichgewicht. Egal ob Blazer mit Chino
-                oder Bluse mit Loafern - du bleibst modisch, gepflegt und selbstbewusst.
-              </p>
-            </Card>
-
-            <Card>
-              <h3 className="text-h3 mb-3">Dresscode-Kompass</h3>
-              <p className="text-brand-secondary">
-                Ob streng Business Attire oder lockerer Business Casual - wir knacken jeden Dresscode
-                und definieren deinen persönlichen Rahmen. Du weißt, wann Blazer und wann legerer Chic genügt.
-              </p>
-            </Card>
-
-            <Card>
-              <h3 className="text-h3 mb-3">Capsule Wardrobe</h3>
-              <p className="text-brand-secondary">
-                Eine zeitlose Auswahl an Essentials sorgt für Komfort und minimalen Entscheidungsstress im Berufsalltag.
-                Jeder Look entsteht aus perfekt aufeinander abgestimmten Teilen.
-              </p>
-            </Card>
-
-            <Card>
-              <h3 className="text-h3 mb-3">Maßgeschneiderter Look</h3>
-              <p className="text-brand-secondary">
-                Mit individueller Stilberatung und Typanalyse (z. B. Kibbe) findest du deine perfekte Passform.
-                Dein Look wirkt persönlich, ohne sich an vorgefertigte Schablonen zu halten.
-              </p>
-            </Card>
+            {[
+              { title: 'Perfekt gekleidet', text: 'Dein Business-Outfit ist keine Verkleidung, sondern deine visuelle Visitenkarte. Statt Uniform bekommst du maßgeschneiderte Looks, die sofort professionell und stilsicher wirken.' },
+              { title: 'Layering-Looks', text: 'Für die kalte Jahreszeit kombinieren wir Cashmere, Wolle und leichte Schichten so, dass dein Outfit luftig wirkt und trotzdem warm hält. Stilsicher und perfekt temperiert.' },
+              { title: 'Business-Casual-Check', text: 'Zwischen formell und casual finden wir dein optimales Gleichgewicht. Egal ob Blazer mit Chino oder Bluse mit Loafern – du bleibst modisch, gepflegt und selbstbewusst.' },
+              { title: 'Dresscode-Kompass', text: 'Ob streng Business Attire oder lockerer Business Casual – wir knacken jeden Dresscode und definieren deinen persönlichen Rahmen. Du weißt, wann Blazer und wann legerer Chic genügt.' },
+              { title: 'Capsule Wardrobe', text: 'Eine zeitlose Auswahl an Essentials sorgt für Komfort und minimalen Entscheidungsstress im Berufsalltag. Jeder Look entsteht aus perfekt aufeinander abgestimmten Teilen.' },
+              { title: 'Maßgeschneiderter Look', text: 'Mit individueller Stilberatung und Typanalyse (z. B. Kibbe) findest du deine perfekte Passform. Dein Look wirkt persönlich, ohne sich an vorgefertigte Schablonen zu halten.' },
+            ].map((item) => (
+              <Card key={item.title}>
+                <h3 className="page-h3">{item.title}</h3>
+                <p className="page-body">{item.text}</p>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section-padding">
+      <section className="page-section">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="text-h2 mb-4">Meine Leistungen für Dich</h2>
-            <p className="text-body-lg text-brand-secondary max-w-2xl mx-auto">
+            <h2 className="page-h2">Meine Leistungen für Dich</h2>
+            <p className="page-lede mx-auto" style={{ marginBottom: 0 }}>
               Von der ersten Orientierung bis zur persönlichen 1:1-Beratung
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <Card hover>
-              <h3 className="text-h3 mb-3">Kleiderschrank Check</h3>
-              <p className="text-brand-secondary mb-4">
-                Dein Einstieg ins Business-Styling: Wir analysieren deine Garderobe und entwickeln direkt erste Outfit-Ideen.
-              </p>
-              <div className="my-6">
-                <div className="inline-block bg-brand-secondary text-white px-8 py-4 rounded-lg">
-                  <span className="text-4xl font-bold">€179</span>
+            {[
+              { title: 'Kleiderschrank Check', price: '€179', desc: 'Dein Einstieg ins Business-Styling: Wir analysieren deine Garderobe und entwickeln direkt erste Outfit-Ideen.', features: ['Bestehende Teile neu stylen', 'Kein Kaufdruck', 'Passform-Tipps'], link: '/kleiderschrank-check', cta: 'Jetzt Termin buchen' },
+              { title: 'Farbberatung', price: '€179', desc: 'Entdecke deine perfekte Farbpalette mit professioneller Farbtyp-Analyse nach der Vier-Jahreszeiten-Methode.', features: ['Farbtyp-Analyse', 'Persönliche Farbpalette', 'Styling-Empfehlungen', 'Make-up & Accessoires-Tipps'], link: '/farbtyp-beratung', cta: 'Farbberatung buchen' },
+              { title: 'Stilberatung', price: '€390', desc: 'In 1:1-Sessions entwickle ich mit Dir deinen Business-Look: klar, typgerecht und zukunftsfähig.', features: ['Farb- & Stiltyp Analyse', 'Komplette Outfit-Strategie', 'Figur & Passform', 'Lookbook inkl.'], link: '/stilberatung', cta: 'Stilberatung buchen' },
+            ].map((item) => (
+              <Card key={item.title} hover>
+                <h3 className="page-h3">{item.title}</h3>
+                <p className="page-body mb-4">{item.desc}</p>
+                <div className="my-6">
+                  <span className="text-3xl font-light text-[var(--ink)]">{item.price}</span>
                 </div>
-              </div>
-              <ul className="space-y-2 mb-6 text-sm text-brand-secondary">
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Bestehende Teile neu stylen
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Kein Kaufdruck
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Passform-Tipps
-                </li>
-              </ul>
-              <Link href="/kleiderschrank-check">
-                <Button className="w-full">Jetzt Termin buchen</Button>
-              </Link>
-            </Card>
-
-            <Card hover>
-              <h3 className="text-h3 mb-3">Farbberatung</h3>
-              <p className="text-brand-secondary mb-4">
-                Entdecke deine perfekte Farbpalette mit professioneller Farbtyp-Analyse nach der Vier-Jahreszeiten-Methode.
-              </p>
-              <div className="my-6">
-                <div className="inline-block bg-brand-secondary text-white px-8 py-4 rounded-lg">
-                  <span className="text-4xl font-bold">€179</span>
-                </div>
-              </div>
-              <ul className="space-y-2 mb-6 text-sm text-brand-secondary">
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Farbtyp-Analyse
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Persönliche Farbpalette
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Styling-Empfehlungen
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Make-up & Accessoires-Tipps
-                </li>
-              </ul>
-              <Link href="/farbtyp-beratung">
-                <Button className="w-full">Farbberatung buchen</Button>
-              </Link>
-            </Card>
-
-            <Card hover>
-              <h3 className="text-h3 mb-3">Stilberatung</h3>
-              <p className="text-brand-secondary mb-4">
-                In 1:1-Sessions entwickle ich mit Dir deinen Business-Look: klar, typgerecht und zukunftsfähig.
-              </p>
-              <div className="my-6">
-                <div className="inline-block bg-brand-secondary text-white px-8 py-4 rounded-lg">
-                  <span className="text-4xl font-bold">€390</span>
-                </div>
-              </div>
-              <ul className="space-y-2 mb-6 text-sm text-brand-secondary">
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Farb- & Stiltyp Analyse
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  komplette Outfit-Strategie
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Figur & Passform
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Lookbook inkl.
-                </li>
-              </ul>
-              <Link href="/stilberatung">
-                <Button className="w-full">Stilberatung buchen</Button>
-              </Link>
-            </Card>
+                <ul className="space-y-2 mb-6 text-sm page-body">
+                  {item.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2">
+                      <span className="w-1 h-1 mt-2 bg-[var(--taupe)] flex-shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href={item.link}>
+                  <Button className="w-full">{item.cta}</Button>
+                </Link>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section-padding">
+      <section className="page-section" style={{ background: 'var(--paper)' }}>
         <div className="container-custom">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="order-2 md:order-1">
               <div className="grid grid-cols-2 gap-4">
-                <div className="aspect-square rounded-xl overflow-hidden shadow-card">
-                  <img
-                    src="/lookbook.webp"
-                    alt="Business Styling"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="aspect-square overflow-hidden">
+                  <img src="/lookbook.webp" alt="Business Styling" className="w-full h-full object-cover" />
                 </div>
-                <div className="aspect-square rounded-xl overflow-hidden shadow-card">
+                <div className="aspect-square overflow-hidden">
                   <a href="/stilberatung" title="Stilberatung">
-                    <img
-                      src="/stilberatung copy.webp"
-                      alt="Stilberatung"
-                      className="w-full h-full object-cover"
-                    />
+                    <img src="/stilberatung copy.webp" alt="Stilberatung" className="w-full h-full object-cover" />
                   </a>
                 </div>
-                <div className="aspect-square rounded-xl overflow-hidden shadow-card">
-                  <img
-                    src="/kibbe-body-type-analyse.webp"
-                    alt="Kibbe Body Type Analyse"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="aspect-square overflow-hidden">
+                  <img src="/kibbe-body-type-analyse.webp" alt="Kibbe Body Type Analyse" className="w-full h-full object-cover" />
                 </div>
-                <div className="aspect-square rounded-xl overflow-hidden shadow-card">
-                  <img
-                    src="/streetstyle-blazer.webp"
-                    alt="Streetstyle Blazer"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="aspect-square overflow-hidden">
+                  <img src="/streetstyle-blazer.webp" alt="Streetstyle Blazer" className="w-full h-full object-cover" />
                 </div>
               </div>
             </div>
 
             <div className="order-1 md:order-2">
-              <h2 className="text-h2 mb-6">Über mich - Anika Schmitz</h2>
-              <p className="text-body-lg text-brand-secondary mb-6">
+              <p className="page-eyebrow">Über mich</p>
+              <h2 className="page-h2">Anika Schmitz</h2>
+              <p className="page-body mb-6">
                 Mit der Ausbildung als Schneiderin und dem anschließenden Studium zur <strong>Diplom-Kostümbildnerin (FH)</strong>
                 habe ich meine Grundsteine für meine Karriere gelegt. Neben Etappen bei Film, Fernsehen und Theater
                 habe ich über <strong>10 Jahre Erfahrung als Stylistin</strong> sammeln können.
               </p>
               <div className="space-y-4 mb-8">
-                <div className="flex items-start bg-business-cream p-4 rounded-lg">
-                  <svg className="w-6 h-6 text-brand-accent mr-3 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
+                <div className="flex items-start gap-3 p-4 border border-[var(--stone-light)]">
+                  <span className="w-1 h-1 mt-2 bg-[var(--taupe)] flex-shrink-0" />
                   <div>
-                    <p className="font-semibold">7 Jahre bei Zalon by Zalando</p>
-                    <p className="text-brand-secondary text-sm">als Freelance Stylistin mit tausenden betreuten Kunden</p>
+                    <p className="text-[var(--ink)] text-sm">7 Jahre bei Zalon by Zalando</p>
+                    <p className="page-body text-sm">als Freelance Stylistin mit tausenden betreuten Kunden</p>
                   </div>
                 </div>
-                <div className="flex items-start bg-business-cream p-4 rounded-lg">
-                  <svg className="w-6 h-6 text-brand-accent mr-3 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
+                <div className="flex items-start gap-3 p-4 border border-[var(--stone-light)]">
+                  <span className="w-1 h-1 mt-2 bg-[var(--taupe)] flex-shrink-0" />
                   <div>
-                    <p className="font-semibold">Freelance Stylistin bei Outfittery</p>
-                    <p className="text-brand-secondary text-sm">Hunderte Kunden bis Juni 2025 betreut</p>
+                    <p className="text-[var(--ink)] text-sm">Freelance Stylistin bei Outfittery</p>
+                    <p className="page-body text-sm">Hunderte Kunden bis Juni 2025 betreut</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-gradient-to-r from-business-navy to-business-darkNavy p-6 rounded-xl text-white">
-                <p className="text-lg mb-2">
+              <div className="p-6" style={{ background: 'var(--ink)', color: 'var(--paper)' }}>
+                <p className="text-base mb-2" style={{ color: 'rgba(255,255,255,.8)' }}>
                   Ich unterstütze dich mit Stilberatung, Farbberatung, Capsule-Wardrobe-Konzepten und Kibbe-Typanalyse dabei,
                   eine klare, moderne Business-Garderobe aufzubauen.
                 </p>
-                <p className="text-2xl text-business-gold font-semibold">
+                <p className="text-xl" style={{ color: 'var(--taupe)' }}>
                   Zieh Erfolg an!
                 </p>
               </div>
@@ -435,49 +257,35 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-padding bg-gradient-to-br from-business-cream to-white">
+      <section className="page-section" style={{ background: 'var(--bone)' }}>
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-lifted overflow-hidden">
+            <div className="page-card overflow-hidden">
               <div className="grid md:grid-cols-2">
                 <div className="p-8 md:p-12">
-                  <div className="inline-block bg-business-gold text-white px-4 py-1 rounded-full text-sm font-semibold mb-4">
-                    Kostenloser Download
-                  </div>
-                  <h2 className="text-h2 mb-4">Smart Casual Checkliste</h2>
-                  <p className="text-brand-secondary mb-6">
+                  <p className="page-eyebrow">Kostenloser Download</p>
+                  <h2 className="page-h2">Smart Casual Checkliste</h2>
+                  <p className="page-body mb-6">
                     Hol dir jetzt die <strong>kostenlose Smart Casual Checkliste</strong> mit Do&apos;s & Don&apos;ts,
                     Outfit-Vorschlägen für Damen und Herren sowie Profi-Tipps!
                   </p>
                   <ul className="space-y-3 mb-6 text-sm">
-                    <li className="flex items-start">
-                      <svg className="w-5 h-5 text-business-gold mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      4-seitiges PDF mit allen Essentials
-                    </li>
-                    <li className="flex items-start">
-                      <svg className="w-5 h-5 text-business-gold mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Sofort umsetzbare Tipps
-                    </li>
-                    <li className="flex items-start">
-                      <svg className="w-5 h-5 text-business-gold mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Für Damen & Herren
-                    </li>
+                    {['4-seitiges PDF mit allen Essentials', 'Sofort umsetzbare Tipps', 'Für Damen & Herren'].map((item) => (
+                      <li key={item} className="flex items-start gap-2 page-body">
+                        <span className="w-1 h-1 mt-2 bg-[var(--taupe)] flex-shrink-0" />
+                        {item}
+                      </li>
+                    ))}
                   </ul>
-                  <Link href="/downloads" className="text-brand-accent font-semibold hover:underline">
+                  <Link href="/downloads" className="page-link">
                     Alle Downloads ansehen →
                   </Link>
                 </div>
-                <div className="relative bg-gradient-to-br from-business-navy to-business-darkNavy p-8 md:p-12 flex items-center justify-center">
+                <div className="relative p-8 md:p-12 flex items-center justify-center" style={{ background: 'var(--ink)' }}>
                   <img
                     src="/smart-casual-checkliste.webp"
                     alt="Smart Casual Checkliste"
-                    className="w-full max-w-xs drop-shadow-2xl transform hover:scale-105 transition-transform duration-300"
+                    className="w-full max-w-xs"
                   />
                 </div>
               </div>
@@ -486,10 +294,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-padding bg-brand-primary text-white">
+      <section className="page-section" style={{ background: 'var(--ink)', color: 'var(--paper)' }}>
         <div className="container-custom text-center">
-          <h2 className="text-h2 mb-6">Deine Zukunftsversion, dein Wettbewerbsvorteil</h2>
-          <p className="text-body-lg mb-8 max-w-2xl mx-auto">
+          <h2 className="page-h2" style={{ color: 'var(--paper)' }}>Deine Zukunftsversion, dein Wettbewerbsvorteil</h2>
+          <p className="page-lede mx-auto" style={{ color: 'rgba(255,255,255,.7)', marginBottom: '32px' }}>
             Stell dir vor, du betrittst den Raum, alle spüren deine Eleganz, deinen Fokus – bevor du sprichst.
             Das ist Kleidung als strategische Ressource. Ich begleite dich vom ersten Mood-Board bis zum großen Pitch.
           </p>
