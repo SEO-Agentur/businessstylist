@@ -28,16 +28,42 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans;
+    font-family: Inter Tight, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   }
 
-  h1 { @apply text-h1; }
-  h2 { @apply text-h2; }
-  h3 { @apply text-h3; }
-  h4 { @apply text-h4; }
+  h1 {
+    font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 2.8vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+  }
+
+  h3 {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    font-weight: 300;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    font-weight: 400;
+  }
 
   p {
-    @apply text-body mb-4;
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 400;
+    margin-bottom: 1rem;
   }
 
   a {
@@ -64,41 +90,92 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center px-8 py-4 bg-ink text-paper font-medium uppercase tracking-[.16em] text-xs hover:bg-navy transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy focus-visible:outline-offset-4;
+    @apply inline-flex items-center justify-center px-8 py-4 font-medium uppercase tracking-[.16em] text-xs transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4;
+    color: var(--paper);
+    background-color: var(--ink);
     border-radius: 0 !important;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--navy);
+  }
+
+  .btn-primary:focus-visible {
+    outline-color: var(--navy);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-8 py-4 bg-transparent text-ink font-medium uppercase tracking-[.16em] text-xs border border-ink hover:bg-ink hover:text-paper transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy focus-visible:outline-offset-4;
+    @apply inline-flex items-center justify-center px-8 py-4 bg-transparent font-medium uppercase tracking-[.16em] text-xs transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4;
+    color: var(--ink);
+    border: 1px solid var(--ink);
     border-radius: 0 !important;
+  }
+
+  .btn-secondary:hover {
+    color: var(--paper);
+    background-color: var(--ink);
+  }
+
+  .btn-secondary:focus-visible {
+    outline-color: var(--navy);
   }
 
   .btn-accent {
-    @apply inline-flex items-center justify-center px-8 py-4 bg-navy text-paper font-medium uppercase tracking-[.16em] text-xs hover:bg-ink transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy focus-visible:outline-offset-4;
+    @apply inline-flex items-center justify-center px-8 py-4 font-medium uppercase tracking-[.16em] text-xs transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4;
+    color: var(--paper);
+    background-color: var(--navy);
     border-radius: 0 !important;
   }
 
+  .btn-accent:hover {
+    background-color: var(--ink);
+  }
+
+  .btn-accent:focus-visible {
+    outline-color: var(--navy);
+  }
+
   .card {
-    @apply bg-paper border border-stone-light p-6 transition-colors;
+    @apply p-6 transition-colors;
+    background-color: var(--paper);
+    border: 1px solid var(--stone-light);
     border-radius: 0 !important;
     box-shadow: none !important;
   }
 
   .input-field {
-    @apply w-full bg-transparent border-0 border-b border-stone py-3 text-ink focus:outline-none focus:border-b-navy transition-colors;
+    @apply w-full bg-transparent border-0 py-3 focus:outline-none transition-colors;
+    color: var(--ink);
+    border-bottom: 1px solid var(--stone);
     border-radius: 0 !important;
   }
 
+  .input-field:focus {
+    border-bottom-color: var(--navy);
+  }
+
   .link-underline {
-    @apply underline decoration-taupe decoration-1 underline-offset-4 hover:decoration-ink transition-colors;
+    @apply underline decoration-1 underline-offset-4 transition-colors;
+    color: var(--ink);
+    text-decoration-color: var(--taupe);
+  }
+
+  .link-underline:hover {
+    text-decoration-color: var(--ink);
   }
 
   .eyebrow {
-    @apply text-eyebrow uppercase text-ink-faint;
+    @apply uppercase;
+    color: var(--ink-faint);
+    font-size: 0.625rem;
+    line-height: 1.4;
+    letter-spacing: 0.18em;
+    font-weight: 500;
   }
 
   .rule {
-    @apply h-px bg-stone-light border-0;
+    @apply h-px border-0;
+    background-color: var(--stone-light);
   }
 }
 
