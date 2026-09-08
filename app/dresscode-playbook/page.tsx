@@ -236,7 +236,7 @@ export default function DresscodePlaybookPage() {
             <div className="flex-shrink-0">
               <div className="w-48 h-48 md:w-60 md:h-60 rounded-full overflow-hidden shadow-card">
                 <img
-                  src="/anika-schmitz.jpg"
+                  src="/stilberatung-anika.jpg"
                   alt="Anika Schmitz, Autorin des Dresscode Playbooks"
                   width={240}
                   height={240}

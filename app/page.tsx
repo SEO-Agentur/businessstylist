@@ -44,7 +44,7 @@ export default function HomePage() {
             <div className="relative">
               <div className="aspect-[3/4] overflow-hidden">
                 <img
-                  src="/business_stylist.webp"
+                  src="/business-stylist.jpg"
                   alt="Business-Stylist"
                   className="w-full h-full object-cover"
                 />
@@ -116,9 +116,9 @@ export default function HomePage() {
           <div className="grid md:grid-cols-4 gap-6">
             {[
               { num: '1', title: 'Erster Eindruck', text: 'Finde in 12 Minuten heraus, wie dein Business-Auftritt wirkt – mit deinem persönlichen Business First Impression Score™.' },
-              { num: '2', title: 'Digitales Lookbook', text: 'Erhalte ein fertiges Lookbook mit Outfit-Vorschlägen, perfekt auf deinen Stiltyp abgestimmt – inklusive Shop-Links für sofort bestellbare Business Outfits.' },
-              { num: '3', title: 'Stilberatung', text: 'In der 1:1-Beratung mit Anika bekommst du deine Farb-, Stil- und Garderobenstrategie – auf Wunsch online oder vor Ort, diskret und individuell.' },
-              { num: '4', title: 'Laufende Stilpflege', text: 'Mit dem Style-Abo bleibst du saisonal aktuell. Du bekommst neue Looks, Updates für deine Capsule Wardrobe und persönliche Unterstützung bei Fragen.' },
+              { num: '2', title: 'Business Style Check', text: 'Erhalte deine persönliche Wirkungs- und Stilstrategie mit klaren Empfehlungen für deinen professionellen Auftritt.' },
+              { num: '3', title: 'Capsule Wardrobe', text: 'Baue dir eine funktionale Business-Garderobe mit konkreten Teilen und vielen Kombinationen auf.' },
+              { num: '4', title: 'Laufende Stilpflege', text: 'Mit der laufenden Stilpflege bleibst du saisonal aktuell und erhältst neue Looks, Updates für deine Capsule Wardrobe und persönliche Unterstützung.' },
             ].map((item) => (
               <Card key={item.num} hover>
                 <div className="w-10 h-10 border border-[var(--stone)] flex items-center justify-center text-[var(--taupe)] text-sm mb-4">
@@ -170,9 +170,9 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: 'Kleiderschrank Check', price: '€179', desc: 'Dein Einstieg ins Business-Styling: Wir analysieren deine Garderobe und entwickeln direkt erste Outfit-Ideen.', features: ['Bestehende Teile neu stylen', 'Kein Kaufdruck', 'Passform-Tipps'], link: '/kleiderschrank-check', cta: 'Jetzt Termin buchen' },
-              { title: 'Farbberatung', price: '€179', desc: 'Entdecke deine perfekte Farbpalette mit professioneller Farbtyp-Analyse nach der Vier-Jahreszeiten-Methode.', features: ['Farbtyp-Analyse', 'Persönliche Farbpalette', 'Styling-Empfehlungen', 'Make-up & Accessoires-Tipps'], link: '/farbtyp-beratung', cta: 'Farbberatung buchen' },
-              { title: 'Stilberatung', price: '€390', desc: 'In 1:1-Sessions entwickle ich mit Dir deinen Business-Look: klar, typgerecht und zukunftsfähig.', features: ['Farb- & Stiltyp Analyse', 'Komplette Outfit-Strategie', 'Figur & Passform', 'Lookbook inkl.'], link: '/stilberatung', cta: 'Stilberatung buchen' },
+              { title: 'Erster Eindruck – Analyse', price: '0,- EUR', desc: 'Finde in 12 Minuten heraus, wie dein Business-Auftritt wirkt – mit deiner persönlichen Analyse und konkreten ersten Impulsen.', features: ['Business First Impression Score™', 'Stärkster Wirkungsbereich', 'Größtes Entwicklungspotenzial', 'Sofort umsetzbarer Tipp'], link: '/erster-eindruck', cta: 'Analyse starten' },
+              { title: 'Stilberatung – Business Style Check', price: '99,- EUR', desc: 'Deine persönliche Wirkungs- und Stilstrategie für einen klaren, souveränen Business-Auftritt.', features: ['Business Style Archetyp™', 'Wirkungsanalyse', 'Farb- & Stilstrategie', 'Identity Profil™ als PDF'], link: '/stilberatung', cta: 'Business Style Check buchen' },
+              { title: 'Business Capsule Wardrobe', price: '299,- EUR', desc: 'Deine komplette Business-Garderobenstrategie mit konkreten Teilen und vielen Outfitkombinationen.', features: ['25–35 Teile', '80–100 Outfitkombinationen', 'Saisonplanung', '90-Tage-Fahrplan'], link: '/capsule-wardrobe#bestellen', cta: 'Capsule Wardrobe starten' }
             ].map((item) => (
               <Card key={item.title} hover>
                 <h3 className="page-h3">{item.title}</h3>

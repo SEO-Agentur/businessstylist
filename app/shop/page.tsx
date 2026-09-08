@@ -25,6 +25,16 @@ export default function ShopPage() {
       directLink: true,
     },
     {
+      id: 'stilberatung',
+      name: 'Business Style Check',
+      slug: '/stilberatung',
+      price: 99,
+      description: 'Deine persönliche Wirkungs- und Stilstrategie für einen klaren, souveränen Business-Auftritt – komplett online.',
+      type: 'Service',
+      features: ['Business Style Archetyp™', 'Wirkungsanalyse', 'Farb- & Stilstrategie', 'Identity Profil™ als PDF'],
+      directLink: true,
+    },
+    {
       id: 'capsule-wardrobe',
       name: 'Business Capsule Wardrobe',
       slug: '/capsule-wardrobe#bestellen',
@@ -33,15 +43,6 @@ export default function ShopPage() {
       type: 'Signature Service',
       features: ['Komplette Business-Garderobe', '25–35 Teile', '80–100 Outfitkombinationen', 'Saisonplanung', 'Fehlkäufe vermeiden', 'Einkauf nach Plan'],
       directLink: true,
-    },
-    {
-      id: 'stilberatung',
-      name: 'Stilberatung',
-      slug: '/stilberatung',
-      price: 390,
-      description: 'In 1:1-Sessions entwickle ich mit Dir deinen Business-Look: klar, typgerecht und zukunftsfähig.',
-      type: 'Service',
-      features: ['Farb- & Stiltyp Analyse', 'komplette Outfit-Strategie', 'Figur & Passform', 'Lookbook inkl.'],
     },
   ];
 
