@@ -1,559 +1,488 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useCart } from '@/lib/context/CartContext';
 
-const CheckIcon = () => (
-  <svg
-    className="w-5 h-5 text-business-gold flex-shrink-0 mt-0.5"
-    fill="currentColor"
-    viewBox="0 0 20 20"
-    aria-hidden="true"
-  >
-    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-  </svg>
-);
+const BASE_PRICE = 99;
+const CURRENCY = '€';
+const COUPONS: Record<string, { pct?: number; fixed?: number; label: string }> = {
+  WILLKOMMEN: { pct: 20, label: '−20 %' },
+  ANIKA30: { fixed: 30, label: '−30 €' },
+};
 
-const StarIcon = () => (
-  <svg className="w-4 h-4 text-business-gold" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-  </svg>
-);
+function fmt(n: number): string {
+  return (Math.round(n * 100) / 100).toLocaleString('de-DE', {
+    minimumFractionDigits: n % 1 ? 2 : 0,
+    maximumFractionDigits: 2,
+  }) + ' ' + CURRENCY;
+}
 
-const tileData = [
-  {
-    title: 'Stilberatung: Dein Fundament',
-    text: 'Eine gute Stilberatung schafft Überblick: Welche Kleidung passt, welche Schnitte Deine Silhouette optimal zeigen und wie Du neue Looks auszuprobieren lernst. Wir beraten Dich strukturiert, damit Du Deinen Kleidungsstil sicher tragen kannst – ohne tägliche Unsicherheit beim Anziehen.',
-  },
-  {
-    title: 'Farb- und Stilberatung',
-    text: 'Die Farb- und Stilberatung zeigt, welche Farben und Formen Deine Ausstrahlung stärken. Eine präzise Farbanalyse hilft Dir, Farbe gezielt einzusetzen – im Business wie privat. Wir bestimmen, welche Muster, welcher Stoff und welche Formen Deine Wirkung unterstreichen und Dich optisch in Szene setzen.',
-  },
-  {
-    title: 'Persönliche Beratung',
-    text: 'In der Beratung geht es um Deine Persönlichkeit. Wir beraten individuell und entwickeln einen Style, in dem Du Dich wohlfühlst und der Eindruck hinterlässt. Ein Vorgespräch klärt Deine Ziele, danach folgt die Anprobe, bei der wir Kleidungsstücke ausprobieren und neu kombinieren.',
-  },
-  {
-    title: 'Personal Shopping',
-    text: 'Personal Shopping spart Zeit. Wir begleiten Dich beim Shoppen, wählen passende Teile und vermeiden Fehlkäufe. So entsteht eine Garderobe, die nachhaltig ist und sich leicht erweitern lässt. Im Jahresabo erhältst Du zusätzlich einen persönlichen Shop mit monatlich kuratierten Kleidungsstücken.',
-  },
-  {
-    title: 'Styling & Stylingtipps',
-    text: 'Gutes Styling ist planbar. Mit gezielten Stylingtipps lernst Du, wie Accessoires, Schmuck und Make-up Deine Wirkung unterstreichen. Wir berücksichtigen Frisur, Schnitte und Details, damit jedes Kleidungsstück seinen Platz hat – für verschiedene Anlässe vom Meeting bis zum Empfang.',
-  },
-  {
-    title: 'Outfit & Passform',
-    text: 'Ein Outfit wirkt, wenn es passend geschnitten ist. Wir analysieren Figurtyp und Schnitte, damit Kleidung optimal sitzt. Ob schmale Linien oder strukturierte Formen – Du lernst, wie sich Problemzonen zu kaschieren und Deine Stärken hervorheben lassen, ohne Dich verstecken zu müssen.',
-  },
-  {
-    title: 'Online-Stilberatung',
-    text: 'Die Online-Stilberatung verbindet Nähe mit Effizienz. Per Online-Session erhältst Du klare Empfehlungen, Lookbooks und Feedback – ideal für volle Kalender. So bleibt Deine Beratung flexibel und individuell, ohne dass Du für einen Termin reisen musst.',
-  },
-  {
-    title: 'Kleiderschrank & Garderobe',
-    text: 'Ein strukturierter Kleiderschrank gibt Überblick. Beim Kleiderschrank-Check prüfen wir Deinen Schrank, sortieren und bauen eine funktionale Garderobe auf. Du weißt danach genau, welche Kleidungsstücke Du behalten willst und was fehlt – für einen Modestil, der zu Dir passt.',
-  },
-  {
-    title: 'Business-Stil',
-    text: 'Im Business zählt Wirkung. Die Imageberatung schärft Deinen Look, damit Du souverän auftreten kannst und gut angezogen bist – ob vor Kundinnen, im Pitch oder auf der Bühne. Dein Auftritt wird stimmig, modern und glaubwürdig, ohne Verkleidung.',
-  },
-];
+function priceNow(applied: string | null): number {
+  if (!applied) return BASE_PRICE;
+  const c = COUPONS[applied];
+  if (!c) return BASE_PRICE;
+  const p = c.pct ? BASE_PRICE * (1 - c.pct / 100) : BASE_PRICE - (c.fixed || 0);
+  return Math.max(0, p);
+}
 
-const faqItems = [
-  {
-    q: 'Was kostet eine Farb- und Stilberatung?',
-    a: 'Die Einzel-Stilberatung kostet 390 € inklusive zweier 90-minütiger Termine, Farbanalyse, Figurtyp-Bestimmung und einem individuellen Lookbook. Das Jahresabo liegt bei 1.290 € und umfasst zusätzlich einen Kleiderschrank-Check, monatliche Lookbooks und Personal Shopping. Alle Preise verstehen sich inkl. MwSt.',
-  },
-  {
-    q: 'Wie lange dauert eine Stilberatung?',
-    a: 'Die Einzelberatung besteht aus zwei Terminen à 90 Minuten – einem Vorgespräch mit Analyse und einer anschließenden Anprobe mit Lookbook-Erstellung. Beim Jahresabo verteilen sich die Termine über zwölf Monate, sodass Deine Stilberatung mit Dir wächst.',
-  },
-  {
-    q: 'Findet die Beratung online oder vor Ort statt?',
-    a: 'Beides ist möglich. Die Online-Stilberatung nutzt Video-Sessions und digitale Lookbooks – ideal für volle Kalender. Vor-Ort-Termine bieten mehr Raum für Anprobe und Kleiderschrank-Check. Viele Kundinnen kombinieren beide Formate.',
-  },
-  {
-    q: 'Was ist ein Kleiderschrank-Check und wie läuft er ab?',
-    a: 'Beim Kleiderschrank-Check gehen wir Deine Garderobe systematisch durch. Wir prüfen, welche Kleidungsstücke zu Deinem Farb- und Figurtyp passen, welche Looks sich kombinieren lassen und wo Lücken bestehen. Das Ergebnis ist eine funktionale Garderobe ohne Fehlkäufe.',
-  },
-  {
-    q: 'Welche Qualifikation hat die Stylistin?',
-    a: 'Als Personal Stylistin habe ich fundierte Weiterbildung in Mode, Styling und Imageberatung aus der Beauty-Branche. Jede Stilberatung basiert auf Kompetenz und Gespür, nicht auf Trends – damit Dein Stil langfristig trägt.',
-  },
-  {
-    q: 'Gibt es eine Zufriedenheitsgarantie?',
-    a: 'Wenn Du nach dem ersten Termin das Gefühl hast, dass die Beratung nicht zu Dir passt, sprechen wir darüber und finden eine Lösung. Mir ist wichtig, dass Du langfristig profitierst – nicht nur einmal gut angezogen bist.',
-  },
-];
+function StyleCheckForm() {
+  const [email, setEmail] = useState('');
+  const [coupon, setCoupon] = useState('');
+  const [applied, setApplied] = useState<string | null>(null);
+  const [couponMsg, setCouponMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  const [emailError, setEmailError] = useState(false);
 
-export default function StilberatungPage() {
-  const [selectedPlan, setSelectedPlan] = useState<'single' | 'yearly'>('single');
-  const { addToCart, applyDiscount, discount } = useCart();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [codeStatus, setCodeStatus] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const now = priceNow(applied);
 
-  useEffect(() => {
-    const code = searchParams?.get('code');
-    if (!code) return;
-    if (discount?.code?.toUpperCase() === code.toUpperCase()) return;
-    (async () => {
-      const result = await applyDiscount(code);
-      if (result.ok) {
-        setCodeStatus({ message: `Rabattcode "${code.toUpperCase()}" aktiv – wird im Warenkorb abgezogen.`, type: 'success' });
-      } else {
-        setCodeStatus({ message: result.error || 'Code ungültig', type: 'error' });
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  const handleCoupon = useCallback(() => {
+    const code = coupon.trim().toUpperCase();
+    if (!code) {
+      setApplied(null);
+      setCouponMsg(null);
+      return;
+    }
+    if (COUPONS[code]) {
+      setApplied(code);
+      setCouponMsg({ text: `Code angewendet: ${COUPONS[code].label}. Verbindlich beim Checkout.`, ok: true });
+    } else {
+      setApplied(null);
+      setCouponMsg({ text: 'Dieser Code wurde nicht erkannt.', ok: false });
+    }
+  }, [coupon]);
 
-  const handleBooking = (type: 'single' | 'yearly') => {
-    const product = type === 'single'
-      ? { id: 'stilberatung-single', name: '1:1 Stilberatung', price: 390, type: 'service' }
-      : { id: 'stilberatung-yearly', name: 'Jahresabo Stilberatung', price: 1290, type: 'subscription' };
-    addToCart(product);
-    router.push('/checkout');
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !/.+@.+\..+/.test(email)) {
+      setEmailError(true);
+      return;
+    }
+    const params = new URLSearchParams({ email });
+    if (applied) params.set('coupon', applied);
+    window.location.href = `/checkout?${params.toString()}`;
   };
 
   return (
-    <>
-      {/* ── 1. HERO ── */}
-      <section className="relative section-padding overflow-hidden bg-gradient-to-br from-business-navy via-business-darkNavy to-business-charcoal">
-        <div className="absolute inset-0 opacity-10 pointer-events-none" aria-hidden="true">
-          <div className="absolute top-20 right-20 w-96 h-96 bg-business-gold rounded-full blur-3xl" />
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-brand-accent rounded-full blur-3xl" />
+    <div className="sc-offer">
+      <div className="sc-offer__price">
+        <span className="sc-offer__now">{fmt(now)}</span>
+        {applied && (
+          <>
+            <span className="sc-offer__was">{fmt(BASE_PRICE)}</span>
+            <span className="sc-offer__save">{COUPONS[applied].label}</span>
+          </>
+        )}
+      </div>
+      <p className="sc-offer__sub">Einmalig · online · persönlicher Report inkl. BusinessStylist® Identity Profil™</p>
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="sc-field">
+          <label className="sc-field__label" htmlFor="sc-email">E-Mail-Adresse</label>
+          <input
+            id="sc-email"
+            type="email"
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); setEmailError(false); }}
+            placeholder="name@beispiel.de"
+            autoComplete="email"
+            required
+            className="sc-input"
+            style={emailError ? { borderBottomColor: '#8a5a4a' } : undefined}
+          />
         </div>
-
-        <div className="container-custom relative z-10">
-          {codeStatus && (
-            <div
-              className={`max-w-3xl mx-auto mb-8 px-5 py-3 rounded-xl text-sm font-medium text-center ${
-                codeStatus.type === 'success'
-                  ? 'bg-business-gold/95 text-business-navy shadow-lg'
-                  : 'bg-red-100 text-red-800'
-              }`}
-              role="status"
-            >
-              {codeStatus.message}
-            </div>
+        <div className="sc-field">
+          <label className="sc-field__label" htmlFor="sc-coupon">
+            Gutscheincode <span className="sc-field__sub">(optional)</span>
+          </label>
+          <div className="sc-coupon">
+            <input
+              id="sc-coupon"
+              type="text"
+              value={coupon}
+              onChange={(e) => setCoupon(e.target.value)}
+              placeholder="Code eingeben"
+              autoCapitalize="characters"
+              className="sc-input"
+            />
+            <button type="button" onClick={handleCoupon} className="sc-coupon__btn">Einlösen</button>
+          </div>
+          {couponMsg && (
+            <p className={`sc-coupon__msg ${couponMsg.ok ? 'ok' : 'err'}`} aria-live="polite">
+              {couponMsg.text}
+            </p>
           )}
-          <div className="max-w-4xl mx-auto text-center text-white mb-14">
-            <h1 className="font-serif text-display-2 mb-6 leading-tight">
-              Stilberatung &amp; Personal Styling –<br />
-              <span className="text-business-gold">Farb- und Stilberatung für Business-Frauen</span>
-            </h1>
-            <p className="text-xl text-gray-200 max-w-3xl mx-auto mb-10 leading-relaxed">
-              Professionelle Farb- und Stilberatung von einer erfahrenen Personal Stylistin – online oder vor Ort. Dein Überblick zu Stil, Figurtyp und persönlicher Ausstrahlung, weil der erste Eindruck zählt.
-            </p>
-
-            <div className="flex justify-center mb-10">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-1.5 inline-flex">
-                <button
-                  onClick={() => setSelectedPlan('single')}
-                  className={`px-7 py-3 rounded-xl font-semibold transition-all text-sm ${
-                    selectedPlan === 'single'
-                      ? 'bg-white text-business-navy shadow-lg'
-                      : 'text-white hover:bg-white/20'
-                  }`}
-                >
-                  Einzelberatung
-                </button>
-                <button
-                  onClick={() => setSelectedPlan('yearly')}
-                  className={`px-7 py-3 rounded-xl font-semibold transition-all text-sm ${
-                    selectedPlan === 'yearly'
-                      ? 'bg-white text-business-navy shadow-lg'
-                      : 'text-white hover:bg-white/20'
-                  }`}
-                >
-                  Jahresabo
-                </button>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
-              {/* Einzelberatung Card */}
-              <div
-                className={`bg-white rounded-2xl p-8 text-left transition-all duration-300 cursor-pointer ${
-                  selectedPlan === 'single' ? 'ring-4 ring-business-gold shadow-2xl scale-[1.02]' : 'opacity-70 hover:opacity-95 hover:shadow-xl'
-                }`}
-                onClick={() => setSelectedPlan('single')}
-              >
-                <span className="inline-block bg-business-gold text-white px-3 py-1 rounded-full text-xs font-semibold mb-4">
-                  Beliebteste Wahl
-                </span>
-                <h3 className="font-heading font-bold text-business-navy text-2xl mb-1">1:1 Stilberatung</h3>
-                <p className="text-brand-secondary text-sm mb-5">persönlich &amp; effektiv</p>
-                <div className="mb-1">
-                  <span
-                    className="text-5xl font-bold text-business-navy font-heading"
-                    itemProp="price"
-                    content="390"
-                  >390 €</span>
-                </div>
-                <p className="text-brand-secondary text-xs mb-6">inkl. 19 % MwSt. · einmalig, inkl. Lookbook</p>
-                <ul className="space-y-2 mb-6">
-                  {[
-                    'Farbtyp- & Stiltyp-Analyse',
-                    'Figurtyp & Schnitt-Beratung',
-                    'Outfit-Strategie für Alltag & Business',
-                    'Individuelles Lookbook (inklusive)',
-                    'Kleiderschrank-Empfehlung',
-                    'Shopping-Liste mit konkreten Teilen',
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-brand-secondary text-sm">
-                      <CheckIcon />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleBooking('single'); }}
-                  className="w-full py-3.5 bg-business-navy text-white font-semibold rounded-xl hover:bg-business-darkNavy transition-colors duration-200 text-sm"
-                >
-                  Einzelberatung buchen
-                </button>
-              </div>
-
-              {/* Jahresabo Card */}
-              <div
-                className={`bg-white rounded-2xl p-8 text-left transition-all duration-300 cursor-pointer relative ${
-                  selectedPlan === 'yearly' ? 'ring-4 ring-business-gold shadow-2xl scale-[1.02]' : 'opacity-70 hover:opacity-95 hover:shadow-xl'
-                }`}
-                onClick={() => setSelectedPlan('yearly')}
-              >
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-business-gold text-white px-4 py-1 rounded-full text-xs font-semibold whitespace-nowrap shadow-md">
-                    Ganzjährige Begleitung
-                  </span>
-                </div>
-                <div className="mt-3">
-                  <h3 className="font-heading font-bold text-business-navy text-2xl mb-1">Jahresabo Stilberatung</h3>
-                  <p className="text-brand-secondary text-sm mb-5">Dein Stil-System für 12 Monate</p>
-                  <div className="mb-1">
-                    <span
-                      className="text-5xl font-bold text-business-navy font-heading"
-                      itemProp="price"
-                      content="1290"
-                    >1.290 €</span>
-                  </div>
-                  <p className="text-brand-secondary text-xs mb-6">inkl. 19 % MwSt. · pro Jahr (107,50 €/Monat)</p>
-                  <ul className="space-y-2 mb-6">
-                    {[
-                      'Alle Leistungen der Einzelberatung',
-                      'Kleiderschrank-Check (vollständig)',
-                      'Monatliches Lookbook mit aktuellen Empfehlungen',
-                      'Persönlicher Online-Shop mit kuratierten Teilen',
-                      'Saisonale Outfit-Updates',
-                      '12 Monate persönliche Stilbegleitung',
-                    ].map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-brand-secondary text-sm">
-                        <CheckIcon />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleBooking('yearly'); }}
-                    className="w-full py-3.5 bg-business-gold text-white font-semibold rounded-xl hover:bg-opacity-90 transition-all duration-200 text-sm"
-                  >
-                    Jahresabo starten
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-gray-400 text-sm">
-              Zertifizierte Imageberatung · einfach Online buchen · Sichere Bezahlung
-            </p>
-          </div>
         </div>
-      </section>
-
-      {/* ── 2. INTRO-TEXTBLOCK ── */}
-      <section className="section-padding bg-white">
-        <div className="container-custom max-w-4xl">
-          <p className="text-lg text-brand-secondary leading-relaxed">
-            Ein klarer Stil ist kein Zufall. Diese Stilberatung zeigt Dir, wie Kleidung, Farben und Formen perfekt zusammenwirken – passend zu Deinem Figurtyp, Deiner Persönlichkeit und Deinen beruflichen Zielen. Als Personal Stylistin mit fundierter Weiterbildung aus der Beauty-Branche bringe ich das Know-how mit, um Mode und Styling als Werkzeug für Dich nutzbar zu machen – nicht als Daueraufgabe. Du erfährst, wie Du Outfits zusammenstellst, die stimmig wirken, Fehlkäufe vermeidest und Deine Ausstrahlung mit Gespür und Kompetenz gezielt unterstreichst.
-          </p>
-        </div>
-      </section>
-
-      {/* ── 3. SEO-SEKTION: Was ist Farb- und Stilberatung ── */}
-      <section className="section-padding bg-brand-light">
-        <div className="container-custom max-w-5xl">
-          <h2 className="font-serif text-h2 text-business-navy mb-8">
-            Was ist Farb- und Stilberatung und für wen lohnt sie sich?
-          </h2>
-          <p className="text-brand-secondary leading-relaxed mb-12 text-lg">
-            Farb- und Stilberatung ist mehr als eine Modeberatung. Sie verbindet Farbanalyse, Figurtyp und persönliche Ausstrahlung zu einem System, das Dir im Alltag Entscheidungen abnimmt. Besonders für Frauen in Führungspositionen, Gründerinnen und Selbstständige lohnt sich eine professionelle Beratung, weil Kleidung hier direkt zur Kompetenz-Wahrnehmung beiträgt. Der erste Eindruck zählt – aber er ist nur der Anfang. Was bleibt, ist die Wirkung über Monate und Jahre.
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-10">
-            <div>
-              <h3 className="font-heading font-semibold text-business-navy text-xl mb-4 pb-3 border-b-2 border-business-gold">
-                Wie bestimmen wir Deinen Farbtyp und Figurtyp?
-              </h3>
-              <p className="text-brand-secondary leading-relaxed text-sm">
-                In der Anprobe testen wir Farben direkt am Gesicht und bestimmen Deinen Farbtyp. Parallel analysieren wir Deinen Figurtyp – welche Schnitte Deine Silhouette unterstreichen, wo wir Problemzonen zu kaschieren und Stärken hervorheben. Aus beiden Ergebnissen entsteht ein individuelles Lookbook, das Dir zeigt, welche Kleidung, Farben und Formen wirklich zu Dir passen.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-heading font-semibold text-business-navy text-xl mb-4 pb-3 border-b-2 border-business-gold">
-                Kleiderschrank-Check: Was bleibt, was geht, was fehlt?
-              </h3>
-              <p className="text-brand-secondary leading-relaxed text-sm">
-                Der <Link href="/kleiderschrank-check" className="text-business-navy underline decoration-business-gold decoration-2 underline-offset-2 hover:text-business-gold transition-colors">Kleiderschrank-Check</Link> ist oft der Wendepunkt. Wir gehen gemeinsam Deinen Schrank durch, sortieren Kleidungsstücke und identifizieren Lücken. Das Ergebnis: weniger Fehlkäufe, nachhaltiger Konsum und eine Garderobe, in der alles funktioniert. Viele Kundinnen berichten, dass dieser Schritt mehr verändert hat als jede neue Shopping-Tour.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-heading font-semibold text-business-navy text-xl mb-4 pb-3 border-b-2 border-business-gold">
-                Warum eine Personal Stylistin mit Know-how und Weiterbildung?
-              </h3>
-              <p className="text-brand-secondary leading-relaxed text-sm">
-                Eine <Link href="/ueber-mich" className="text-business-navy underline decoration-business-gold decoration-2 underline-offset-2 hover:text-business-gold transition-colors">Personal Stylistin</Link> unterscheidet sich vom reinen Stylist durch fundierte Weiterbildung in der Beauty-Branche, Mode und Styling. Dieses Know-how sorgt dafür, dass Empfehlungen nicht auf Trends basieren, sondern auf Dir. Trend, Fashion und aktuelle Kollektionen sind Werkzeuge – nicht das Ziel. Das Ziel ist, Deinen persönlichen Stil zu finden, der unabhängig von der nächsten Saison bleibt.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 4. WAS DU BEKOMMST (3×3) ── */}
-      <section className="section-padding bg-white">
-        <div className="container-custom max-w-6xl">
-          <div className="text-center mb-10">
-            <h2 className="font-serif text-h2 text-business-navy mb-4">Was Du bekommst</h2>
-            <p className="text-brand-secondary text-lg max-w-3xl mx-auto">
-              In unserer Stilberatung verbinden wir persönliche Beratung mit strukturierter Methode. Neun Bausteine helfen Dir, Deinen Stil zu finden – von der Farb- und Stilberatung über den Kleiderschrank-Check bis hin zu Personal Shopping und Stylingtipps für verschiedene Anlässe. Jeder Baustein steht für sich, aber alle greifen ineinander.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {tileData.map((tile) => (
-              <article
-                key={tile.title}
-                className="bg-white rounded-xl border border-gray-100 shadow-card p-6 hover:shadow-lifted hover:-translate-y-0.5 transition-all duration-300"
-              >
-                <div className="w-8 h-0.5 bg-business-gold mb-4" />
-                <h3 className="font-heading font-semibold text-business-navy mb-3 text-lg">{tile.title}</h3>
-                <p className="text-brand-secondary text-sm leading-relaxed">{tile.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 5. TESTIMONIALS ── */}
-      <section className="section-padding bg-business-cream">
-        <div className="container-custom max-w-5xl">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-h2 text-business-navy mb-3">Was Kundinnen sagen</h2>
-            <p className="text-brand-secondary text-lg">Echte Ergebnisse – von echten Frauen.</p>
-          </div>
-          {/* TODO: Echte Testimonials einfügen */}
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                quote: 'Ich war skeptisch, ob eine Stilberatung wirklich etwas verändert. Heute weiß ich: Ich greife morgens nicht mehr ins Leere. Meine Garderobe funktioniert, und ich fühle mich gut angezogen – auch an stressigen Tagen.',
-                name: 'Anna K.',
-                role: 'Senior Consultant',
-              },
-              {
-                quote: 'Die Farb- und Stilberatung hat mir gezeigt, warum manche Outfits mir immer "komisch" vorkamen. Mit dem richtigen Gespür für Farben und Schnitte habe ich endlich einen Look, der zu mir passt.',
-                name: 'Julia M.',
-                role: 'Gründerin',
-              },
-              {
-                quote: 'Das Jahresabo war die beste Investition in meine Außenwirkung. Der Kleiderschrank-Check allein hat mich vor zig Fehlkäufen bewahrt. Und das monatliche Lookbook macht Shopping zu einem geplanten Vergnügen statt zu Stress.',
-                name: 'Sarah B.',
-                role: 'Führungskraft',
-              },
-            ].map((t) => (
-              <div key={t.name} className="bg-white rounded-2xl p-8 shadow-card flex flex-col">
-                <div className="flex gap-1 mb-5">
-                  {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
-                </div>
-                <p className="text-brand-secondary text-sm leading-relaxed italic flex-grow mb-6">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div>
-                  <p className="font-semibold text-business-navy text-sm">{t.name}</p>
-                  <p className="text-brand-secondary text-xs">{t.role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 6. DAS WICHTIGSTE AUF EINEN BLICK ── */}
-      <section className="section-padding bg-gradient-to-br from-business-navy via-business-darkNavy to-business-charcoal text-white">
-        <div className="container-custom max-w-4xl">
-          <h2 className="font-serif text-h2 text-center mb-10">Das Wichtigste auf einen Blick</h2>
-          <div className="grid md:grid-cols-2 gap-4 mb-14">
-            {[
-              'Stilberatung schafft Überblick, Sicherheit und ein dauerhaftes Gespür für Kleidung',
-              'Farb- und Stilberatung stärkt Deine Ausstrahlung und Dein Selbstbewusstsein',
-              'Personal Shopping vermeidet Fehlkäufe und macht Deine Garderobe nachhaltig',
-              'Styling-Know-how sorgt für stimmige Looks bei verschiedenen Anlässen',
-              'einfach Online buchen: flexibel, professionell und wirksam',
-              'Klare Preise: 390 € Einzelberatung oder 1.290 € im Jahresabo',
-            ].map((item) => (
-              <div key={item} className="flex items-start gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-5">
-                <svg className="w-6 h-6 text-business-gold flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <p className="text-gray-200 leading-snug">{item}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <h3 className="font-serif text-h3 mb-5">Bereit für Deinen nächsten Schritt?</h3>
-            <p className="text-gray-300 text-lg max-w-2xl mx-auto mb-8">
-              Starte mit Deiner Stilberatung auf businessstylist.de – als einmalige Einzelberatung oder als ganzjährige Begleitung im Stil-System. Unsicher, was zu Dir passt? Buche ein kostenloses 15-Minuten-Vorgespräch und wir klären gemeinsam, welcher Einstieg für Dich sinnvoll ist.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
-              <button
-                onClick={() => handleBooking('single')}
-                className="inline-flex items-center justify-center px-8 py-4 bg-business-gold text-white font-semibold rounded-xl hover:bg-opacity-90 transition-all duration-200 text-base shadow-lg"
-              >
-                Einzelberatung buchen
-              </button>
-              <button
-                onClick={() => handleBooking('yearly')}
-                className="inline-flex items-center justify-center px-8 py-4 bg-white/10 border border-white/30 text-white font-semibold rounded-xl hover:bg-white/20 transition-all duration-200 text-base backdrop-blur-sm"
-              >
-                Jahresabo starten
-              </button>
-            </div>
-            <Link
-              href="/kontakt"
-              className="inline-block text-gray-400 hover:text-business-gold transition-colors text-sm underline underline-offset-4"
-            >
-              Kostenloses Vorgespräch anfragen
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 7. FAQ ── */}
-      <section className="section-padding bg-brand-light">
-        <div className="container-custom max-w-3xl">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-h2 text-business-navy mb-4">Häufige Fragen zur Stilberatung</h2>
-          </div>
-          <div className="space-y-3">
-            {faqItems.map((item) => (
-              <FaqItem key={item.q} question={item.q} answer={item.a} />
-            ))}
-          </div>
-          <p className="text-center text-sm text-brand-secondary mt-8">
-            Weitere Fragen?{' '}
-            <Link href="/faq" className="text-business-navy underline decoration-business-gold decoration-2 underline-offset-2 hover:text-business-gold transition-colors">
-              Alle FAQs ansehen
-            </Link>{' '}
-            oder{' '}
-            <Link href="/kontakt" className="text-business-navy underline decoration-business-gold decoration-2 underline-offset-2 hover:text-business-gold transition-colors">
-              Kontakt aufnehmen
-            </Link>.
-          </p>
-        </div>
-      </section>
-
-      {/* ── 8. PREISE & BUCHUNG (bewusste Wiederholung am Seitenende) ── */}
-      <section className="section-padding bg-white">
-        <div className="container-custom max-w-4xl">
-          <div className="text-center mb-10">
-            <h2 className="font-serif text-h2 text-business-navy mb-3">Preise &amp; Buchung</h2>
-            <p className="text-brand-secondary text-lg">Beide Angebote enthalten die volle Beratungstiefe.</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-brand-light rounded-2xl p-8 flex flex-col">
-              <h3 className="font-heading font-bold text-business-navy text-xl mb-1">Einzel-Stilberatung</h3>
-              <p className="text-brand-secondary text-sm mb-5">inklusive Analyse &amp; Lookbook</p>
-              <div className="mb-1">
-                <span className="text-4xl font-bold text-business-navy font-heading" itemProp="price" content="390">
-                  390 €
-                </span>
-              </div>
-              <p className="text-brand-secondary text-xs mb-6">inkl. 19 % MwSt.</p>
-              <button
-                onClick={() => handleBooking('single')}
-                className="mt-auto w-full py-3.5 bg-business-navy text-white font-semibold rounded-xl hover:bg-business-darkNavy transition-colors duration-200"
-              >
-                Einzelberatung buchen
-              </button>
-            </div>
-            <div className="bg-business-navy rounded-2xl p-8 flex flex-col text-white">
-              <h3 className="font-heading font-bold text-white text-xl mb-1">Jahresabo</h3>
-              <p className="text-gray-300 text-sm mb-5">Initialanalyse + Check + monatliches Lookbook</p>
-              <div className="mb-1">
-                <span className="text-4xl font-bold font-heading" itemProp="price" content="1290">
-                  1.290 €
-                </span>
-              </div>
-              <p className="text-gray-400 text-xs mb-6">inkl. 19 % MwSt. · pro Jahr</p>
-              <button
-                onClick={() => handleBooking('yearly')}
-                className="mt-auto w-full py-3.5 bg-business-gold text-white font-semibold rounded-xl hover:bg-opacity-90 transition-all duration-200"
-              >
-                Jahresabo starten
-              </button>
-            </div>
-          </div>
-          <p className="text-center text-brand-secondary text-sm mt-6">
-            Alle Preise inkl. 19 % MwSt. Sichere Bezahlung per Überweisung, PayPal oder Kreditkarte.
-          </p>
-
-          <div className="mt-12 pt-10 border-t border-gray-100 flex flex-wrap gap-x-8 gap-y-3 justify-center text-sm text-brand-secondary">
-            <Link href="/kibbe-body-type-test" className="hover:text-business-navy transition-colors underline decoration-business-gold underline-offset-2">
-              Typberatung (Kibbe-Test)
-            </Link>
-            <Link href="/kleiderschrank-check" className="hover:text-business-navy transition-colors underline decoration-business-gold underline-offset-2">
-              Kleiderschrank-Check
-            </Link>
-            <Link href="/downloads" className="hover:text-business-navy transition-colors underline decoration-business-gold underline-offset-2">
-              Downloads &amp; Checklisten
-            </Link>
-            <Link href="/ueber-mich" className="hover:text-business-navy transition-colors underline decoration-business-gold underline-offset-2">
-              Über die Stylistin
-            </Link>
-          </div>
-        </div>
-      </section>
-    </>
+        <button type="submit" className="sc-btn">
+          Business Style Check buchen <span className="sc-btn__arrow" aria-hidden="true">&#8594;</span>
+        </button>
+        <p className="sc-offer__reassure">
+          Nach dem Kauf erhältst Du sofort den Fragebogen. Deine Lieferzeit startet, sobald Deine ausgefüllten Unterlagen und Fotos bei Anika eingegangen sind.
+        </p>
+      </form>
+    </div>
   );
 }
 
-function FaqItem({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false);
+function ScrollRail() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+    const update = () => {
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - window.innerHeight;
+      const pct = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+      setProgress(pct);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
   return (
-    <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-      <button
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        className="w-full flex items-center justify-between px-6 py-5 text-left font-heading font-semibold text-business-navy hover:bg-gray-50 transition-colors"
-      >
-        <span className="pr-4">{question}</span>
-        <svg
-          className={`w-5 h-5 flex-shrink-0 text-business-gold transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      {open && (
-        <div className="px-6 pb-5 pt-4 text-brand-secondary text-sm leading-relaxed border-t border-gray-100">
-          {answer}
+    <aside className="sc-rail" aria-hidden="true">
+      <span className="sc-rail__mark">
+        <img src="/businessstylist-logo-sml.png" alt="" className="sc-rail__logo" />
+      </span>
+      <div className="sc-rail__track">
+        <div
+          className="sc-rail__fill"
+          style={isMobile ? { width: `${progress * 100}%` } : { height: `${progress * 100}%` }}
+        />
+      </div>
+      <span className="sc-rail__phase">Strategie™ · Phase 03</span>
+    </aside>
+  );
+}
+
+export default function StilberatungPage() {
+  return (
+    <>
+      <ScrollRail />
+      <main className="sc-shell">
+        <div className="sc-wrap">
+          {/* HERO */}
+          <header className="sc-hero">
+            <p className="sc-eyebrow sc-hero__eyebrow">Farb- und Stilberatung für Business-Frauen</p>
+            <h1 className="sc-hero__title">
+              Stilberatung, die auf Wirkung setzt – weil der erste Eindruck zählt.
+            </h1>
+            <p className="sc-hero__lede">
+              Du willst, dass man Dir Deine <strong>Kompetenz sofort ansieht</strong> – nicht erst, wenn Du den
+              Mund aufmachst. Der Business Style Check™ ist die Stilberatung, die genau das leistet: Sie
+              übersetzt Deinen Auftritt in eine klare Wirkungsstrategie. Von einer Mode-Stylistin und gelernten
+              Kostümbildnerin, komplett online, einmalig 99 €.
+            </p>
+            <div className="sc-hero__cta">
+              <a className="sc-btn" href="#buchen">
+                Business Style Check buchen <span className="sc-btn__arrow" aria-hidden="true">&#8594;</span>
+              </a>
+              <div className="sc-price-inline">
+                <span className="sc-price-inline__now">99 €</span>
+                <span className="sc-price-inline__note">einmalig · online · in 2 Tagen</span>
+              </div>
+            </div>
+            <div className="sc-chips">
+              <span className="sc-chip">Gelernte Kostümbildnerin</span>
+              <span className="sc-chip">Ausgebildete Schneiderin</span>
+              <span className="sc-chip">Studium Modedesign</span>
+              <span className="sc-chip">Persönlicher Report in 2 Tagen</span>
+            </div>
+          </header>
+
+          {/* CONTRAST */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">01</span>
+              <h2 className="sc-section__title">Stil oder Wirkung – worauf kommt es an?</h2>
+              <p className="sc-section__hint">Der Unterschied zwischen einer klassischen Stilberatung und dem Business Style Check™ auf einen Blick.</p>
+            </div>
+            <div className="sc-compare">
+              <div className="sc-compare__col sc-compare__col--alt">
+                <span className="sc-compare__l">Klassische Stilberatung</span>
+                <p className="sc-compare__h">Fokus: Aussehen</p>
+                <ul>
+                  <li>Welche Farben stehen mir?</li>
+                  <li>Welcher Figurtyp bin ich?</li>
+                  <li>Was ist gerade Trend?</li>
+                  <li>Wie sehe ich vorteilhaft aus?</li>
+                </ul>
+              </div>
+              <div className="sc-compare__col sc-compare__col--now">
+                <span className="sc-compare__l">Business Style Check™</span>
+                <p className="sc-compare__h">Fokus: Wirkung</p>
+                <ul>
+                  <li>Wie will ich wahrgenommen werden?</li>
+                  <li>Was traut man mir zu?</li>
+                  <li>Welche Rolle spiele ich im Job?</li>
+                  <li>Wie wird meine Kompetenz sichtbar?</li>
+                </ul>
+              </div>
+            </div>
+            <p className="sc-compare__foot">Dein Look bleibt wichtig – aber er ist das Werkzeug, nicht das Ziel. Es geht nicht darum, ständig neue Looks auszuprobieren, sondern Deinen Auftritt gezielt einzusetzen.</p>
+          </section>
+
+          {/* WHY */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">02</span>
+              <h2 className="sc-section__title">Warum sieht man Dir Deine Wirkung sofort an?</h2>
+            </div>
+            <div className="sc-prose">
+              <p>Eine klassische Farb- und Stilberatung hilft Dir, Deinen persönlichen <strong>Stil</strong> zu finden: Eine Stylistin schaut sich Farben und Formen an, bestimmt Deinen Figurtyp und zeigt Dir, welche Schnitte, Materialien und Muster zu Dir passen – Kleidung, Mode und Styling, handwerklich sauber aufgeschlüsselt.</p>
+              <p>Im Berufsleben wird dieser Auftritt sofort gelesen. <strong>Der erste Eindruck zählt</strong>, lange bevor Du ein Wort gesagt hast – und man sieht Dir direkt an, ob Anspruch und Auftreten zusammenpassen. Deine Kleidung ist dort weniger Geschmack als Kommunikation: Sie sendet ein Signal über Deine Kompetenz, Deine Rolle und Dein Selbstbewusstsein.</p>
+              <p>Genau hier setzt der Business Style Check™ an – eine Stilberatung, die eher Imageberatung ist: Er nimmt das Handwerk, Farben, Formen und Schnitte, und richtet es konsequent auf Deine Wirkung aus.</p>
+            </div>
+          </section>
+
+          {/* FOR WHOM */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">03</span>
+              <h2 className="sc-section__title">Für wen ist der Business Style Check gedacht?</h2>
+              <p className="sc-section__hint">Unsere Kundinnen kommen aus dem Business und stehen vor verschiedenen Anlässen – Meeting, Präsentation, Kundentermin, Networking.</p>
+            </div>
+            <div className="sc-cards3">
+              <div className="sc-tile">
+                <span className="sc-tile__l">01</span>
+                <p className="sc-tile__h">Angestellte &amp; Führungskräfte</p>
+                <p className="sc-tile__p">Für Frauen, deren Auftritt mit wachsender Verantwortung mithalten soll.</p>
+              </div>
+              <div className="sc-tile">
+                <span className="sc-tile__l">02</span>
+                <p className="sc-tile__h">Gründerinnen &amp; Selbstständige</p>
+                <p className="sc-tile__p">Für Frauen, die als Marke sichtbar werden und Vertrauen aufbauen wollen.</p>
+              </div>
+              <div className="sc-tile">
+                <span className="sc-tile__l">03</span>
+                <p className="sc-tile__h">Vor dem nächsten Schritt</p>
+                <p className="sc-tile__p">Vor Beförderung, Pitch oder Rollenwechsel – wenn der Auftritt jetzt sitzen muss.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* DELIVERABLES */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">04</span>
+              <h2 className="sc-section__title">Was bekommst Du?</h2>
+              <p className="sc-section__hint">Deine persönliche Stilstrategie, individuell erstellt – auf Basis Deiner Antworten und Fotos. Ganz ohne Shopping-Links: Hier geht es um Deine Wirkung, nicht ums Einkaufen.</p>
+            </div>
+            <ul className="sc-deliver">
+              {[
+                { n: '01', t: 'Business Vision Statement™', d: 'Ein Satz, der festhält, wie Du im beruflichen Kontext wahrgenommen werden willst.' },
+                { n: '02', t: 'Business Style Archetyp™', d: 'Dein primärer und sekundärer Archetyp – Dein Kompass für jede Outfit-Entscheidung.' },
+                { n: '03', t: 'Business Style Profile™', d: 'Deine stärksten Wirkungsmerkmale und worauf Du bewusst achten solltest.' },
+                { n: '04', t: 'Wirkungsanalyse', d: 'Wie Dein Auftritt auf Kompetenz, Führung, Modernität und Vertrauen einzahlt.' },
+                { n: '05', t: 'Farb- & Stilstrategie', d: 'Deine Basis-, Akzent- und No-Go-Farben, passend zu Deiner Rolle.' },
+                { n: '06', t: 'Schnitte, Materialien & Accessoires', d: 'Konkrete Empfehlungen für Schnitte und Materialien, die Deine Wirkung tragen.' },
+                { n: '07', t: 'Persönliche Style-Regeln', d: 'Was Deine Wirkung stärkt – und was Du ab jetzt bewusst weglässt.' },
+                { n: '08', t: 'Erste Outfit-Kombinationen', d: 'Richtungs-Outfits, die zeigen, wie Du Deine Kleidungsstücke kombinieren kannst.' },
+                { n: '09', t: 'Quick Wins', d: 'Sofort umsetzbare Änderungen mit dem größten Effekt auf Deine Ausstrahlung.' },
+                { n: '10', t: 'BusinessStylist® Identity Profil™', d: 'Dein persönliches Business-Identity-Profil als PDF – innerhalb von 2 Tagen in Deinem Postfach.' },
+              ].map((item) => (
+                <li key={item.n} className="sc-deliver__item">
+                  <span className="sc-deliver__n">{item.n}</span>
+                  <div>
+                    <p className="sc-deliver__t">{item.t}</p>
+                    <p className="sc-deliver__d">{item.d}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div className="sc-cta-mid">
+              <a className="sc-btn" href="#buchen">
+                Jetzt für 99 € buchen <span className="sc-btn__arrow" aria-hidden="true">&#8594;</span>
+              </a>
+            </div>
+          </section>
+
+          {/* HOW */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">05</span>
+              <h2 className="sc-section__title">Wie läuft die Online-Stilberatung ab?</h2>
+            </div>
+            <div className="sc-steps">
+              {[
+                { n: '01', t: 'Buchen', d: 'Sichere Dir Deinen Business Style Check™ unten – mit E-Mail und, falls vorhanden, Deinem Gutscheincode.' },
+                { n: '02', t: 'Fragebogen & Fotos', d: 'Fragebogen ca. 20–30 Minuten, dazu 5–8 Outfitfotos. Kein Termin, keine Anprobe – alles online.' },
+                { n: '03', t: 'Dein Report', d: 'Anika erstellt Deine Stilstrategie und Dein Identity Profil™ – als PDF innerhalb von 2 Tagen nach Eingang Deiner Unterlagen.' },
+              ].map((step) => (
+                <div key={step.n} className="sc-step">
+                  <span className="sc-step__n">{step.n}</span>
+                  <div>
+                    <p className="sc-step__t">{step.t}</p>
+                    <p className="sc-step__d">{step.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="sc-card">
+              <div className="sc-card__badge">
+                <img src="/dresscode-playbook.png" alt="BusinessStylist® Identity Profil™" />
+              </div>
+              <div>
+                <p className="sc-card__t">Dein BusinessStylist® Identity Profil™</p>
+                <p className="sc-card__d">Deine Business-Identität als persönliches PDF: Archetyp, Wirkungsprofil, Farbwelt, Signature Pieces und Dein Mantra – kompakt auf einen Blick, innerhalb von 2 Tagen.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* WHO BEHIND */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">06</span>
+              <h2 className="sc-section__title">Wer Dich berät</h2>
+            </div>
+            <div className="sc-bio">
+              <p className="sc-bio__p">
+                Anika Schmitz ist <strong>keine Quereinsteigerin</strong>. Sie ist gelernte Kostümbildnerin und
+                ausgebildete Schneiderin, hat Designingenieurwesen für Mode studiert und jahrelang für Film,
+                Theater und als Mode-Stylistin gearbeitet. Dieses Handwerk – Schnitt, Material und die Frage,
+                wie ein Auftritt auf der Bühne wirkt – bringt sie mit einem geschulten Gespür in jeden Business
+                Style Check ein. Fundiertes Know-how aus Mode und Styling statt Bauchgefühl und schnelllebiger Fashion.
+              </p>
+              <div className="sc-chips">
+                <span className="sc-chip">Gelernte Kostümbildnerin</span>
+                <span className="sc-chip">Ausgebildete Schneiderin</span>
+                <span className="sc-chip">Studium Designingenieurwesen für Mode</span>
+                <span className="sc-chip">Film · Theater · Mode-Styling</span>
+              </div>
+            </div>
+          </section>
+
+          {/* CRAFT */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">07</span>
+              <h2 className="sc-section__title">Wie findest Du Deinen Stil – Farben, Schnitte, Figurtyp?</h2>
+            </div>
+            <div className="sc-prose">
+              <p>Um Deinen <strong>Stil zu finden</strong>, beginnen wir bei den Grundlagen: Wir bestimmen, welche Farben und Formen Dir schmeicheln und welcher Figurtyp Du bist. Daraus ergibt sich, welche Schnitte und Muster Deine Stärken hervorheben, Dich optisch strecken und – wo Du möchtest – helfen, Proportionen gezielt zu betonen.</p>
+              <p>Darauf baut Dein persönlicher Modestil auf: von passenden Kleidungsstücken über Materialien bis zu Accessoires und Schmuck, die Deinen Auftritt unterstreichen. Du musst dafür kein Model sein. Am Ende weißt Du, wie Du Deine Teile clever kombinierst und Deine Garderobe im Kleiderschrank gezielt aufbaust.</p>
+            </div>
+          </section>
+
+          {/* BENEFITS */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">08</span>
+              <h2 className="sc-section__title">Was Dir das bringt</h2>
+              <p className="sc-section__hint">Es geht nicht ums Aussehen, sondern um Wirkung – und die ist im Beruf unmittelbar spürbar.</p>
+            </div>
+            <div className="sc-cards3">
+              <div className="sc-tile">
+                <p className="sc-tile__h">Souveräne Ausstrahlung</p>
+                <p className="sc-tile__p">Dein Auftritt stärkt Ausstrahlung und Selbstbewusstsein – spürbar in jedem Raum.</p>
+              </div>
+              <div className="sc-tile">
+                <p className="sc-tile__h">Sichtbare Kompetenz</p>
+                <p className="sc-tile__p">Der richtige Look ist das i-Tüpfelchen, das Deine Kompetenz sofort sichtbar macht.</p>
+              </div>
+              <div className="sc-tile">
+                <p className="sc-tile__h">Der richtige Eindruck</p>
+                <p className="sc-tile__p">Du setzt Dich passend in Szene und hinterlässt professionell den Eindruck, den Du willst.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* OFFER */}
+          <section className="sc-section" id="buchen">
+            <div className="sc-section__head">
+              <span className="sc-section__num">09</span>
+              <h2 className="sc-section__title">Was kostet der Business Style Check – und wie buchst Du?</h2>
+            </div>
+            <StyleCheckForm />
+          </section>
+
+          {/* RELATED PRODUCTS TEASER */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">10</span>
+              <h2 className="sc-section__title">Und danach?</h2>
+              <p className="sc-section__hint">Der Business Style Check™ ist die Strategie – bewusst ohne Shopping-Links. Wer erst die Richtung kennt, macht weniger Fehlkäufe und kauft nachhaltiger ein. Diese zwei Angebote sind eigenständig buchbar:</p>
+            </div>
+            <div className="sc-cards3" style={{ gridTemplateColumns: '1fr 1fr' }}>
+              <Link href="/kleiderschrank-check" className="sc-tile sc-tile--link">
+                <span className="sc-tile__l">Eigenes Produkt</span>
+                <p className="sc-tile__h">Kleiderschrank-Check</p>
+                <p className="sc-tile__p">Wir sichten, was Du schon hast, und zeigen, wie Du es clever kombinierst. Unabhängig vom Style Check buchbar.</p>
+              </Link>
+              <Link href="/capsule-wardrobe" className="sc-tile sc-tile--link">
+                <span className="sc-tile__l">Nächste Stufe</span>
+                <p className="sc-tile__h">Business Capsule Wardrobe™</p>
+                <p className="sc-tile__p">Die Umsetzung: konkrete Teile inklusive Personal Shopping mit klickbaren Links zum direkten Shoppen.</p>
+              </Link>
+            </div>
+          </section>
+
+          {/* FAQ */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">11</span>
+              <h2 className="sc-section__title">Häufige Fragen zur Stilberatung</h2>
+            </div>
+            <div className="sc-faq">
+              {[
+                { q: 'Was kostet eine Stilberatung bei BusinessStylist®?', a: 'Der Business Style Check™ kostet einmalig 99 € – inklusive Deiner kompletten Stilstrategie und dem BusinessStylist® Identity Profil™ als PDF.' },
+                { q: 'Findet die Stilberatung online oder vor Ort statt?', a: 'Komplett online. Du brauchst weder einen Termin noch eine Anprobe vor Ort – nur Fotos Deiner aktuellen Business-Outfits.' },
+                { q: 'Bekomme ich konkrete Einkaufslinks?', a: 'Nein, bewusst nicht. Der Business Style Check™ ist die Strategie. Personal Shopping mit klickbaren Links bekommst Du in der Business Capsule Wardrobe™.' },
+                { q: 'Worin unterscheidet sich diese Stilberatung von einer klassischen?', a: 'Eine klassische Beratung endet beim Aussehen. Hier geht es um Wirkung: wie Du wahrgenommen werden willst und wie Dein Business-Stil das unterstützt.' },
+              ].map((item) => (
+                <div key={item.q} className="sc-faq__item">
+                  <p className="sc-faq__q">{item.q}</p>
+                  <p className="sc-faq__a">{item.a}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* SUMMARY */}
+          <section className="sc-section">
+            <div className="sc-section__head">
+              <span className="sc-section__num">12</span>
+              <h2 className="sc-section__title">Das Wichtigste auf einen Blick</h2>
+            </div>
+            <ul className="sc-glance">
+              <li>Stilberatung, die auf Wirkung zielt – nicht nur auf Aussehen.</li>
+              <li>Speziell für Business-Frauen entwickelt.</li>
+              <li>Von einer gelernten Kostümbildnerin und Mode-Stylistin.</li>
+              <li>Dein Archetyp, Deine Farb- und Stilstrategie, Deine ersten Outfits.</li>
+              <li>Identity Profil™ als PDF – innerhalb von 2 Tagen.</li>
+              <li>Komplett online: Fotos und 20–30 Minuten genügen.</li>
+              <li>Klarer Preis: einmalig 99 €, keine versteckten Kosten.</li>
+              <li>Ohne Shopping-Links – die fertige Garderobe kommt mit der Capsule Wardrobe™.</li>
+            </ul>
+            <div className="sc-cta-mid" style={{ paddingTop: '32px' }}>
+              <a className="sc-btn" href="#buchen">
+                Business Style Check buchen <span className="sc-btn__arrow" aria-hidden="true">&#8594;</span>
+              </a>
+            </div>
+          </section>
         </div>
-      )}
-    </div>
+      </main>
+
+      <footer className="sc-foot">
+        <div className="sc-foot__inner">
+          <div>
+            <img src="/businessstylist-logo-sml.png" alt="BusinessStylist®" className="sc-foot__logo" />
+            <p className="sc-eyebrow sc-foot__by">Anika Schmitz</p>
+          </div>
+          <p className="sc-foot__claim">Wirkung vor Worten.</p>
+        </div>
+      </footer>
+    </>
   );
 }

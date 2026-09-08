@@ -39,7 +39,7 @@ export default function UeberMichPage() {
                 <div className="relative">
                   <div className="aspect-square rounded-2xl overflow-hidden shadow-lifted">
                     <img
-                      src="/anika-schmitz.jpg"
+                      src="/stilberatung-anika.webp"
                       alt="Anika Schmitz - Stilberaterin"
                       className="w-full h-full object-cover"
                     />

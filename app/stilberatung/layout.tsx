@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Stilberatung & Personal Styling für Business-Frauen',
-  description: 'Stilberatung von einer Top Personal Stylistin: Kleiderschrank-Check & Stylingtipps für Business-Frauen. Jetzt ab 390,- € buchen.',
+  title: 'Stilberatung für Business-Frauen – Business Style Check™ | BusinessStylist®',
+  description: 'Stilberatung, die auf Wirkung setzt: Der Business Style Check™ ist die Farb- und Stilberatung für Business-Frauen – von einer Mode-Stylistin und gelernten Kostümbildnerin, online, einmalig 99 €. Weil der erste Eindruck zählt.',
   authors: [{ name: 'Businessstylist' }],
   robots: {
     index: true,
@@ -14,61 +14,32 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    title: 'Farb- und Stilberatung: Dein persönlicher Stil',
-    description: 'Professionelle Stilberatung von einer erfahrenen Personal Stylistin. Farben, Formen, Schnitte und Kleiderschrank-Check — online oder vor Ort.',
+    title: 'Stilberatung für Business-Frauen – Business Style Check™',
+    description: 'Farb- und Stilberatung, die auf Wirkung setzt. Deine persönliche Stilstrategie inkl. BusinessStylist® Identity Profil™ – einmalig 99 €.',
     url: 'https://businessstylist.de/stilberatung',
     locale: 'de_DE',
     siteName: 'Businessstylist',
-    images: [
-      {
-        url: 'https://businessstylist.de/og-stilberatung.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Personal Stylistin bei der Farb- und Stilberatung',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Farb- und Stilberatung: Dein persönlicher Stil',
-    description: 'Professionelle Stilberatung von einer erfahrenen Personal Stylistin.',
-    images: ['https://businessstylist.de/og-stilberatung.jpg'],
   },
 };
 
 const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'Farb- und Stilberatung',
-  serviceType: 'Personal Styling',
+  serviceType: 'Stilberatung',
+  name: 'Business Style Check™ – Stilberatung für Business-Frauen',
+  description: 'Farb- und Stilberatung, die auf Wirkung setzt: persönliche Business-Stilstrategie inkl. BusinessStylist® Identity Profil™.',
   provider: {
-    '@type': 'Person',
-    name: 'Anika Schmitz',
-    jobTitle: 'Personal Stylistin',
-    url: 'https://businessstylist.de/ueber-mich',
+    '@type': 'Organization',
+    name: 'BusinessStylist®',
+    url: 'https://businessstylist.de',
   },
-  areaServed: { '@type': 'Country', name: 'Deutschland' },
-  description: 'Professionelle Farb- und Stilberatung mit Kleiderschrank-Check, Personal Shopping und Stylingtipps. Online oder vor Ort.',
-  offers: [
-    {
-      '@type': 'Offer',
-      name: '1:1 Stilberatung',
-      description: '2 × 90 Minuten persönliche Beratung, Farb- & Stiltyp-Analyse, Figur & Passform, komplette Outfit-Strategie, individuelles Lookbook',
-      price: '390.00',
-      priceCurrency: 'EUR',
-      availability: 'https://schema.org/InStock',
-      url: 'https://businessstylist.de/stilberatung',
-    },
-    {
-      '@type': 'Offer',
-      name: 'Jahresabo Stil-System',
-      description: 'Jahresbegleitung mit Kleiderschrank-Check, monatlichem Lookbook und persönlichem Shop mit kuratierten Teilen',
-      price: '1290.00',
-      priceCurrency: 'EUR',
-      availability: 'https://schema.org/InStock',
-      url: 'https://businessstylist.de/stilberatung',
-    },
-  ],
+  areaServed: 'DE',
+  offers: {
+    '@type': 'Offer',
+    price: '99',
+    priceCurrency: 'EUR',
+    availability: 'https://schema.org/InStock',
+  },
 };
 
 const faqSchema = {
@@ -77,50 +48,34 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Was kostet eine Farb- und Stilberatung?',
+      name: 'Was kostet eine Stilberatung bei BusinessStylist®?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Die Einzel-Stilberatung kostet 390 € inklusive zweier 90-minütiger Termine, Farbanalyse, Figurtyp-Bestimmung und einem individuellen Lookbook. Das Jahresabo liegt bei 1.290 € und umfasst zusätzlich einen Kleiderschrank-Check, monatliche Lookbooks und Personal Shopping. Alle Preise verstehen sich inkl. MwSt.',
+        text: 'Der Business Style Check™ kostet einmalig 99 € – inklusive Deiner kompletten Stilstrategie und dem BusinessStylist® Identity Profil™ als PDF.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Wie lange dauert eine Stilberatung?',
+      name: 'Findet die Stilberatung online oder vor Ort statt?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Die Einzelberatung besteht aus zwei Terminen à 90 Minuten – einem Vorgespräch mit Analyse und einer anschließenden Anprobe mit Lookbook-Erstellung. Beim Jahresabo verteilen sich die Termine über zwölf Monate, sodass Deine Stilberatung mit Dir wächst.',
+        text: 'Komplett online. Du brauchst weder einen Termin noch eine Anprobe vor Ort – nur Fotos Deiner aktuellen Business-Outfits.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Findet die Beratung online oder vor Ort statt?',
+      name: 'Bekomme ich konkrete Einkaufslinks?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Beides ist möglich. Die Online-Stilberatung nutzt Video-Sessions und digitale Lookbooks – ideal für volle Kalender. Vor-Ort-Termine bieten mehr Raum für Anprobe und Kleiderschrank-Check. Viele Kundinnen kombinieren beide Formate.',
+        text: 'Nein, bewusst nicht. Der Business Style Check™ ist die Strategie. Personal Shopping mit klickbaren Links bekommst Du in der Business Capsule Wardrobe™.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Was ist ein Kleiderschrank-Check und wie läuft er ab?',
+      name: 'Worin unterscheidet sich diese Stilberatung von einer klassischen?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Beim Kleiderschrank-Check gehen wir Deine Garderobe systematisch durch. Wir prüfen, welche Kleidungsstücke zu Deinem Farb- und Figurtyp passen, welche Looks sich kombinieren lassen und wo Lücken bestehen. Das Ergebnis ist eine funktionale Garderobe ohne Fehlkäufe.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'Welche Qualifikation hat die Stylistin?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Als Personal Stylistin habe ich fundierte Weiterbildung in Mode, Styling und Imageberatung aus der Beauty-Branche. Jede Stilberatung basiert auf Kompetenz und Gespür, nicht auf Trends – damit Dein Stil langfristig trägt.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'Gibt es eine Zufriedenheitsgarantie?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Wenn Du nach dem ersten Termin das Gefühl hast, dass die Beratung nicht zu Dir passt, sprechen wir darüber und finden eine Lösung. Mir ist wichtig, dass Du langfristig profitierst – nicht nur einmal gut angezogen bist.',
+        text: 'Eine klassische Beratung endet beim Aussehen. Hier geht es um Wirkung: wie Du wahrgenommen werden willst und wie Dein Business-Stil das unterstützt.',
       },
     },
   ],

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { supabase } from '@/lib/db/supabase';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -25,7 +25,6 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = schema.parse(body);
 
-    const supabase = getSupabaseAdmin();
     const { error } = await supabase
       .from('first_impression_submissions')
       .insert(parsed);

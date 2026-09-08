@@ -135,7 +135,7 @@ export default function ErsterEindruckPage() {
             </div>
             <div className="analyse-fields analyse-who">
               <div className="analyse-portrait">
-                <img src="/anika-schmitz.jpg" alt="Anika Schmitz, BusinessStylist®" />
+                <img src="/stilberatung-anika.webp" alt="Anika Schmitz, BusinessStylist®" />
               </div>
               <div>
                 <p className="analyse-field__label">Anika Schmitz, BusinessStylist®</p>
