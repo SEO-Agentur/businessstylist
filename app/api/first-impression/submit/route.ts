@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/db/supabase';
+import { getSupabaseAdmin } from '@/lib/db/supabase';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -20,24 +20,116 @@ const schema = z.object({
   spiegelt: z.string().optional(),
 });
 
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB per file
+const MAX_PHOTOS = 5;
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const parsed = schema.parse(body);
+    const formData = await req.formData();
 
-    const { error } = await supabase
-      .from('first_impression_submissions')
-      .insert(parsed);
+    const payload = {
+      vorname: (formData.get('vorname') as string) || '',
+      email: (formData.get('email') as string) || '',
+      alter_jahre: formData.get('alter_jahre') ? Number(formData.get('alter_jahre')) : null,
+      beruf: (formData.get('beruf') as string) || undefined,
+      branche: (formData.get('branche') as string) || undefined,
+      position: (formData.get('position') as string) || undefined,
+      ziel: (formData.get('ziel') as string) || undefined,
+      wirkung: formData.getAll('wirkung').length > 0 ? formData.getAll('wirkung') as string[] : undefined,
+      satz: (formData.get('satz') as string) || undefined,
+      stil: (formData.get('stil') as string) || undefined,
+      herausforderung: (formData.get('herausforderung') as string) || undefined,
+      situationen: formData.getAll('situationen').length > 0 ? formData.getAll('situationen') as string[] : undefined,
+      zufriedenheit: formData.get('zufriedenheit') ? Number(formData.get('zufriedenheit')) : null,
+      haeufigkeit: (formData.get('haeufigkeit') as string) || undefined,
+      spiegelt: (formData.get('spiegelt') as string) || undefined,
+    };
+
+    const parsed = schema.parse(payload);
+
+    const files = formData.getAll('fotos').filter(
+      (f): f is File => f instanceof File && f.size > 0
+    );
+
+    if (files.length === 0) {
+      return NextResponse.json(
+        { error: 'Bitte lade mindestens ein Foto hoch.' },
+        { status: 400 }
+      );
+    }
+
+    if (files.length > MAX_PHOTOS) {
+      return NextResponse.json(
+        { error: `Du kannst maximal ${MAX_PHOTOS} Fotos hochladen.` },
+        { status: 400 }
+      );
+    }
+
+    for (const file of files) {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        return NextResponse.json(
+          { error: 'Bitte lade nur JPG-, PNG- oder WebP-Bilder hoch.' },
+          { status: 400 }
+        );
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        return NextResponse.json(
+          { error: 'Jedes Foto darf maximal 10 MB groß sein.' },
+          { status: 400 }
+        );
+      }
+    }
+
+    const supabase = getSupabaseAdmin();
+    const photoPaths: string[] = [];
+    const submissionId = crypto.randomUUID();
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `${submissionId}/photo-${i + 1}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('first-impression-photos')
+        .upload(path, file, { contentType: file.type, upsert: false });
+
+      if (uploadError) {
+        console.error('Photo upload failed:', uploadError);
+        return NextResponse.json(
+          { error: 'Die Fotos konnten nicht gespeichert werden. Bitte versuche es erneut.' },
+          { status: 500 }
+        );
+      }
+
+      photoPaths.push(path);
+    }
+
+    const { error } = await supabase.from('first_impression_submissions').insert({
+      ...parsed,
+      photo_paths: photoPaths,
+    });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error('Submission insert failed:', error);
+      return NextResponse.json(
+        { error: 'Die Angaben konnten nicht gespeichert werden. Bitte versuche es erneut.' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
     if (err?.name === 'ZodError') {
-      return NextResponse.json({ error: 'Ungültige Daten', details: err.errors }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Bitte überprüfe deine Angaben und versuche es erneut.' },
+        { status: 400 }
+      );
     }
-    return NextResponse.json({ error: 'Interner Fehler' }, { status: 500 });
+    console.error('First impression submit error:', err);
+    return NextResponse.json(
+      { error: 'Beim Absenden ist ein Fehler aufgetreten. Bitte versuche es erneut.' },
+      { status: 500 }
+    );
   }
 }

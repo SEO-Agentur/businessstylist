@@ -8,6 +8,7 @@ export default function FirstImpressionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [photos, setPhotos] = useState<File[]>([]);
 
   const MAX_WIRKUNG = 3;
 
@@ -26,41 +27,35 @@ export default function FirstImpressionForm() {
 
     const formData = new FormData(e.currentTarget);
 
-    const situationen: string[] = [];
-    formData.getAll('situationen').forEach((v) => situationen.push(v as string));
+    formData.delete('wirkung');
+    wirkungSelected.forEach((v) => formData.append('wirkung', v));
 
-    const payload = {
-      vorname: formData.get('vorname') as string,
-      email: formData.get('email') as string,
-      alter_jahre: formData.get('alter') ? Number(formData.get('alter')) : null,
-      beruf: (formData.get('beruf') as string) || undefined,
-      branche: (formData.get('branche') as string) || undefined,
-      position: (formData.get('position') as string) || undefined,
-      ziel: (formData.get('ziel') as string) || undefined,
-      wirkung: wirkungSelected.length > 0 ? wirkungSelected : undefined,
-      satz: (formData.get('satz') as string) || undefined,
-      stil: (formData.get('stil') as string) || undefined,
-      herausforderung: (formData.get('herausforderung') as string) || undefined,
-      situationen: situationen.length > 0 ? situationen : undefined,
-      zufriedenheit: zufriedenheit,
-      haeufigkeit: (formData.get('haeufigkeit') as string) || undefined,
-      spiegelt: (formData.get('spiegelt') as string) || undefined,
-    };
+    if (zufriedenheit !== null) {
+      formData.set('zufriedenheit', String(zufriedenheit));
+    }
+
+    if (formData.get('alter')) {
+      formData.set('alter_jahre', formData.get('alter') as string);
+    }
+    formData.delete('alter');
+
+    formData.delete('fotos');
+    photos.forEach((file) => formData.append('fotos', file));
 
     try {
       const res = await fetch('/api/first-impression/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       if (!res.ok) {
-        throw new Error('Fehler beim Absenden');
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Fehler beim Absenden');
       }
 
       setIsSuccess(true);
-    } catch {
-      setError('Beim Absenden ist ein Fehler aufgetreten. Bitte versuche es erneut.');
+    } catch (err: any) {
+      setError(err?.message || 'Beim Absenden ist ein Fehler aufgetreten. Bitte versuche es erneut.');
     } finally {
       setIsSubmitting(false);
     }
@@ -312,8 +307,19 @@ export default function FirstImpressionForm() {
         <div className="analyse-fields">
           <div className="analyse-upload">
             <p className="analyse-upload__title">Ganzkörperfoto in deinem typischen Business-Outfit</p>
-            <p className="analyse-upload__hint">Erforderlich · JPG oder PNG · Ein zweites Outfit, das du regelmäßig trägst, ist willkommen.</p>
-            <input type="file" name="fotos" accept="image/*" multiple />
+            <p className="analyse-upload__hint">Erforderlich · JPG, PNG oder WebP · max. 10 MB pro Foto · Ein zweites Outfit, das du regelmäßig trägst, ist willkommen.</p>
+            <input
+              type="file"
+              name="fotos"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              onChange={(e) => setPhotos(Array.from(e.target.files || []))}
+            />
+            {photos.length > 0 && (
+              <p className="analyse-upload__selected">
+                {photos.length} {photos.length === 1 ? 'Foto ausgewählt' : 'Fotos ausgewählt'}
+              </p>
+            )}
           </div>
         </div>
       </section>
