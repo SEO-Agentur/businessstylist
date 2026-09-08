@@ -52,6 +52,12 @@ const OPTIONS: ChecklistOption[] = [
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+interface DownloadLink {
+  slug: string;
+  title: string;
+  url: string;
+}
+
 export default function ChecklistSignup() {
   const [email, setEmail] = useState('');
   const [selected, setSelected] = useState<Record<ChecklistSlug, boolean>>({
@@ -61,6 +67,7 @@ export default function ChecklistSignup() {
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [downloads, setDownloads] = useState<DownloadLink[]>([]);
   const [error, setError] = useState('');
 
   const selectedSlugs = useMemo(
@@ -91,6 +98,7 @@ export default function ChecklistSignup() {
       const data = await response.json();
 
       if (response.ok) {
+        setDownloads(data.downloads || []);
         setSuccess(true);
       } else {
         setError(data.error || 'Ein Fehler ist aufgetreten.');
@@ -114,11 +122,26 @@ export default function ChecklistSignup() {
             />
           </svg>
         </div>
-        <h3 className="text-h2 font-serif mb-3">Fast geschafft!</h3>
-        <p className="text-brand-secondary leading-relaxed">
-          Wir haben dir eine Bestätigungs-E-Mail gesendet. Bitte bestätige deine Anmeldung (Double-Opt-in),
-          damit wir dir die ausgewählten Checklisten zusenden können. Schau auch im Spam-Ordner nach.
+        <h3 className="text-h2 font-serif mb-3">Deine Checklisten sind bereit!</h3>
+        <p className="text-brand-secondary leading-relaxed mb-6">
+          Klicke auf die Links unten, um deine Checklisten direkt herunterzuladen.
+          Wir haben dir die Links zusätzlich per E-Mail geschickt.
         </p>
+        <div className="space-y-3">
+          {downloads.map((dl) => (
+            <a
+              key={dl.slug}
+              href={dl.url}
+              download
+              className="inline-flex items-center justify-center w-full px-6 py-3 bg-brand-accent text-white font-semibold rounded-xl hover:bg-brand-accent/90 transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              {dl.title} herunterladen
+            </a>
+          ))}
+        </div>
       </div>
     );
   }

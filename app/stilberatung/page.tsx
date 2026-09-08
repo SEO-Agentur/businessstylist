@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useCart } from '@/lib/context/CartContext';
 
 const BASE_PRICE = 99;
 const CURRENCY = '€';
+const PRODUCT_ID = 'stilberatung';
 const COUPONS: Record<string, { pct?: number; fixed?: number; label: string }> = {
   WILLKOMMEN: { pct: 20, label: '−20 %' },
   ANIKA30: { fixed: 30, label: '−30 €' },
@@ -26,11 +28,13 @@ function priceNow(applied: string | null): number {
 }
 
 function StyleCheckForm() {
+  const { addToCart, applyDiscount } = useCart();
   const [email, setEmail] = useState('');
   const [coupon, setCoupon] = useState('');
   const [applied, setApplied] = useState<string | null>(null);
   const [couponMsg, setCouponMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const [emailError, setEmailError] = useState(false);
+  const [adding, setAdding] = useState(false);
 
   const now = priceNow(applied);
 
@@ -50,15 +54,22 @@ function StyleCheckForm() {
     }
   }, [coupon]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !/.+@.+\..+/.test(email)) {
       setEmailError(true);
       return;
     }
-    const params = new URLSearchParams({ email });
-    if (applied) params.set('coupon', applied);
-    window.location.href = `/checkout?${params.toString()}`;
+    setAdding(true);
+    if (applied) {
+      await applyDiscount(applied);
+    }
+    addToCart({
+      id: PRODUCT_ID,
+      name: 'Business Style Check',
+      price: BASE_PRICE,
+      type: 'Service',
+    });
   };
 
   return (
@@ -110,8 +121,8 @@ function StyleCheckForm() {
             </p>
           )}
         </div>
-        <button type="submit" className="sc-btn">
-          Business Style Check buchen <span className="sc-btn__arrow" aria-hidden="true">&#8594;</span>
+        <button type="submit" className="sc-btn" disabled={adding}>
+          {adding ? 'Wird in den Warenkorb gelegt …' : <>Business Style Check in den Warenkorb <span className="sc-btn__arrow" aria-hidden="true">&#8594;</span></>}
         </button>
         <p className="sc-offer__reassure">
           Nach dem Kauf erhältst Du sofort den Fragebogen. Deine Lieferzeit startet, sobald Deine ausgefüllten Unterlagen und Fotos bei Anika eingegangen sind.

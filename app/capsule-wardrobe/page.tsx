@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import CapsuleCheckoutForm from '@/components/capsule/CapsuleCheckoutForm';
+import AddCapsuleToCart from '@/components/capsule/AddCapsuleToCart';
 
 export const metadata: Metadata = {
   title: 'Capsule Wardrobe erstellen – Minimalistischer Kleiderschrank | Businessstylist',
@@ -369,10 +369,10 @@ export default function CapsuleWardrobePage() {
         </div>
       </section>
 
-      {/* CHECKOUT FORM */}
+      {/* ADD TO CART */}
       <section className="py-16 md:py-20 bg-white">
         <div className="container-custom max-w-xl">
-          <CapsuleCheckoutForm />
+          <AddCapsuleToCart />
         </div>
       </section>
     </>

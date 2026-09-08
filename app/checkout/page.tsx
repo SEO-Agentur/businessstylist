@@ -13,7 +13,7 @@ type AuthMode = 'unknown' | 'guest' | 'existing_with_password' | 'existing_no_pa
 
 export default function CheckoutPage() {
   const { data: session } = useSession();
-  const { items, removeFromCart, updateQuantity, clearCart, totalPrice, discount, discountAmount, clearDiscount } = useCart();
+  const { items, removeFromCart, updateQuantity, clearCart, totalPrice, discount, discountAmount, applyDiscount, clearDiscount } = useCart();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -31,6 +31,9 @@ export default function CheckoutPage() {
   const [wantsAccount, setWantsAccount] = useState(true);
   const [authError, setAuthError] = useState('');
   const lastCheckedEmail = useRef('');
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountMsg, setDiscountMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  const [discountLoading, setDiscountLoading] = useState(false);
 
   useEffect(() => {
     if (session?.user) {
@@ -438,6 +441,47 @@ export default function CheckoutPage() {
                     </div>
                   ))}
                 </div>
+
+                {!discount && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-brand-primary mb-2">
+                      Gutscheincode
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={discountCode}
+                        onChange={(e) => setDiscountCode(e.target.value)}
+                        placeholder="Code eingeben"
+                        autoCapitalize="characters"
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all"
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (!discountCode.trim()) return;
+                          setDiscountLoading(true);
+                          const result = await applyDiscount(discountCode);
+                          setDiscountLoading(false);
+                          if (result.ok) {
+                            setDiscountMsg({ text: 'Code erfolgreich angewendet.', ok: true });
+                          } else {
+                            setDiscountMsg({ text: result.error || 'Code ungültig.', ok: false });
+                          }
+                        }}
+                        disabled={discountLoading}
+                        className="px-4 py-2 bg-brand-primary text-white rounded-lg font-medium text-sm hover:bg-brand-primary/90 transition-colors disabled:opacity-50"
+                      >
+                        {discountLoading ? '...' : 'Einlösen'}
+                      </button>
+                    </div>
+                    {discountMsg && (
+                      <p className={`text-sm mt-2 ${discountMsg.ok ? 'text-green-700' : 'text-red-600'}`} aria-live="polite">
+                        {discountMsg.text}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {discount && discountAmount > 0 && (
                   <div className="border-t border-gray-200 pt-4 mb-4 space-y-2 text-sm">

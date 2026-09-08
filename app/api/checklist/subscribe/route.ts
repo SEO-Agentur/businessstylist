@@ -1,60 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { sendEmail } from '@/lib/email/service';
 
-const CHECKLIST_GROUP_ENV: Record<string, string> = {
-  'smart-casual': 'MAILERLITE_GROUP_ID_SMART_CASUAL',
-  'business-attire': 'MAILERLITE_GROUP_ID_BUSINESS_ATTIRE',
-  'wardrobe-declutter': 'MAILERLITE_GROUP_ID_WARDROBE_DECLUTTER',
-};
-
-async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = 10000): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    return await fetch(url, { ...init, signal: controller.signal });
-  } finally {
-    clearTimeout(timer);
-  }
+interface ChecklistDef {
+  slug: string;
+  title: string;
+  filename: string;
+  filePath: string;
 }
 
-async function subscribeToMailerLite(
-  apiKey: string,
-  email: string,
-  groupIds: string[]
-): Promise<{ ok: boolean; status: number; bodyPreview: string; networkError?: string }> {
-  const payload = JSON.stringify({
-    email,
-    groups: groupIds,
-    status: 'unconfirmed',
-  });
-
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      const res = await fetchWithTimeout(
-        'https://connect.mailerlite.com/api/subscribers',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: payload,
-        },
-        10000
-      );
-      const text = await res.text().catch(() => '');
-      return { ok: res.ok || res.status === 422, status: res.status, bodyPreview: text.slice(0, 300) };
-    } catch (err: any) {
-      const msg = err?.message || String(err);
-      console.error(`[checklist] MailerLite fetch attempt ${attempt} failed:`, msg);
-      if (attempt === 2) {
-        return { ok: false, status: 0, bodyPreview: '', networkError: msg };
-      }
-    }
-  }
-  return { ok: false, status: 0, bodyPreview: '', networkError: 'unreachable' };
-}
+const CHECKLISTS: ChecklistDef[] = [
+  {
+    slug: 'smart-casual',
+    title: 'Smart Casual Checkliste',
+    filename: 'smart-casual-checkliste.pdf',
+    filePath: 'smart-casual-checkliste.pdf',
+  },
+  {
+    slug: 'business-attire',
+    title: 'Business Attire Checkliste',
+    filename: 'smart-casual-checkliste.pdf',
+    filePath: 'smart-casual-checkliste.pdf',
+  },
+  {
+    slug: 'wardrobe-declutter',
+    title: 'Wardrobe-Decluttering Checkliste',
+    filename: 'smart-casual-checkliste.pdf',
+    filePath: 'smart-casual-checkliste.pdf',
+  },
+];
 
 export async function POST(request: NextRequest) {
   try {
@@ -62,43 +36,33 @@ export async function POST(request: NextRequest) {
 
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       return NextResponse.json(
-        { error: 'Bitte gib eine gueltige E-Mail-Adresse ein.' },
+        { error: 'Bitte gib eine gültige E-Mail-Adresse ein.' },
         { status: 400 }
       );
     }
 
     if (!Array.isArray(checklists) || checklists.length === 0) {
       return NextResponse.json(
-        { error: 'Bitte waehle mindestens eine Checkliste aus.' },
+        { error: 'Bitte wähle mindestens eine Checkliste aus.' },
         { status: 400 }
       );
     }
 
-    const groupIds: string[] = [];
-    const validSlugs: string[] = [];
-    for (const slug of checklists) {
-      const envKey = CHECKLIST_GROUP_ENV[slug];
-      if (!envKey) continue;
-      const id = process.env[envKey];
-      if (id) {
-        groupIds.push(id);
-        validSlugs.push(slug);
-      }
-    }
+    const normalizedEmail = email.trim().toLowerCase();
+    const validSlugs = checklists.filter((slug: string) =>
+      CHECKLISTS.some((c) => c.slug === slug)
+    );
 
-    const apiKey = process.env.MAILERLITE_API_KEY;
-    if (!apiKey || groupIds.length === 0) {
-      console.error('[checklist] missing config', { hasApiKey: !!apiKey, groups: groupIds.length });
+    if (validSlugs.length === 0) {
       return NextResponse.json(
-        { error: 'Der Versand ist aktuell nicht verfuegbar. Bitte versuche es spaeter erneut.' },
-        { status: 500 }
+        { error: 'Bitte wähle mindestens eine Checkliste aus.' },
+        { status: 400 }
       );
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
+    const admin = getSupabaseAdmin();
 
     try {
-      const admin = getSupabaseAdmin();
       await admin.from('newsletter_subscribers').upsert(
         { email: normalizedEmail, source: `checklist:${validSlugs.join(',')}` },
         { onConflict: 'email' }
@@ -107,24 +71,46 @@ export async function POST(request: NextRequest) {
       console.error('[checklist] supabase persist failed (non-fatal):', err);
     }
 
-    const result = await subscribeToMailerLite(apiKey, normalizedEmail, groupIds);
+    const downloadLinks = validSlugs.map((slug: string) => {
+      const def = CHECKLISTS.find((c) => c.slug === slug)!;
+      return { slug, title: def.title, url: `/${def.filePath}` };
+    });
 
-    if (!result.ok) {
-      console.error('[checklist] MailerLite failed', {
-        status: result.status,
-        body: result.bodyPreview,
-        networkError: result.networkError,
+    try {
+      const { sendEmail: doSend } = await import('@/lib/email/service');
+      const html = `
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: #2d3e50; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="margin:0">Deine Checklisten sind bereit</h1>
+  </div>
+  <div style="background: #f9f7f4; padding: 30px; border-radius: 0 0 8px 8px;">
+    <p>Hallo,</p>
+    <p>vielen Dank für dein Interesse! Hier sind deine angeforderten Checklisten:</p>
+    <ul>
+      ${downloadLinks.map((l) => `<li><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://businessstylist.de'}${l.url}">${l.title}</a></li>`).join('')}
+    </ul>
+    <p>Viel Erfolg mit deinem Business-Stil!</p>
+    <p>Herzliche Grüße,<br>Anika Schmitz</p>
+  </div>
+</div>
+</body></html>`.trim();
+
+      await doSend({
+        to: normalizedEmail,
+        subject: 'Deine Checklisten von Businessstylist',
+        html,
+        text: `Deine angeforderten Checklisten: ${downloadLinks.map((l) => l.url).join(', ')}`,
+        replyTo: 'kontakt@businessstylist.de',
       });
-      return NextResponse.json(
-        { error: 'Anmeldung konnte gerade nicht uebermittelt werden. Bitte versuche es in wenigen Minuten erneut.' },
-        { status: 502 }
-      );
+    } catch (err) {
+      console.error('[checklist] email send failed (non-fatal):', err);
     }
 
     return NextResponse.json({
       success: true,
-      message:
-        'Perfekt! Wir haben dir eine Bestaetigungs-E-Mail gesendet. Bitte bestaetige deine Anmeldung, um die Checklisten zu erhalten.',
+      downloads: downloadLinks,
+      message: 'Deine Checklisten sind jetzt bereit zum Download.',
     });
   } catch (error: any) {
     console.error('[checklist] unhandled error:', error?.message || error);

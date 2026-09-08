@@ -32,7 +32,6 @@ export default function ShopPage() {
       description: 'Deine persönliche Wirkungs- und Stilstrategie für einen klaren, souveränen Business-Auftritt – komplett online.',
       type: 'Service',
       features: ['Business Style Archetyp™', 'Wirkungsanalyse', 'Farb- & Stilstrategie', 'Identity Profil™ als PDF'],
-      directLink: true,
     },
     {
       id: 'capsule-wardrobe',
@@ -42,7 +41,6 @@ export default function ShopPage() {
       description: 'Dein Signature-Produkt: Anika entwickelt deine komplette Business-Garderobenstrategie – die eigentliche Transformation.',
       type: 'Signature Service',
       features: ['Komplette Business-Garderobe', '25–35 Teile', '80–100 Outfitkombinationen', 'Saisonplanung', 'Fehlkäufe vermeiden', 'Einkauf nach Plan'],
-      directLink: true,
     },
   ];
 

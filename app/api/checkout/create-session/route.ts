@@ -216,9 +216,23 @@ export async function POST(request: Request) {
       }
     }
 
-    const successUrl = loginToken
-      ? `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&login_token=${loginToken}`
-      : `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+    const hasCapsule = items.some((i: any) => i.id === 'capsule-wardrobe');
+
+    let capsuleOrderId: string | null = null;
+    if (hasCapsule && admin) {
+      const { data: capsuleOrder } = await admin
+        .from('capsule_wardrobe_orders')
+        .insert({ email: normalizedEmail, name: customerInfo.name || '', answers: {}, status: 'pending' })
+        .select('id')
+        .maybeSingle();
+      if (capsuleOrder) capsuleOrderId = capsuleOrder.id;
+    }
+
+    const successUrl = hasCapsule
+      ? `${origin}/capsule-wardrobe/fragebogen?session_id={CHECKOUT_SESSION_ID}`
+      : loginToken
+        ? `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&login_token=${loginToken}`
+        : `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
 
     let checkoutSession;
     try {
@@ -236,6 +250,7 @@ export async function POST(request: Request) {
           : { allow_promotion_codes: true }),
         metadata: {
           ...(checkoutUserId ? { userId: checkoutUserId } : {}),
+          ...(hasCapsule && capsuleOrderId ? { productType: 'capsule-wardrobe', orderId: capsuleOrderId } : {}),
           customerName: customerInfo.name || '',
           customerPhone: customerInfo.phone || '',
           customerAddress: customerInfo.address || '',
@@ -254,6 +269,13 @@ export async function POST(request: Request) {
         { error: `Fehler beim Erstellen der Checkout-Session: ${msg}` },
         { status: 502 }
       );
+    }
+
+    if (hasCapsule && capsuleOrderId && admin) {
+      await admin
+        .from('capsule_wardrobe_orders')
+        .update({ stripe_session_id: checkoutSession.id })
+        .eq('id', capsuleOrderId);
     }
 
     if (discountRow && discountAmountEuros > 0) {
