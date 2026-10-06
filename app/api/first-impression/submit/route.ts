@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { sendEmail } from '@/lib/email/service';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -23,6 +24,60 @@ const schema = z.object({
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB per file
 const MAX_PHOTOS = 5;
+const BUCKET = 'first-impression-photos';
+const NOTIFY_EMAIL = 'info@businessstylist.de';
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function buildEmailHtml(
+  data: z.infer<typeof schema>,
+  photoLinks: { name: string; url: string }[]
+): string {
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 12px 6px 0;color:#8C8F95;font-size:13px;vertical-align:top;white-space:nowrap;">${escapeHtml(label)}</td><td style="padding:6px 0;font-size:14px;vertical-align:top;">${escapeHtml(value) || '—'}</td></tr>`;
+
+  const arr = (a?: string[]) => (a && a.length ? a.join(', ') : '');
+
+  const photoRows = photoLinks.length
+    ? photoLinks
+        .map(
+          (p) =>
+            `<p style="margin:8px 0;"><a href="${p.url}" style="color:#1E2B3C;text-decoration:underline;">${escapeHtml(p.name)}</a></p>`
+        )
+        .join('')
+    : '<p style="color:#8C8F95;">Keine Fotos hochgeladen.</p>';
+
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#16181C;background:#F4F3F0;margin:0;padding:24px;">
+  <div style="max-width:600px;margin:0 auto;background:#fff;padding:32px;">
+    <h1 style="font-size:22px;font-weight:300;margin:0 0 24px;letter-spacing:-0.02em;">Neue First-Impression-Analyse</h1>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:28px;">
+      ${row('Vorname', data.vorname)}
+      ${row('E-Mail', data.email)}
+      ${row('Alter', data.alter_jahre != null ? String(data.alter_jahre) : '')}
+      ${row('Beruf', data.beruf || '')}
+      ${row('Branche', data.branche || '')}
+      ${row('Position', data.position || '')}
+      ${row('Berufliches Ziel', data.ziel || '')}
+      ${row('Gewünschte Wirkung', arr(data.wirkung))}
+      ${row('Satzergänzung', data.satz || '')}
+      ${row('Aktueller Stil', data.stil || '')}
+      ${row('Herausforderung', data.herausforderung || '')}
+      ${row('Situationen', arr(data.situationen))}
+      ${row('Zufriedenheit', data.zufriedenheit != null ? `${data.zufriedenheit}/10` : '')}
+      ${row('Häufigkeit', data.haeufigkeit || '')}
+      ${row('Spiegelt Kompetenz wider', data.spiegelt || '')}
+    </table>
+    <h2 style="font-size:16px;font-weight:400;margin:0 0 12px;">Fotos</h2>
+    ${photoRows}
+  </div>
+</body></html>`;
+}
 
 export async function POST(req: Request) {
   try {
@@ -36,11 +91,11 @@ export async function POST(req: Request) {
       branche: (formData.get('branche') as string) || undefined,
       position: (formData.get('position') as string) || undefined,
       ziel: (formData.get('ziel') as string) || undefined,
-      wirkung: formData.getAll('wirkung').length > 0 ? formData.getAll('wirkung') as string[] : undefined,
+      wirkung: formData.getAll('wirkung').length > 0 ? (formData.getAll('wirkung') as string[]) : undefined,
       satz: (formData.get('satz') as string) || undefined,
       stil: (formData.get('stil') as string) || undefined,
       herausforderung: (formData.get('herausforderung') as string) || undefined,
-      situationen: formData.getAll('situationen').length > 0 ? formData.getAll('situationen') as string[] : undefined,
+      situationen: formData.getAll('situationen').length > 0 ? (formData.getAll('situationen') as string[]) : undefined,
       zufriedenheit: formData.get('zufriedenheit') ? Number(formData.get('zufriedenheit')) : null,
       haeufigkeit: (formData.get('haeufigkeit') as string) || undefined,
       spiegelt: (formData.get('spiegelt') as string) || undefined,
@@ -76,6 +131,7 @@ export async function POST(req: Request) {
 
     const supabase = getSupabaseAdmin();
     const photoPaths: string[] = [];
+    const photoLinks: { name: string; url: string }[] = [];
     const submissionId = crypto.randomUUID();
 
     for (let i = 0; i < files.length; i++) {
@@ -83,14 +139,24 @@ export async function POST(req: Request) {
       const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
       const path = `${submissionId}/photo-${i + 1}.${ext}`;
 
+      const arrayBuffer = await file.arrayBuffer();
       const { error: uploadError } = await supabase.storage
-        .from('first-impression-photos')
-        .upload(path, file, { contentType: file.type, upsert: false });
+        .from(BUCKET)
+        .upload(path, arrayBuffer, { contentType: file.type, upsert: false });
 
       if (uploadError) {
-        console.error('Photo upload failed (non-fatal):', uploadError);
-      } else {
-        photoPaths.push(path);
+        console.error('Photo upload failed:', uploadError);
+        continue;
+      }
+
+      photoPaths.push(path);
+
+      const { data: urlData } = await supabase.storage
+        .from(BUCKET)
+        .createSignedUrl(path, 60 * 24 * 7);
+
+      if (urlData?.signedUrl) {
+        photoLinks.push({ name: file.name, url: urlData.signedUrl });
       }
     }
 
@@ -105,6 +171,18 @@ export async function POST(req: Request) {
         { error: 'Die Angaben konnten nicht gespeichert werden. Bitte versuche es erneut.' },
         { status: 500 }
       );
+    }
+
+    try {
+      await sendEmail({
+        to: NOTIFY_EMAIL,
+        replyTo: parsed.email,
+        subject: `Neue First-Impression-Analyse von ${parsed.vorname}`,
+        html: buildEmailHtml(parsed, photoLinks),
+        text: `Neue First-Impression-Analyse von ${parsed.vorname} (${parsed.email}).\n\nFotos: ${photoLinks.length > 0 ? photoLinks.map((p) => p.url).join('\n') : 'Keine Fotos hochgeladen.'}`,
+      });
+    } catch (emailErr) {
+      console.error('Notification email failed:', emailErr);
     }
 
     return NextResponse.json({ success: true });
