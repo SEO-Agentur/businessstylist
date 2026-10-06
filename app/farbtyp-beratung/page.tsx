@@ -43,7 +43,7 @@ export default function FarbtypBeratungPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <article className="min-h-screen">
+      <article className="farbtyp-page min-h-screen">
         <section className="relative bg-gradient-to-br from-business-cream via-white to-brand-light py-20 md:py-28 overflow-hidden">
           <div className="absolute inset-0 opacity-5">
             <div className="absolute top-20 left-10 w-72 h-72 bg-brand-accent rounded-full blur-3xl"></div>
