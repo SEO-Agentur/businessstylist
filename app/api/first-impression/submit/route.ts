@@ -52,13 +52,6 @@ export async function POST(req: Request) {
       (f): f is File => f instanceof File && f.size > 0
     );
 
-    if (files.length === 0) {
-      return NextResponse.json(
-        { error: 'Bitte lade mindestens ein Foto hoch.' },
-        { status: 400 }
-      );
-    }
-
     if (files.length > MAX_PHOTOS) {
       return NextResponse.json(
         { error: `Du kannst maximal ${MAX_PHOTOS} Fotos hochladen.` },
@@ -95,14 +88,10 @@ export async function POST(req: Request) {
         .upload(path, file, { contentType: file.type, upsert: false });
 
       if (uploadError) {
-        console.error('Photo upload failed:', uploadError);
-        return NextResponse.json(
-          { error: 'Die Fotos konnten nicht gespeichert werden. Bitte versuche es erneut.' },
-          { status: 500 }
-        );
+        console.error('Photo upload failed (non-fatal):', uploadError);
+      } else {
+        photoPaths.push(path);
       }
-
-      photoPaths.push(path);
     }
 
     const { error } = await supabase.from('first_impression_submissions').insert({

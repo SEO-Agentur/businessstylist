@@ -307,7 +307,7 @@ export default function FirstImpressionForm() {
         <div className="analyse-fields">
           <div className="analyse-upload">
             <p className="analyse-upload__title">Ganzkörperfoto in deinem typischen Business-Outfit</p>
-            <p className="analyse-upload__hint">Erforderlich · JPG, PNG oder WebP · max. 10 MB pro Foto · Ein zweites Outfit, das du regelmäßig trägst, ist willkommen.</p>
+            <p className="analyse-upload__hint">Optional · JPG, PNG oder WebP · max. 10 MB pro Foto · Ein zweites Outfit, das du regelmäßig trägst, ist willkommen.</p>
             <input
               type="file"
               name="fotos"

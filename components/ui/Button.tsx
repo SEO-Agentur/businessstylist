@@ -15,7 +15,7 @@ export default function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center font-medium uppercase tracking-[.16em] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy focus-visible:outline-offset-4 disabled:opacity-40 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center text-center font-medium uppercase tracking-[.16em] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy focus-visible:outline-offset-4 disabled:opacity-40 disabled:cursor-not-allowed';
 
   const variants = {
     primary: 'bg-ink text-paper hover:bg-navy',
