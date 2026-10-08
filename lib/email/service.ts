@@ -1,5 +1,5 @@
 import nodemailer, { Transporter } from 'nodemailer';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { prisma } from '@/lib/db/prisma';
 
 interface EmailAttachment {
   filename: string;
@@ -47,13 +47,14 @@ async function logEmail(
   errorMessage?: string
 ) {
   try {
-    const admin = getSupabaseAdmin();
-    await admin.from('email_log').insert({
-      to_address: to,
-      subject,
-      status,
-      provider: 'smtp',
-      error_message: errorMessage || null,
+    await prisma.emailLog.create({
+      data: {
+        toAddress: to,
+        subject,
+        status,
+        provider: 'smtp',
+        errorMessage: errorMessage || null,
+      },
     });
   } catch (err) {
     console.error('[email] failed to write email_log:', err);

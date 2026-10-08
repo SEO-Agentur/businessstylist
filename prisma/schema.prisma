@@ -1,38 +1,41 @@
 // Businessstylist Database Schema
-// SQLite for quick setup, easily migrateable to PostgreSQL
+// PostgreSQL for self-hosted production deployments
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   email         String    @unique
   name          String?
   phone         String?
   password      String?
-  role          String    @default("USER") // USER or ADMIN
+  role          String    @default("USER")
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  profile       Profile?
-  orders        Order[]
-  invoices      Invoice[]
-  lookbooks     UserLookbook[]
-  quizResults   QuizResult[]
-  messages      Message[]
+  profile             Profile?
+  orders              Order[]
+  invoices            Invoice[]
+  lookbooks           UserLookbook[]
+  quizResults         QuizResult[]
+  messages            Message[]
+  passwordResetTokens PasswordResetToken[]
+  loginTokens         AuthLoginToken[]
 }
 
 model Profile {
   id          String    @id @default(cuid())
   userId      String    @unique
-  preferences String?   // JSON string
+  preferences String? // JSON string
   deletedAt   DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -41,32 +44,32 @@ model Profile {
 }
 
 model Product {
-  id             String      @id @default(cuid())
-  slug           String      @unique
-  name           String
-  description    String?
-  type           String      // EBOOK, LOOKBOOK, SERVICE, SUBSCRIPTION
-  price          Float
-  stripePriceId  String?
-  active         Boolean     @default(true)
-  features       String?     // JSON string array
-  imageUrl       String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  description   String?
+  type          String // EBOOK, LOOKBOOK, SERVICE, SUBSCRIPTION
+  price         Float
+  stripePriceId String?
+  active        Boolean  @default(true)
+  features      String? // JSON string array
+  imageUrl      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   orders Order[]
 }
 
 model Order {
-  id                      String      @id @default(cuid())
+  id                      String   @id @default(cuid())
   userId                  String
   productId               String
   stripeCheckoutSessionId String?
   stripePaymentIntentId   String?
-  status                  String      @default("PENDING") // PENDING, COMPLETED, FAILED, REFUNDED
+  status                  String   @default("PENDING") // PENDING, COMPLETED, FAILED, REFUNDED
   amount                  Float
-  createdAt               DateTime    @default(now())
-  updatedAt               DateTime    @updatedAt
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
@@ -90,7 +93,7 @@ model Lookbook {
   description  String?
   fileUrl      String
   thumbnailUrl String?
-  kibbeType    String?  // DRAMATIC, SOFT_DRAMATIC, FLAMBOYANT_NATURAL, etc.
+  kibbeType    String? // DRAMATIC, SOFT_DRAMATIC, FLAMBOYANT_NATURAL, etc.
   freeForType  Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -113,9 +116,9 @@ model UserLookbook {
 model QuizResult {
   id         String   @id @default(cuid())
   userId     String?
-  resultType String   // Kibbe Type
-  answers    String   // JSON string
-  scores     String?  // JSON string: {D, N, R, G}
+  resultType String // Kibbe Type
+  answers    String // JSON string
+  scores     String? // JSON string: {D, N, R, G}
   phone      String?
   createdAt  DateTime @default(now())
 
@@ -123,12 +126,12 @@ model QuizResult {
 }
 
 model Message {
-  id       String    @id @default(cuid())
-  toUserId String
-  subject  String
-  body     String
-  readAt   DateTime?
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid())
+  toUserId  String
+  subject   String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
 
   user User @relation(fields: [toUserId], references: [id], onDelete: Cascade)
 }
@@ -138,9 +141,9 @@ model BlogPost {
   slug        String    @unique
   title       String
   excerpt     String?
-  content     String    // MDX content
+  content     String // MDX content
   category    String?
-  keywords    String?   // JSON array
+  keywords    String? // JSON array
   published   Boolean   @default(false)
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
@@ -150,86 +153,230 @@ model BlogPost {
   seoTitle       String?
   seoDescription String?
   canonical      String?
-  robots         String?  @default("index,follow")
+  robots         String? @default("index,follow")
   ogTitle        String?
   ogDescription  String?
   ogImage        String?
-  twitterCard    String?  @default("summary_large_image")
+  twitterCard    String? @default("summary_large_image")
   dcTitle        String?
   dcDescription  String?
   dcCreator      String?
-  dcLanguage     String?  @default("de-DE")
-  schemaJson     String?  // JSON-LD
+  dcLanguage     String? @default("de-DE")
+  schemaJson     String? // JSON-LD
 }
 
 model Page {
-  id        String    @id @default(cuid())
-  slug      String    @unique
+  id        String   @id @default(cuid())
+  slug      String   @unique
   title     String
-  content   String    // MDX or Rich Text
-  status    String    @default("DRAFT") // DRAFT, PUBLISHED
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  content   String // MDX or Rich Text
+  status    String   @default("DRAFT") // DRAFT, PUBLISHED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // SEO Fields
   seoTitle       String?
   seoDescription String?
   canonical      String?
-  robots         String?  @default("index,follow")
+  robots         String? @default("index,follow")
   ogTitle        String?
   ogDescription  String?
   ogImage        String?
-  twitterCard    String?  @default("summary_large_image")
+  twitterCard    String? @default("summary_large_image")
   dcTitle        String?
   dcDescription  String?
   dcCreator      String?
-  dcLanguage     String?  @default("de-DE")
-  schemaJson     String?  // JSON-LD
+  dcLanguage     String? @default("de-DE")
+  schemaJson     String? // JSON-LD
 }
 
 model ProductPage {
-  id            String    @id @default(cuid())
-  slug          String    @unique
+  id            String   @id @default(cuid())
+  slug          String   @unique
   name          String
   description   String?
-  content       String    // Rich content
+  content       String // Rich content
   price         Float?
   priceDisplay  String?
   stripePriceId String?
-  status        String    @default("PUBLISHED")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  status        String   @default("PUBLISHED")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // SEO Fields
   seoTitle       String?
   seoDescription String?
   canonical      String?
-  robots         String?  @default("index,follow")
+  robots         String? @default("index,follow")
   ogTitle        String?
   ogDescription  String?
   ogImage        String?
-  twitterCard    String?  @default("summary_large_image")
+  twitterCard    String? @default("summary_large_image")
   dcTitle        String?
   dcDescription  String?
   dcCreator      String?
-  dcLanguage     String?  @default("de-DE")
-  schemaJson     String?  // JSON-LD
+  dcLanguage     String? @default("de-DE")
+  schemaJson     String? // JSON-LD
 }
 
 model MenuItem {
-  id          String   @id @default(cuid())
-  label       String
-  href        String
-  position    String   // HEADER or FOOTER
-  order       Int      @default(0)
-  parentId    String?
-  external    Boolean  @default(false)
-  visible     Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  label     String
+  href      String
+  position  String // HEADER or FOOTER
+  order     Int      @default(0)
+  parentId  String?
+  external  Boolean  @default(false)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   parent   MenuItem?  @relation("MenuItemToParent", fields: [parentId], references: [id], onDelete: Cascade)
   children MenuItem[] @relation("MenuItemToParent")
 
   @@index([position, order])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  ipAddress String?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model AuthLoginToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model DiscountCode {
+  id                  String    @id @default(uuid())
+  code                String    @unique
+  description         String?
+  discountType        String
+  discountValueCents  Int       @default(0)
+  discountPercent     Decimal   @default(0) @db.Decimal(5, 2)
+  appliesToProductIds String[]
+  active              Boolean   @default(true)
+  validFrom           DateTime?
+  validUntil          DateTime?
+  maxRedemptions      Int?
+  redemptions         Int       @default(0)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model EmailLog {
+  id           String   @id @default(uuid())
+  toAddress    String
+  subject      String
+  status       String
+  provider     String?
+  errorMessage String?
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  source    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ConsentLog {
+  id                   String   @id @default(uuid())
+  emailHash            String
+  ipHash               String
+  userAgent            String?
+  privacyPolicyVersion String
+  consentType          String
+  createdAt            DateTime @default(now())
+
+  @@index([emailHash])
+  @@index([createdAt])
+}
+
+model KibbeSubscriber {
+  id                     String   @id @default(uuid())
+  email                  String
+  firstName              String
+  kibbeType              String
+  kibbeTypeDisplay       String
+  mailerliteSubscriberId String?
+  status                 String   @default("active")
+  errorMessage           String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([email])
+}
+
+model FirstImpressionSubmission {
+  id              String   @id @default(uuid())
+  vorname         String
+  email           String
+  alterJahre      Int?
+  beruf           String?
+  branche         String?
+  position        String?
+  ziel            String?
+  wirkung         String[]
+  satz            String?
+  stil            String?
+  herausforderung String?
+  situationen     String[]
+  zufriedenheit   Int?
+  haeufigkeit     String?
+  spiegelt        String?
+  photoPaths      String[]
+  createdAt       DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+}
+
+model CapsuleWardrobeOrder {
+  id              String   @id @default(uuid())
+  email           String
+  name            String
+  stripeSessionId String?
+  status          String   @default("pending")
+  answers         Json     @default("{}")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([email])
+  @@index([stripeSessionId])
 }

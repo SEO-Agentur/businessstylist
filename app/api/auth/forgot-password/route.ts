@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { randomBytes, createHash } from 'crypto';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { prisma } from '@/lib/db/prisma';
 import { sendEmail } from '@/lib/email/service';
 
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
@@ -45,13 +45,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    const admin = getSupabaseAdmin();
-
-    const { data: user } = await admin
-      .from('users')
-      .select('id, email, name')
-      .ilike('email', normalizedEmail)
-      .maybeSingle();
+    const user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      select: { id: true, email: true, name: true },
+    });
 
     if (!user) {
       return NextResponse.json({ ok: true });
@@ -59,18 +56,18 @@ export async function POST(request: Request) {
 
     const token = randomBytes(32).toString('hex');
     const tokenHash = hashToken(token);
-    const expiresAt = new Date(Date.now() + TOKEN_TTL_MS).toISOString();
+    const expiresAt = new Date(Date.now() + TOKEN_TTL_MS);
 
-    const { error: insertError } = await admin
-      .from('password_reset_tokens')
-      .insert({
-        user_id: user.id,
-        token_hash: tokenHash,
-        expires_at: expiresAt,
-        ip_address: ip,
+    try {
+      await prisma.passwordResetToken.create({
+        data: {
+          userId: user.id,
+          tokenHash,
+          expiresAt,
+          ipAddress: ip,
+        },
       });
-
-    if (insertError) {
+    } catch (insertError) {
       console.error('[forgot-password] insert token failed:', insertError);
       return NextResponse.json({ ok: true });
     }

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { prisma } from '@/lib/db/prisma';
 import { sendEmail } from '@/lib/email/service';
 
 const RECIPIENT = process.env.CONTACT_RECIPIENT_EMAIL || 'info@businessstylist.de';
@@ -37,17 +37,11 @@ export async function POST(request: Request) {
     const ip = hdrs.get('x-forwarded-for')?.split(',')[0].trim() || '';
     const userAgent = hdrs.get('user-agent') || '';
 
-    const { error: dbError } = await getSupabaseAdmin().from('contact_messages').insert({
-      name,
-      email,
-      phone,
-      subject,
-      message,
-      ip_address: ip,
-      user_agent: userAgent,
-    });
-
-    if (dbError) {
+    try {
+      await prisma.contactMessage.create({
+        data: { name, email, phone, subject, message, ipAddress: ip, userAgent },
+      });
+    } catch (dbError) {
       console.error('[contact] DB insert error:', dbError);
       return NextResponse.json({ error: 'Speichern fehlgeschlagen' }, { status: 500 });
     }

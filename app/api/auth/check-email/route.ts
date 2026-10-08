@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { prisma } from '@/lib/db/prisma';
 
 export async function GET(request: Request) {
   try {
@@ -9,12 +9,10 @@ export async function GET(request: Request) {
       return NextResponse.json({ exists: false, hasPassword: false });
     }
 
-    const admin = getSupabaseAdmin();
-    const { data } = await admin
-      .from('users')
-      .select('id, password')
-      .ilike('email', email)
-      .maybeSingle();
+    const data = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, password: true },
+    });
 
     return NextResponse.json({
       exists: !!data,

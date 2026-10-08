@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { prisma } from '@/lib/db/prisma';
 import { sendEmail } from '@/lib/email/service';
 
 export async function POST(request: Request) {
@@ -15,13 +15,11 @@ export async function POST(request: Request) {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
-    const admin = getSupabaseAdmin();
 
-    const { data: existingUser } = await admin
-      .from('users')
-      .select('id')
-      .ilike('email', normalizedEmail)
-      .maybeSingle();
+    const existingUser = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      select: { id: true },
+    });
 
     if (existingUser) {
       return NextResponse.json(
@@ -32,23 +30,15 @@ export async function POST(request: Request) {
 
     const hashedPassword = await hash(password, 12);
 
-    const { data: user, error: insertError } = await admin
-      .from('users')
-      .insert({
-        name,
-        email: normalizedEmail,
-        password: hashedPassword,
-        role: 'USER',
-      })
-      .select('id, name, email')
-      .maybeSingle();
-
-    if (insertError || !user) {
+    let user;
+    try {
+      user = await prisma.user.create({
+        data: { name, email: normalizedEmail, password: hashedPassword, role: 'USER' },
+        select: { id: true, name: true, email: true },
+      });
+    } catch (insertError) {
       console.error('Signup insert error:', insertError);
-      return NextResponse.json(
-        { error: insertError?.message || 'Fehler beim Erstellen des Benutzers' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Fehler beim Erstellen des Benutzers' }, { status: 500 });
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://businessstylist.de';

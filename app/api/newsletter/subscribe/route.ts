@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { prisma } from '@/lib/db/prisma';
 import { sendEmail } from '@/lib/email/service';
 
 const LEAD_MAGNETS: Record<string, { url: string; title: string }> = {
@@ -29,14 +29,11 @@ export async function POST(request: NextRequest) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://businessstylist.de';
 
     try {
-      const admin = getSupabaseAdmin();
-      await admin.from('newsletter_subscribers').upsert(
-        {
-          email: normalizedEmail,
-          source: leadMagnet || 'newsletter',
-        },
-        { onConflict: 'email' }
-      );
+      await prisma.newsletterSubscriber.upsert({
+        where: { email: normalizedEmail },
+        create: { email: normalizedEmail, source: leadMagnet || 'newsletter' },
+        update: { source: leadMagnet || 'newsletter' },
+      });
     } catch (err) {
       console.error('[newsletter] subscriber persist failed (non-fatal):', err);
     }

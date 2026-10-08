@@ -2,7 +2,7 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
 import { createHash } from 'crypto';
-import { getSupabaseAdmin } from '@/lib/db/supabase';
+import { prisma } from '@/lib/db/prisma';
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -25,11 +25,9 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Email und Passwort erforderlich');
         }
 
-        const { data: user } = await getSupabaseAdmin()
-          .from('users')
-          .select('*')
-          .ilike('email', credentials.email.trim())
-          .maybeSingle();
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email.trim().toLowerCase() },
+        });
 
         if (!user || !user.password) {
           throw new Error('Ungültige Anmeldedaten');
@@ -57,30 +55,19 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.token) return null;
-        const admin = getSupabaseAdmin();
         const tokenHash = createHash('sha256').update(credentials.token).digest('hex');
+        const row = await prisma.authLoginToken.findUnique({
+          where: { tokenHash },
+          include: { user: true },
+        });
 
-        const { data: row } = await admin
-          .from('auth_login_tokens')
-          .select('id, user_id, expires_at, used_at')
-          .eq('token_hash', tokenHash)
-          .maybeSingle();
+        if (!row || row.usedAt || row.expiresAt.getTime() < Date.now()) return null;
+        const user = row.user;
 
-        if (!row || row.used_at) return null;
-        if (new Date(row.expires_at).getTime() < Date.now()) return null;
-
-        const { data: user } = await admin
-          .from('users')
-          .select('id, email, name, role')
-          .eq('id', row.user_id)
-          .maybeSingle();
-
-        if (!user) return null;
-
-        await admin
-          .from('auth_login_tokens')
-          .update({ used_at: new Date().toISOString() })
-          .eq('id', row.id);
+        await prisma.authLoginToken.update({
+          where: { id: row.id },
+          data: { usedAt: new Date() },
+        });
 
         return {
           id: user.id,
